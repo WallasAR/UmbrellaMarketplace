@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="authors" content="Wallas and Adalberto">
+  <meta name="description" content="Umbrella Marketplace - Sua farmácia online com os melhores preços e uma variedade completa de medicamentos, tudo à sua disposição.">
+  <meta name="keywords" content="Medicamentos, Umbrella, comprar">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  
+  <title>Umbrella Marketplace</title>
+  
+  <!-- Icones -->
+  <script src="https://kit.fontawesome.com/bebcb8230f.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module" defer></script>
+  <link rel="stylesheet" href="/css/product.css">
+  </head>
+<body>
+  <header id="header">
+    <!-- Umbrella Logo -->
+  <div class="header-content">
+    <nav>
+      <!-- Search -->
+      <div class="nav-search">
+        <dotlottie-player src="https://lottie.host/4fcc4bab-e2bd-4413-965d-125270c7881d/PtJIXkdC7Y.json" background="transparent" speed="1" style="width: 50px; height: 50px" direction="1" playMode="normal" loop autoplay></dotlottie-player>
+        <input type="text" placeholder="Buscar medicamentos...">
+        <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+      </div>
+      <ul class="nav-tab">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="#footer-contact">Sobre</a></li>
+        <li><a href="#">FAQs</a></li>
+      </ul>
+      <div class="nav-icon">
+        <a href="#"><i class="fa-solid fa-circle-user"></i></a>
+        <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+      </div>
+    </nav>
+  </div>
+  </header>
+
+  <main class="product-main">
+    <aside>
+      <div id="product-details">
+        <div class="image-selector">
+          <div class="main-image">
+            <img id="mainImg" src="" alt="Imagem Principal">
+          </div>
+          <div id="product-images" class="thumbnail-images">
+            <!-- As miniaturas serão inseridas aqui -->
+          </div>
+        </div>
+      </div>
+    </aside>
+    <section>
+      <div id="product-info">
+        <h2 id="product-name"></h2>
+        <p id="product-description"></p>
+        <h3 id="product-price"></h3>
+        <div class="btn-container">
+          <a href="#" id="add-to-cart" class="btn">Adicionar ao Carrinho</a>
+          <a href="#" id="buy-now" class="btn">Comprar Agora</a>
+        </div>
+      </div>
+  </section>
+  </main>
+
+  <script src="../js/products.js"></script>
+</body>
+</html>

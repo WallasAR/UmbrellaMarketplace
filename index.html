@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="authors" content="Wallas and Adalberto">
+  <meta name="description" content="Umbrella Marketplace - Sua farmácia online com os melhores preços e uma variedade completa de medicamentos, tudo à sua disposição.">
+  <meta name="keywords" content="Medicamentos, Umbrella, comprar">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+
+  <title>Umbrella Marketplace</title>
+
+  <!-- Icones -->
+  <script src="https://kit.fontawesome.com/bebcb8230f.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module" defer></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header id="header">
+    <!-- Umbrella Logo -->
+  <div class="header-content">
+    <nav>
+      <!-- Search -->
+      <div class="nav-search">
+        <dotlottie-player src="https://lottie.host/4fcc4bab-e2bd-4413-965d-125270c7881d/PtJIXkdC7Y.json" background="transparent" speed="1" style="width: 50px; height: 50px" direction="1" playMode="normal" loop autoplay></dotlottie-player>
+        <input type="text" placeholder="Buscar medicamentos...">
+        <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+      </div>
+      <ul class="nav-tab">
+        <li><a href="index.html" class="nav-tab-active">Home</a></li>
+        <li><a href="#footer-contact">Sobre</a></li>
+        <li><a href="#">FAQs</a></li>
+      </ul>
+      <div class="nav-icon">
+        <a href="#"><i class="fa-solid fa-circle-user"></i></a>
+        <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+      </div>
+    </nav>
+  </div>
+  <div class="carousel">
+    <div id="carousel-slide" class="carousel-slide"></div>
+  </div>
+  
+  <script src="js/carousel.js"></script>
+  </header>
+  <main>
+    <aside>
+      <div class="filter-conainer">
+        <div class="header-filter">
+          <i class="fa-solid fa-filter"></i>  
+          <h2>Filtrar por:</h2>
+        </div>
+        
+      </div>
+    </aside>
+    <section>
+      <div id="card-container"></div>
+      <script src="js/cards.js"></script>
+  </section>
+  </main>
+  <footer id="footer-contact">
+    <div class="social">
+      <a href="https://www.instagram.com/war_ggez/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+      <a href="https://t.me/War_ggez" target="_blank"><i class="fa-brands fa-telegram"></i></a>
+      <a href="mailto:wallasarprofissional@gmail.com" target="_blank"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://github.com/wallasar" target="_blank"><i class="fa-brands fa-github"></i></a>
+    </div>
+    <a href="https://wa.link/rkdm8x" target="_blank" class="contact">
+      <i class="fa-solid fa-phone"></i>
+      <div class="contact-content">
+        <h3>Contate-nos</h3>
+        <p>(86) 9 8190-3061</p>
+      </div>
+    </a>
+    <a class="totop-btn" href="#header">
+      <i class="fa-solid fa-arrow-up"></i>
+    </a>
+  </footer>
+</body>
+</html>

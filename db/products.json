@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "nome": "Amoxicilina 50mg",
+    "preco": 6.99,
+    "descricao": "Amoxicilina é um antibiótico usado para tratar várias infecções bacterianas.",
+    "imagem": "https://dmvfarma.vtexassets.com/arquivos/ids/236010/Generico_2--2-.png?v=638424184699670000",
+    "imagens": [
+      "https://dmvfarma.vtexassets.com/arquivos/ids/236010/Generico_2--2-.png?v=638424184699670000",
+      "https://example.com/amoxicilina2.jpg",
+      "https://example.com/amoxicilina3.jpg"
+    ]
+  },
+  {
+    "id": 2,
+    "nome": "Tadalafila 20mg",
+    "preco": 2.7,
+    "descricao": "Tadalafila é um medicamento usado no tratamento da disfunção erétil.",
+    "imagem": "https://dcdn.mitiendanube.com/stores/002/164/673/products/produtos-site-1024-x-1024-px-63-5c118e4dce14ead98f17163820897914-1024-1024.png",
+    "imagens": [
+      "https://dcdn.mitiendanube.com/stores/002/164/673/products/produtos-site-1024-x-1024-px-63-5c118e4dce14ead98f17163820897914-1024-1024.png",
+      "https://example.com/tadalafila2.jpg",
+      "https://example.com/tadalafila3.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "nome": "Clonazepam",
+    "preco": 3.8,
+    "descricao": "Clonazepam é utilizado para tratar crises de ansiedade e convulsões.",
+    "imagem": "https://www.geolab.com.br/wp-content/uploads/2021/05/Mockup-Gotas-tarja-preta_R2-500x500-1.png",
+    "imagens": [
+      "https://www.geolab.com.br/wp-content/uploads/2021/05/Mockup-Gotas-tarja-preta_R2-500x500-1.png",
+      "https://example.com/clonazepam2.jpg",
+      "https://example.com/clonazepam3.jpg"
+    ]
+  },
+  {
+    "id": 4,
+    "nome": "Herbarium",
+    "preco": 1.6,
+    "descricao": "Suplemento fitoterápico que ajuda a aliviar sintomas leves de ansiedade.",
+    "imagem": "https://herbarium.vteximg.com.br/arquivos/ids/157197-1000-1000/OMATER-GEST-mockup.png?v=638017818642430000",
+    "imagens": [
+      "https://herbarium.vteximg.com.br/arquivos/ids/157197-1000-1000/OMATER-GEST-mockup.png?v=638017818642430000",
+      "https://example.com/herbarium2.jpg",
+      "https://example.com/herbarium3.jpg"
+    ]
+  },
+  {
+    "id": 5,
+    "nome": "Vick VaporRub",
+    "preco": 1.8,
+    "descricao": "Pomada descongestionante usada para alívio de sintomas de resfriado.",
+    "imagem": "https://images.ctfassets.net/dnhuh4prvxcr/2BxlxWAztYB5Wop0auO9XR/33a7e7c25562ba12bea7357bf4bdf625/vaporub_30g_jar.Final_Color_Output.0000_840.png",
+    "imagens": [
+      "https://images.ctfassets.net/dnhuh4prvxcr/2BxlxWAztYB5Wop0auO9XR/33a7e7c25562ba12bea7357bf4bdf625/vaporub_30g_jar.Final_Color_Output.0000_840.png",
+      "https://example.com/vick2.jpg",
+      "https://example.com/vick3.jpg"
+    ]
+  },
+  {
+    "id": 6,
+    "nome": "Oxalato Escitalopram",
+    "preco": 1.05,
+    "descricao": "Antidepressivo indicado para o tratamento de depressão e ansiedade.",
+    "imagem": "https://www.germedpharma.com.br/wp-content/uploads/2022/11/embalagens_535x490px_controlados_tarja_vermelha.png",
+    "imagens": [
+      "https://www.germedpharma.com.br/wp-content/uploads/2022/11/embalagens_535x490px_controlados_tarja_vermelha.png",
+      "https://example.com/escitalopram2.jpg",
+      "https://example.com/escitalopram3.jpg"
+    ]
+  },
+  {
+    "id": 7,
+    "nome": "Paracetamol",
+    "preco": 8.90,
+    "descricao": "Analgésico e antipirético utilizado para o alívio de dores e febre.",
+    "imagem": "https://www.multilab.com.br/wp-content/uploads/2024/03/DORSANOL_Gotas_F612.png",
+    "imagens": [
+      "https://www.multilab.com.br/wp-content/uploads/2024/03/DORSANOL_Gotas_F612.png",
+      "https://example.com/paracetamol2.jpg",
+      "https://example.com/paracetamol3.jpg"
+    ]
+  },
+  {
+    "id": 8,
+    "nome": "Ibuprofeno 600mg",
+    "preco": 1.5,
+    "descricao": "Anti-inflamatório e analgésico para tratar dores e inflamações.",
+    "imagem": "https://santaluciadrogaria.vtexassets.com/arquivos/ids/155986/7898148295159.png?v=637637945204100000",
+    "imagens": [
+      "https://santaluciadrogaria.vtexassets.com/arquivos/ids/155986/7898148295159.png?v=637637945204100000",
+      "https://example.com/ibuprofeno2.jpg",
+      "https://example.com/ibuprofeno3.jpg"
+    ]
+  },
+  {
+    "id": 9,
+    "nome": "Dipirona Sódica 1g",
+    "preco": 7.89,
+    "descricao": "Analgésico e antitérmico usado para o alívio da dor e febre.",
+    "imagem": "https://dmvfarma.vtexassets.com/arquivos/ids/245634-800-auto?v=638561467130430000&width=800&height=auto&aspect=true",
+    "imagens": [
+      "https://dmvfarma.vtexassets.com/arquivos/ids/245634-800-auto?v=638561467130430000&width=800&height=auto&aspect=true",
+      "https://example.com/dipirona2.jpg",
+      "https://example.com/dipirona3.jpg"
+    ]
+  },
+  {
+    "id": 10,
+    "nome": "Losartana 50mg",
+    "preco": 1.7,
+    "descricao": "Medicamento utilizado para o controle da hipertensão arterial.",
+    "imagem": "https://santaluciadrogaria.vtexassets.com/arquivos/ids/305017/7898148301720.png?v=637777152848970000",
+    "imagens": [
+      "https://santaluciadrogaria.vtexassets.com/arquivos/ids/305017/7898148301720.png?v=637777152848970000",
+      "https://example.com/losartana2.jpg",
+      "https://example.com/losartana3.jpg"
+    ]
+  }
+]
