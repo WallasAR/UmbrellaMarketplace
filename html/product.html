@@ -23,7 +23,7 @@
       <!-- Search -->
       <div class="nav-search">
         <dotlottie-player src="https://lottie.host/4fcc4bab-e2bd-4413-965d-125270c7881d/PtJIXkdC7Y.json" background="transparent" speed="1" style="width: 50px; height: 50px" direction="1" playMode="normal" loop autoplay></dotlottie-player>
-        <input type="text" placeholder="Buscar medicamentos...">
+        <input type="text" placeholder="Buscar medicamentos..." class="nav-input">
         <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
       </div>
       <ul class="nav-tab">
@@ -33,7 +33,7 @@
       </ul>
       <div class="nav-icon">
         <a href="#"><i class="fa-solid fa-circle-user"></i></a>
-        <a href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+        <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i></a>
       </div>
     </nav>
   </div>
@@ -55,14 +55,45 @@
     <section>
       <div id="product-info">
         <h2 id="product-name"></h2>
+        <hr>
         <p id="product-description"></p>
-        <h3 id="product-price"></h3>
+        <div class="price-container">
+          <div>
+          <p class="label">À vista</p>
+          <h3 id="product-discount" style="color: red;"></h3> <!-- Porcentagem de desconto -->
+          <p class="isProduct-discount" style="text-decoration: line-through;"></p> <!-- Preço original cortado -->
+          <h3 id="product-price-without-discount"></h3>
+          </div>
+          <div>
+            <p class="label-without-discount">por</p>
+            <h3 id="product-price"></h3> <!-- Preço com desconto ou preço original -->
+          </div>
+        </div>
+        <h4 id="product-installments"></h4> <!-- Parcelamento -->
+      </div>
+    </section>
+    <section class="product-options-container">
+      <div class="product-purchase-options">
+        <label for="cep"><i class="fa-solid fa-location-dot"></i></i>Calcular Frete</label>
+        <div class="purchase-options-input">
+          <input type="text"  maxlength="9" onkeyup="handleZipCode(event)" name="cep" placeholder="Digite seu CEP" class="cep-input">
+          <button href=""><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <p class="avaliable-stock">Em estoque</p>
+        <div class="quantity" name="quantity">
+          <p class="label-amount">Quantidade:</p>
+          <div class="selector-amount">
+            <i class="fa-solid fa-minus"></i>
+            <input type="number" value="1" min="1" class="quantity-field">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+        </div>
         <div class="btn-container">
-          <a href="#" id="add-to-cart" class="btn">Adicionar ao Carrinho</a>
+          <a href="cart.html" id="add-to-cart" class="btn">Adicionar ao Carrinho</a>
           <a href="#" id="buy-now" class="btn">Comprar Agora</a>
         </div>
       </div>
-  </section>
+    </section>
   </main>
 
   <script src="../js/products.js"></script>

@@ -241,6 +241,39 @@ section {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+.price-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--SECONDARY);
+}
+
+.price-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.price-container h2 {
+  color: var(--PRIMARY);
+  font-size: 18px;
+}
+
+.price-container h3 {
+  color: var(--SUCSESS);
+  font-size: 20px;
+}
+
+.price-container p {
+  color: #000;
+  font-weight: 500;
+  font-size: 12px;
+}
+
 footer {
   padding: 1em;
   display: flex;
