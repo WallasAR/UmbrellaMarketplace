@@ -1,44 +1,86 @@
+let produtos = [];
+
+// Carrega os dados do arquivo produtos.json
+fetch("http://localhost:999/api/products")
+  .then(response => response.json())
+  .then(data => {
+    produtos = data; // Armazena os produtos na variável
+    loadProductDetails(); // Chama a função para mostrar detalhes do produto
+  })
+  .catch(error => console.error("Erro ao carregar os produtos:", error));
+
 // Função para extrair parâmetros da URL
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
 
-// Carrega os dados do arquivo produtos.json
-fetch("../db/products.json")
-  .then(response => response.json())
-  .then(produtos => {
-    const productId = Number(getQueryParam("id"));
-    const produto = produtos.find(p => p.id === productId);
+const addCartBtn = document.getElementById("add-to-cart");
+addCartBtn.addEventListener("click", addCart);
 
-    if (produto) {
-      // Configurações básicas
-      document.getElementById("product-name").textContent = produto.nome;
-      document.getElementById("product-description").textContent = produto.descricao;
+function addCart() {
+  const id = Number(getQueryParam("id"));
+  const product = produtos.find(p => p.id === id); // Use 'produtos' aqui
+  const productAmount = Number(quantityField.value);
 
-      const mainImage = document.getElementById("mainImg");
-      const imagesContainer = document.getElementById("product-images");
-      mainImage.src = produto.imagens[0];
+  if (product) {
+    console.log(product)
+    const cartItem = {
+      imagem: product.imagem,
+      nome: product.nome,
+      quantidade: productAmount,
+      id: product.id,
+      preco: product.preco,
+    };
 
-      // Adiciona as miniaturas
-      produto.imagens.forEach(imagem => {
-        const imgElement = document.createElement("img");
-        imgElement.src = imagem;
-        imgElement.classList.add("thumbnail");
-        imgElement.onclick = () => swapImage(imgElement, mainImage);
-        imagesContainer.appendChild(imgElement);
-      });
+    fetch("http://localhost:999/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cartItem)
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(product.nome + " adicionado ao carrinho");
+    })
+    .catch(error => console.log("Erro ao adicionar item ao carrinho: ", error));
+  } else {
+    console.log("Produto não encontrado");
+  }
+}
 
-      // Lógica de desconto e parcelas
-      const precoOriginal = produto.preco;
-      let precoFinal = precoOriginal;
+async function loadProductDetails() {
+  const productId = Number(getQueryParam("id"));
+  const produto = produtos.find(p => p.id === productId);
 
-      // Exemplo de condição para desconto (20% se o preço for maior que 5)
-      if (produto.desconto) {
-        const desconto = produto.desconto; // Percentual de desconto
-        const precoFinal = precoOriginal * (1 - desconto / 100);
-          
-        // Exibe o preço com desconto e o preço original cortado
+  if (produto) {
+    // Configurações do Produto na Página
+    document.getElementById("product-name").textContent = produto.nome;
+    document.getElementById("product-description").textContent = produto.descricao;
+
+    const mainImage = document.getElementById("mainImg");
+    const imagesContainer = document.getElementById("product-images");
+    mainImage.src = produto.imagens[0];
+
+    // Adiciona miniaturas
+    produto.imagens.forEach(imagem => {
+      const imgElement = document.createElement("img");
+      imgElement.src = imagem;
+      imgElement.classList.add("thumbnail");
+      imgElement.onclick = () => swapImage(imgElement, mainImage);
+      imagesContainer.appendChild(imgElement);
+    });
+
+    // Lógica de desconto e parcelas
+    const precoOriginal = produto.preco;
+    let precoFinal = precoOriginal;
+
+    if (produto.desconto) {
+      const desconto = produto.desconto;
+      precoFinal = precoOriginal * (1 - desconto / 100);
+
+      // Exibe o preço com desconto e o preço original cortado
         document.getElementById("product-price").textContent = `R$ ${precoFinal.toFixed(2).replace(".", ",")}`;
         document.querySelector(".isProduct-discount").textContent = `De R$ ${precoOriginal.toFixed(2).replace(".", ",")}`;
         document.querySelector(".isProduct-discount").style.textDecoration = "line-through";
@@ -52,37 +94,52 @@ fetch("../db/products.json")
         document.querySelector(".label-without-discount").style.display = "none";
       }
 
-      // Cálculo das parcelas (até 10x sem juros, por exemplo)
-      const numParcelas = Math.min(10, Math.floor(precoFinal / 5)); // Limita a parcelas de acordo com o valor do produto      
-      const valorParcela = precoFinal / numParcelas;
+    // Cálculo de Parcelas
+    const numParcelas = Math.min(10, Math.floor(precoFinal / 5));
+    const valorParcela = precoFinal / numParcelas;
 
-      if (numParcelas > 1) {
-        document.querySelector("#product-installments").textContent = `Ou em até ${numParcelas}x de R$ ${valorParcela.toFixed(2).replace(".", ",")} sem juros`;
-      } else {
-        document.querySelector("#product-installments").textContent = ""; // Oculta o texto de parcelamento se não houver parcelas
-      }
+    if (numParcelas > 1) {
+      document.querySelector("#product-installments").textContent = `Ou em até ${numParcelas}x de R$ ${valorParcela.toFixed(2).replace(".", ",")} sem juros`;
     } else {
-      console.error("Produto não encontrado");
+      document.querySelector("#product-installments").textContent = "";
     }
-  })
-  .catch(error => console.error("Erro ao carregar os produtos:", error));
+  } else {
+    console.error("Produto não encontrado");
+  }
+}
 
-// Função para trocar as imagens entre a principal e a miniatura
+// Função para trocar as imagens
 function swapImage(thumbnail, mainImage) {
   const tempSrc = mainImage.src;
   mainImage.src = thumbnail.src;
   thumbnail.src = tempSrc;
 }
 
+// Máscara para o CEP
 const handleZipCode = (event) => {
-  let input = event.target
-  input.value = zipCodeMask(input.value)
-}
-
+  let input = event.target;
+  input.value = zipCodeMask(input.value);
+};
 
 const zipCodeMask = (value) => {
-  if (!value) return ""
-  value = value.replace(/\D/g,'')
-  value = value.replace(/(\d{5})(\d)/,'$1-$2')
-  return value
-}
+  if (!value) return "";
+  value = value.replace(/\D/g, "");
+  value = value.replace(/(\d{5})(\d)/, "$1-$2");
+  return value;
+};
+
+const quantityField = document.getElementById("quantityField");
+const incrementButton = document.getElementById("increment");
+const decrementButton = document.getElementById("decrement");
+
+// Função para incrementar a quantidade
+incrementButton.addEventListener("click", () => {
+  quantityField.value = parseInt(quantityField.value) + 1;
+});
+
+// Função para decrementar a quantidade, com limite mínimo de 1
+decrementButton.addEventListener("click", () => {
+  if (quantityField.value > 1) {
+    quantityField.value = parseInt(quantityField.value) - 1;
+  }
+});

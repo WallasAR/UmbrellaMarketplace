@@ -5,6 +5,7 @@
 	--PRIMARY: #F74838;
   --SECONDARY: #cdcdcd;
   --SUCSESS: #00C46B;
+  --DARK: #323232;
 
 	--FONT: "Montserrat", sans-serif;
 }
@@ -17,15 +18,18 @@ html a {
 
 body {
   color: #666;
-  margin: 2em auto;
   padding: 1em;
+  margin: 2em auto;
+  font-weight: 500;
   font-family: var(--FONT);
-  background-color: var(--PRIMARY);
+  background-color: var(--SECONDARY);
 }
 
 a {
   outline: 0;
+  color: var(--SECONDARYR);
   border: none;
+  cursor: pointer;
   text-decoration: none;
 }
 
@@ -51,13 +55,18 @@ button {
 }
 
 button {
-  background-color: #666;
-  color: #fff;
+  font-weight: 700;
+  border-radius: 5px;
+  color: var(--BACKGROUND);
+  background-color: var(--SUCSESS);
+  font-family: var(--FONT);
+  cursor: pointer;
+  transition: background .2s ease-in-out;
 }
 
 button:hover,
 button:focus {
-  background-color: #555;
+  background-color: var(--DARK);
 }
 
 img,
@@ -109,6 +118,12 @@ main {
   font-size: 0.75rem;
   border-radius: 1em;
   background-color: var(--BACKGROUND);
+}
+
+#goBack-btn i{
+  font-size: 36px;
+  color: var(--PRIMARY);
+  padding: 5px;
 }
 
 .basket,
@@ -204,10 +219,20 @@ li.subtotal:before {
 
 .remove button {
   background-color: transparent;
-  color: #777;
+  font-size: 36px;
+  color: var(--PRIMARY);
   float: none;
-  text-decoration: underline;
-  text-transform: uppercase;
+  transition: color .2s ease-in-out;
+}
+
+.remove button:hover  {
+  color: var(--DARK);
+}
+
+.remove button:hover::before  {
+  content: "TEM CERTEZA? "; 
+  font-size: 10px;
+  color: var(--DARK);
 }
 
 .item-heading {
@@ -232,7 +257,8 @@ li.subtotal:before {
 }
 
 .product-frame {
-  border: 1px solid #aaa;
+  background-color: var(--SECONDARY);
+  border-radius: 5px;
 }
 
 .product-details {
@@ -252,12 +278,18 @@ li.subtotal:before {
 }
 
 .empty-cart-message {
-  height: 100%;
   text-align: center;
 }
 
+.empty-animation {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .empty-cart-image {
-  max-width: 500px;
+  width: 40%;
   height: auto;
   object-fit: contain;
   margin-bottom: 15px;
@@ -275,14 +307,14 @@ aside {
 }
 
 .summary {
-  background-color: #eee;
-  border: 1px solid #aaa;
+  flex: 1;
   padding: 1rem;
   position: fixed;
-  width: 250px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
+  background-color: #eee;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 2px solid var(--SECONDARY);
 }
 
 .summary-total-items {
@@ -309,6 +341,7 @@ aside {
 .promo-value {
   color: #111;
   float: left;
+  font-weight: 600;
   width: 50%;
 }
 

@@ -14,7 +14,7 @@ function truncateText(text, maxLength) {
 
 
 // Carrega os dados do arquivo produtos.json
-fetch("../db/products.json")
+fetch("http://localhost:999/api/products")
   .then(response => response.json())
   .then(produtos => {
     const cardContainer = document.getElementById("card-container");

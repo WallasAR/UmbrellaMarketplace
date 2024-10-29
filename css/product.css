@@ -5,6 +5,7 @@
 	--PRIMARY: #F74838;
   --SECONDARY: #cdcdcd;
   --SUCSESS: #00C46B;
+  --DARK: #323232;
 
 	--FONT: "Montserrat", sans-serif;
 }
@@ -46,12 +47,15 @@ a:focus-visible {
 
 button {
   border: none;
-  padding: 1em;
+  padding: .5em;
+  cursor: pointer;
+  font-family: var(--FONT);
 }
 
 button:focus-visible {
   outline: none;
   box-shadow: 0 3px 1px #00000032;
+  transform: scale(1.05);
 }
 
 label {
@@ -312,6 +316,18 @@ section {
   background-color: var(--SECONDARY);
 }
 
+#increment, #decrement {
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--DARK);
+  transition: color 0.3s ease-in-out;
+  transition: transform 0.2s ease-in-out;
+}
+
+#increment:hover, #decrement:hover {
+  transform: rotate(180deg) scale(1.2);
+}
+
 .label-amount {
   flex: 1;
   gap: 1em;
@@ -323,10 +339,6 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.selector-amount i {
-  font-size: 18px;
 }
 
 .quantity-field {
