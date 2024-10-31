@@ -58,6 +58,7 @@ async function loadProductDetails() {
     // Configurações do Produto na Página
     document.getElementById("product-name").textContent = produto.nome;
     document.getElementById("product-description").textContent = produto.descricao;
+    document.getElementById("stock").textContent =`(${produto.estoque} Disponíveis)`;
 
     const mainImage = document.getElementById("mainImg");
     const imagesContainer = document.getElementById("product-images");
