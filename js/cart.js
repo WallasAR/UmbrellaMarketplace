@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const goBackBtn = document.getElementById("goBack-btn");
     if (goBackBtn) {
         goBackBtn.addEventListener("click", () => {
-            window.history.back();
+            window.location.href = "http://127.0.0.1:5500/";
         });
     }
 
@@ -203,7 +203,10 @@ async function uploadQuantity() {
     const quantities = Array.from(quantityInputs).map(productRow => {
         const id = productRow.querySelector(".btn-remove").getAttribute("onclick").match(/'([^']+)'/)[1]; // Extrai o ID do produto
         const quantity = parseInt(productRow.querySelector(".quantity-field").value) || 0; // Obtém a quantidade atualizada
-        return { id: Number(id), quantidade: quantity }; // Converte id para Number
+        return { 
+            id: Number(id), 
+            quantidade: quantity 
+        };
     });
 
     // Envia o array de produtos e suas quantidades para o backend
@@ -233,6 +236,31 @@ window.addEventListener("beforeunload", (event) => {
     uploadQuantity(); // Salva a quantidade dos produtos no back-end ao fechar a página
 });
 
+
+const checkoutButton = document.getElementById("goto-checkout");
+checkoutButton.addEventListener("click", async () => {
+    await uploadQuantity(); // Aguarda o upload de quantidades antes do checkout
+    await checkout();
+});
+
+async function checkout() {
+    try {
+        const response = await fetch("http://localhost:999/api/checkout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })   
+        const data = await response.json();
+        if (data.url) {
+            window.location.href = data.url; // Redirect to checkout
+        } else {
+            console.error("Failed to load checkout", data.error);
+        }
+    } catch (error) {
+        console.error("Failed to checkout", error);
+    }
+};
 
 /* Check if the cart is empty */
 function checkCartEmpty() {

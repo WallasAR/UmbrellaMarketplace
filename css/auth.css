@@ -1,5 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
+:root {
+	--BACKGROUND: #FAFAFA;
+	--PRIMARY: #F74838;
+  --SECONDARY: #cdcdcd;
+  --SUCSESS: #00C46B;
+  --DARK: #323232;
+
+	--FONT: "Montserrat", sans-serif;
+}
 
 html,body {
 	position: relative;
@@ -8,7 +17,7 @@ html,body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-family: "Fira Sans", Helvetica, Arial, sans-serif;
+	font-family: var(--FONT);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -80,7 +89,7 @@ html,body {
 		}
 		
 		.form-holder {
-			border-radius: 15px;
+			border-radius: 5px;
 			background-color: #fff;
 			overflow: hidden;
 			margin-top: 50px;
@@ -105,6 +114,10 @@ html,body {
 				}
 				&::-webkit-input-placeholder {
 					color: rgba(0,0,0,0.4);
+				}
+				&.error-border {
+					border-bottom: 2px solid var(--PRIMARY);
+					transition: border .1s ease-out;
 				}
 			}
 		}
@@ -265,4 +278,59 @@ html,body {
 			-webkit-transition: all .3s ease;
 		}
 	}
+}
+
+.modal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+}
+
+.modal-content {
+	padding: 20px;
+	border-radius: 5px;
+	text-align: center;
+		&.success {
+			background-color: var(--SUCSESS);
+		}
+		&.error {
+			background-color: var(--PRIMARY);
+		}
+}
+
+.modal-content i{
+	font-size: 50px;
+}
+
+.modal-content {
+	color: var(--BACKGROUND);
+}
+
+#errorMessageLabel {
+	font-size: 14px;
+	color: var(--PRIMARY);	
+	font-weight: 600;
+
+}
+
+.close-btn {
+	cursor: pointer;
+	float: right;
+	font-size: 24px;
+}
+
+.hidden {
+	display: none;
+}
+
+.error-border {
+	border: 20px solid var(--PRIMARY);
+	transition: border 0.5s ease-in-out;
 }

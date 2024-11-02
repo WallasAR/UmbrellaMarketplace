@@ -15,26 +15,48 @@
   <main>
     <div class="form-structor">
       <div class="signup">
-        <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+        <h2 class="form-title" id="signup"><span>or</span>Cadastre-se</h2>
         <div class="form-holder">
-          <input type="text" class="input" placeholder="Name" />
-          <input type="email" class="input" placeholder="Email" />
-          <input type="password" class="input" placeholder="Password" />
+          <input id="signup-user" type="text" class="input" placeholder="Usuário" />
+          <input id="signup-pass" type="password" class="input" placeholder="Senha" />
         </div>
-        <button class="submit-btn">Sign up</button>
+        <label id="errorMessageLabel" class="hidden"></label>
+        <button id="signup-submit" class="submit-btn">Cadastrar</button>
       </div>
+
+      <!-- Modal de Erro -->
+      <div id="errorModal" class="modal hidden">
+        <div class="modal-content error">
+            <span id="closeError" class="close-btn">&times;</span>
+            <i class="fa-regular fa-face-frown"></i>
+            <h2>Erro</h2>
+            <p id="errorMessage">Mensagem de erro aqui.</p>
+        </div>
+      </div>
+
+      <!-- Modal de Sucesso -->
+      <div id="successModal" class="modal hidden">
+        <div class="modal-content success">
+            <i class="fa-solid fa-check"></i>
+            <h2>Registro Bem-sucedido</h2>
+            <p>Você será redirecionado em 3 segundos.</p>
+        </div>
+      </div>
+
+      
       <div class="login slide-up">
         <div class="center">
           <h2 class="form-title" id="login"><span>or</span>Log in</h2>
           <div class="form-holder">
-            <input type="email" class="input" placeholder="Email" />
-            <input type="password" class="input" placeholder="Password" />
+            <input id="signin-user" type="text" class="input" placeholder="Usuario" />
+            <input id="signin-pass" type="password" class="input" placeholder="Password" />
           </div>
-          <button class="submit-btn">Log in</button>
+          <label id="errorMessageLabel" class="hidden"></label>
+          <button id="signin-submit" class="submit-btn">Entrar</button>
         </div>
       </div>
     </div>
   </main>
-  <script src="../js/auth.js"></script>
+  <script src="../js/auth.js" defer></script>
 </body>
 </html>

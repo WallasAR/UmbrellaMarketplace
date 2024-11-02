@@ -16,12 +16,22 @@ function getQueryParam(param) {
 }
 
 const addCartBtn = document.getElementById("add-to-cart");
+const buyNowBtn = document.getElementById("buy-now");
+
 addCartBtn.addEventListener("click", addCart);
+buyNowBtn.addEventListener("click", buyNow);
 
 function addCart() {
   const id = Number(getQueryParam("id"));
   const product = produtos.find(p => p.id === id); // Use 'produtos' aqui
   const productAmount = Number(quantityField.value);
+
+  // Auth
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/html/auth.html";
+    return;
+  }
 
   if (product) {
     console.log(product)
@@ -37,6 +47,7 @@ function addCart() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": token
       },
       body: JSON.stringify(cartItem)
     })
@@ -49,6 +60,51 @@ function addCart() {
     console.log("Produto não encontrado");
   }
 }
+
+async function buyNow() {
+  const id = Number(getQueryParam("id"));
+  const product = produtos.find(p => p.id === id);
+  const productAmount = Number(quantityField.value);
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/html/auth.html";
+    return;
+  }
+
+  if (product) {
+    const cartItem = {
+      imagem: product.imagem,
+      nome: product.nome,
+      quantidade: productAmount,
+      id: product.id,
+      preco: product.preco,
+    };
+
+    try {
+      const response = await fetch("http://localhost:999/api/checkout/single-item", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(cartItem)
+      });
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url; // Redireciona para a página de checkout do item único
+      } else {
+        console.error("Erro ao iniciar o checkout:", data.error);
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar item ao carrinho:", error);
+    }
+  } else {
+    console.log("Produto não encontrado");
+  }
+}
+
 
 async function loadProductDetails() {
   const productId = Number(getQueryParam("id"));
