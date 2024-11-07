@@ -32,9 +32,13 @@ function addCart() {
     window.location.href = "/html/auth.html";
     return;
   }
+  
+  if (product.estoque == 0) {
+    alert("O produto está esgotado");
+    return;
+  }
 
   if (product) {
-    console.log(product)
     const cartItem = {
       imagem: product.imagem,
       nome: product.nome,
@@ -69,6 +73,11 @@ async function buyNow() {
   const token = localStorage.getItem("token");
   if (!token) {
     window.location.href = "/html/auth.html";
+    return;
+  }
+  
+  if (product.estoque == 0) {
+    alert("O produto está esgotado");
     return;
   }
 

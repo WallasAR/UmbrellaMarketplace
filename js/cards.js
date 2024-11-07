@@ -71,6 +71,11 @@ function renderProducts(produtos) {
   });
 }
 
+const cardContainer = document.getElementById("card-container");
+const noProductsMessage = document.getElementById("no-products-message");
+const noProducts = document.getElementById("no-products");
+const showFilter = document.getElementById("show-filter");
+
 // Função para aplicar filtros dinamicamente
 function applyFilters() {
   const activeFilters = Object.entries(filterState)
@@ -82,7 +87,13 @@ function applyFilters() {
 
   fetchProducts(activeFilters)
     .then(produtos => renderProducts(produtos))
-    .catch(error => console.error("Erro ao carregar os produtos:", error));
+    .catch(error => {
+      if (error.message == "Failed to fetch") {
+        noProductsMessage.textContent = "Erro, Verifique sua conexão com a internet.";
+        showFilter.style.display = "none";
+        noProducts.style.display = "block"; // Exibe a mensagem
+      }
+    });
 }
 
 // Função para alternar filtros

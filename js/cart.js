@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const goBackBtn = document.getElementById("goBack-btn");
     if (goBackBtn) {
         goBackBtn.addEventListener("click", () => {
-            window.location.href = "http://127.0.0.1:5500/";
+            window.location.href = "/index.html";
         });
     }
 
@@ -31,7 +31,19 @@ document.addEventListener("DOMContentLoaded", function() {
 /* Load Products from API */
 async function loadProducts() {
     try {
-        const response = await fetch('http://localhost:999/api/cart');
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "/html/auth.html";
+        return;
+    }
+
+        const response = await fetch('http://localhost:999/api/cart', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${token}`
+            }
+        });
         const produtos = await response.json();
         displayProducts(produtos);
     } catch (error) {

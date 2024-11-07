@@ -70,7 +70,10 @@ async function signUp() {
             if (response.ok) {
                 // Mostrar modal de sucesso
                 successModal.classList.remove("hidden");
-    
+                
+                // Login after successful registration
+                await login(username, password);
+
                 // Redirecionar após 3 segundos
                 setTimeout(() => {
                     window.history.back();
@@ -152,7 +155,7 @@ async function signIn() {
             }
         } catch (error) {
             console.error("Erro:", error);
-            document.getElementById("errorMessage").innerText = "Erro ao tentar registrar. Tente novamente mais tarde.";
+            document.getElementById("errorMessage").innerText = "Erro ao tentar entrar. Tente novamente mais tarde.";
             errorModal.classList.remove("hidden");
         }
     } else {
@@ -175,5 +178,39 @@ async function signIn() {
             usernameInput.classList.remove("error-border");
             passwordInput.classList.remove("error-border");
         }, 5000); // 2000 ms = 2 segundos
+    }
+}
+
+async function login(username, password) {
+    try {
+        const response = await fetch("http://localhost:999/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ user: username, pass: password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Mostrar modal de sucesso
+            successModal.classList.remove("hidden");
+            
+            localStorage.setItem("token", data.token);
+
+            // Redirecionar após 3 segundos
+            setTimeout(() => {
+                window.history.back();
+            }, 3000); // 3000 ms = 3 segundos
+        } else {
+            // Mostrar modal de erro
+            document.getElementById("errorMessage").innerText = data.message;
+            errorModal.classList.remove("hidden");
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        document.getElementById("errorMessage").innerText = "Erro ao tentar entrar. Tente novamente mais tarde.";
+        errorModal.classList.remove("hidden");
     }
 }

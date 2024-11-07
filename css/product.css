@@ -356,3 +356,164 @@ section {
   text-align: center;
   background-color: var(--SECONDARY);
 }
+
+/* Responsividade Geral */
+@media (max-width: 1200px) {
+  main {
+    width: 90%;
+    margin: 0.5em auto;
+    flex-direction: column;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  aside, section {
+    width: 100%;
+  }
+
+  .product-options-container {
+    width: 100%;
+    padding: 1em;
+  }
+
+  #product-info h2, #product-info h3 {
+    font-size: 24px;
+  }
+
+  .quantity {
+    width: 80%;
+  }
+
+  .product-options-container {
+    width: 60%;
+    padding: 1em;
+  }
+}
+
+/* Tablets e Dispositivos Médios */
+@media (max-width: 768px) {
+  main {
+    width: 70%;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .nav-tab {
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+  }
+
+  .nav-search, .nav-icon a {
+    font-size: 14px;
+  }
+
+  .contact {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .contact-content {
+    text-align: center;
+  }
+
+  .image-selector {
+    flex-direction: column;
+  }
+
+  .main-image {
+    max-width: 80%;
+  }
+
+  .thumbnail {
+    width: 75px;
+    height: 75px;
+  }
+
+  #product-info h2, #product-info h3 {
+    font-size: 20px;
+  }
+
+  #product-description {
+    font-size: 16px;
+  }
+
+  .price-container {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .btn {
+    font-size: 12px;
+  }
+
+  .product-options-container {
+    width: 100%;
+    padding: 1em;
+  }
+}
+
+/* Smartphones e Telas Pequenas */
+@media (max-width: 480px) {
+  main {
+    width: 70%;
+  }
+
+  nav {
+    padding: 0.5em;
+  }
+
+  .nav-input, .cep-input {
+    width: 100%;
+  }
+
+  label i {
+    font-size: 20px;
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+
+  .main-image {
+    max-width: 90%;
+  }
+  
+  #product-info h2, #product-info h3 {
+    font-size: 18px;
+  }
+
+  #product-description {
+    font-size: 14px;
+  }
+
+  .price-container {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 0.5em;
+    font-size: 12px;
+  }
+
+  .product-options-container {
+    width: 100%;
+    padding: 1em;
+  }
+
+  .quantity {
+    flex: 1;
+    font-size: 14px;
+  }
+
+  .label, .avaliable-stock, #stock {
+    font-size: 14px;
+  }
+}
