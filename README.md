@@ -65,23 +65,23 @@ npx live-server
 
 ## 🗂️ Key Files
 
-| 📂 Folder/File |	📄 Description                      |
-| -------------- | ------------------------------------ |
-| index.html     | Main entry point of the website.     |
-| src/assets/    | Contains all images, icons, etc.     |
-| src/js/        | JavaScript logic for interactivity.  |
-| src/css/       | 	TailwindCSS and custom styles.      |
-| src/html/      | Additional HTML pages.               |
+| 📂 Folder/File       |	📄 Description                      |
+| -------------------- | ------------------------------------ |
+| ```index.html```     | Main entry point of the website.     |
+| ```src/assets/```    | Contains all images, icons, etc.     |
+| ```src/js/```        | JavaScript logic for interactivity.  |
+| ```src/css/```       | 	TailwindCSS and custom styles.      |
+| ```src/html/```      | Additional HTML pages.               |
 
 ---
 
 ## 🔧 Customization
 
 ### TailwindCSS Configuration
-Modify the src/css/tailwind.config.js file to customize styles and themes.
+Modify the ```src/css/tailwind.config.js``` file to customize styles and themes.
 
 ### Assets
-Place your images and icons in the src/assets/ folder to keep everything organized.
+Place your images and icons in the ```src/assets/``` folder to keep everything organized.
 
 ---
 
