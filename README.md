@@ -37,7 +37,7 @@ The front-end files are neatly organized into the following structure:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/UmbrellaMarketplace-Frontend.git
+git clone https://github.com/WallasAR/UmbrellaMarketplace.git
 ```
 
 ### 2. Install Dependencies
