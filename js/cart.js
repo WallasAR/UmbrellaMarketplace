@@ -37,7 +37,7 @@ async function loadProducts() {
         return;
     }
 
-        const response = await fetch('http://localhost:999/api/cart', {
+        const response = await fetch('http://localhost:999/api/cart/list', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

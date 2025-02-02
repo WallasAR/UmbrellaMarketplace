@@ -1,20 +1,3 @@
-let produtos = [];
-
-// Carrega os dados do arquivo produtos.json
-fetch("http://localhost:999/api/products")
-  .then(response => response.json())
-  .then(data => {
-    produtos = data; // Armazena os produtos na variável
-    loadProductDetails(); // Chama a função para mostrar detalhes do produto
-  })
-  .catch(error => console.error("Erro ao carregar os produtos:", error));
-
-// Função para extrair parâmetros da URL
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
 const addCartBtn = document.getElementById("add-to-cart");
 const buyNowBtn = document.getElementById("buy-now");
 
@@ -114,55 +97,77 @@ async function buyNow() {
   }
 }
 
+async function fetchProduct() {
+  try {
+    const query = getQueryParam("id");
+    const response = await fetch(`http://localhost:999/api/product/${query}`);
+    const data = await response.json();
+    
+    loadProductDetails(data);
+  } catch (error) {
+    throw new Error("Failed to fetch product")
+  };
+};
 
-async function loadProductDetails() {
-  const productId = Number(getQueryParam("id"));
-  const produto = produtos.find(p => p.id === productId);
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-  if (produto) {
-    // Configurações do Produto na Página
-    document.getElementById("product-name").textContent = produto.nome;
-    document.getElementById("product-description").textContent = produto.descricao;
-    document.getElementById("stock").textContent =`(${produto.estoque} Disponíveis)`;
+async function loadProductDetails(data) {
+  if (data) {
+    const product = data;
 
+    document.getElementById("product-name").textContent = product.name;
+    document.getElementById("product-description").textContent = product.description;
+    document.getElementById("stock").textContent =`(${product.stock} Disponíveis)`;
+
+    // Primary image
     const mainImage = document.getElementById("mainImg");
     const imagesContainer = document.getElementById("product-images");
-    mainImage.src = produto.imagens[0];
+    mainImage.src = product.Images[0].thumb_img;
 
-    // Adiciona miniaturas
-    produto.imagens.forEach(imagem => {
-      const imgElement = document.createElement("img");
-      imgElement.src = imagem;
-      imgElement.classList.add("thumbnail");
-      imgElement.onclick = () => swapImage(imgElement, mainImage);
-      imagesContainer.appendChild(imgElement);
+    // Add miniatures
+    product.Images.forEach(image => {
+      Object.keys(image).forEach (imgKey => {
+        const imgElement = document.createElement("img");
+        imgElement.src = image[imgKey];
+        imgElement.classList.add("thumbnail");
+        
+        // Ao clicar na miniatura, troca a imagem principal
+        imgElement.onclick = () => {
+          mainImage.src = image[imgKey];
+        };
+
+        imagesContainer.appendChild(imgElement);
+      });
     });
 
     // Lógica de desconto e parcelas
-    const precoOriginal = produto.preco;
-    let precoFinal = precoOriginal;
+    const originalPrice = product.price;
+    let finalPrice = originalPrice;
+    const discount = product.discount;
 
-    if (produto.desconto) {
-      const desconto = produto.desconto;
-      precoFinal = precoOriginal * (1 - desconto / 100);
+    if (discount > 0 || discount) {
+      finalPrice = originalPrice * (1 - discount / 100);
 
-      // Exibe o preço com desconto e o preço original cortado
-        document.getElementById("product-price").textContent = `R$ ${precoFinal.toFixed(2).replace(".", ",")}`;
-        document.querySelector(".isProduct-discount").textContent = `De R$ ${precoOriginal.toFixed(2).replace(".", ",")}`;
+      // Show the price with discount
+        document.getElementById("product-price").textContent = `R$ ${finalPrice.toFixed(2).replace(".", ",")}`;
+        document.querySelector(".isProduct-discount").textContent = `De R$ ${originalPrice.toFixed(2).replace(".", ",")}`;
         document.querySelector(".isProduct-discount").style.textDecoration = "line-through";
         
-        // Exibe a porcentagem de desconto
-        document.getElementById("product-discount").textContent = `${desconto}% OFF`;
+        // Show percentage OFF
+        document.getElementById("product-discount").textContent = `${discount}% OFF`;
       } else {
-        // Sem desconto
-        document.getElementById("product-price-without-discount").textContent = `R$ ${precoOriginal.toFixed(2).replace(".", ",")}`;
+        // Without discount
+        document.getElementById("product-price-without-discount").textContent = `R$ ${originalPrice.toFixed(2).replace(".", ",")}`;
         document.getElementById("product-discount").textContent = ""; // Oculta o texto de desconto
         document.querySelector(".label-without-discount").style.display = "none";
       }
 
     // Cálculo de Parcelas
-    const numParcelas = Math.min(10, Math.floor(precoFinal / 5));
-    const valorParcela = precoFinal / numParcelas;
+    const numParcelas = Math.min(10, Math.floor(finalPrice / 5));
+    const valorParcela = finalPrice / numParcelas;
 
     if (numParcelas > 1) {
       document.querySelector("#product-installments").textContent = `Ou em até ${numParcelas}x de R$ ${valorParcela.toFixed(2).replace(".", ",")} sem juros`;
@@ -172,13 +177,6 @@ async function loadProductDetails() {
   } else {
     console.error("Produto não encontrado");
   }
-}
-
-// Função para trocar as imagens
-function swapImage(thumbnail, mainImage) {
-  const tempSrc = mainImage.src;
-  mainImage.src = thumbnail.src;
-  thumbnail.src = tempSrc;
 }
 
 // Máscara para o CEP
@@ -209,3 +207,5 @@ decrementButton.addEventListener("click", () => {
     quantityField.value = parseInt(quantityField.value) - 1;
   }
 });
+
+fetchProduct();

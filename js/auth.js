@@ -57,12 +57,12 @@ async function signUp() {
     
     if (username && password) {
         try {
-            const response = await fetch("http://localhost:999/api/register", {
+            const response = await fetch("http://localhost:999/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ user: username, pass: password }),
+                body: JSON.stringify({ email: username, pass: password }),
             });
     
             const result = await response.json();
@@ -128,12 +128,12 @@ async function signIn() {
 
     if (username && password) {
         try {
-            const response = await fetch("http://localhost:999/api/login", {
+            const response = await fetch("http://localhost:999/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ user: username, pass: password })
+                body: JSON.stringify({ email: username, pass: password })
             });
 
             const data = await response.json();
@@ -183,12 +183,12 @@ async function signIn() {
 
 async function login(username, password) {
     try {
-        const response = await fetch("http://localhost:999/api/login", {
+        const response = await fetch("http://localhost:999/api/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ user: username, pass: password })
+            body: JSON.stringify({ email: username, pass: password })
         });
 
         const data = await response.json();
