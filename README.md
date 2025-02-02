@@ -1,95 +1,59 @@
-# 🌐 Umbrella Marketplace - Front-End
+# UmbrellaMarketplaceWeb
 
-Welcome to the **Umbrella Marketplace Front-End**! This is the user interface of our e-commerce platform for selling medicines. With a focus on modern design and interactivity, this project uses cutting-edge technologies to deliver a seamless experience.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
 
----
+## Development server
 
-## 🚀 Technologies Used
+To start a local development server, run:
 
-- 🏗️ **HTML5**: Structuring web pages with semantic elements.
-- 🎨 **CSS3**: Crafting visually appealing and responsive styles.
-- 💻 **JavaScript**: Adding interactivity and business logic.
-- 🌈 **TailwindCSS**: A utility-first CSS framework for rapid UI development.
-
----
-
-## 📂 Project Structure
-
-The front-end files are neatly organized into the following structure:
-
-```plaintext
-  UmbrellaMarket-Frontend/ 
-  │ 
-  ├─── src/ # Source files 
-  |   │ 
-  |   ├─── assets/ # Media assets (images, icons, etc.) 
-  |   ├─── js/ # JavaScript logic and functionality 
-  |   ├─── css/ # TailwindCSS and custom stylesheets 
-  |   └─── html/ # Additional HTML pages
-  |
-  │ index.html # Main HTML file 
-  └── README.md  # Project documentation 
-```
-
----
-
-## 🛠️ Getting Started
-
-### 1. Clone the Repository
 ```bash
-git clone https://github.com/WallasAR/UmbrellaMarketplace.git
+ng serve
 ```
 
-### 2. Install Dependencies
-If you're using TailwindCSS, ensure that the necessary packages are installed:
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
 ```bash
-npm install
+ng generate component component-name
 ```
 
-### 3. Run the Project
-Open index.html in your preferred browser, or serve it locally for a better experience:
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
 ```bash
-npx live-server
+ng generate --help
 ```
 
----
+## Building
 
-## ✨ Features
+To build the project run:
 
-- 📱 **Responsive Design**: Mobile-first design ensures usability on all devices.
-- 💡 **Modern UI**: TailwindCSS makes the interface clean and customizable.
-- 🌀 **Dynamic Interactions**: JavaScript provides enhanced interactivity.
-- 🌐 **Fast Loading**: A utility-first CSS framework for rapid UI development.
+```bash
+ng build
+```
 
----
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## 🗂️ Key Files
+## Running unit tests
 
-| 📂 Folder/File       |	📄 Description                      |
-| -------------------- | ------------------------------------ |
-| ```index.html```     | Main entry point of the website.     |
-| ```src/assets/```    | Contains all images, icons, etc.     |
-| ```src/js/```        | JavaScript logic for interactivity.  |
-| ```src/css/```       | 	TailwindCSS and custom styles.      |
-| ```src/html/```      | Additional HTML pages.               |
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
----
+```bash
+ng test
+```
 
-## 🔧 Customization
+## Running end-to-end tests
 
-### TailwindCSS Configuration
-Modify the ```src/css/tailwind.config.js``` file to customize styles and themes.
+For end-to-end (e2e) testing, run:
 
-### Assets
-Place your images and icons in the ```src/assets/``` folder to keep everything organized.
+```bash
+ng e2e
+```
 
----
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## 🚧 Future Improvements
+## Additional Resources
 
-- 🌟 Add animations using frameworks like GSAP or Framer Motion.
-- 📊 Integrate with the back-end for dynamic product data.
-- ⚡ Optimize loading times with asset minification.
-
-### 💬 Feedback
-I’d love to hear your thoughts! Feel free to open an issue or contribute to the project.
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
