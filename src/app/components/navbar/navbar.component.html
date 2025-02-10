@@ -1,38 +1,21 @@
   <nav class="px-6 flex items-center h-16 w-auto">
     <!-- Logo -->
-    <div class="flex shrink-0 items-center">
-      <img class="h-12 w-auto" src="nav-logo.svg" alt="logo Umbrella Corporation">
-    </div>
+    <a routerLink="/home" class="flex shrink-0 items-center">
+      <img class="h-12 hover:animate-squash" src="nav-logo.svg" alt="logo Umbrella Corporation">
+    </a>
 
     <!-- Desktop Navigation Links -->
     <div class="hidden md:flex lg:mx-4 mx-2 space-x-2">
-      <a href="#" class="text-gray-600 nav-link px-2 py-4">Home</a>
-      <a href="#" class="text-gray-600 nav-link px-2 py-4">Sobre</a>
-      <a href="#" class="text-gray-600 nav-link px-2 py-4">FAQs</a>
-      <a href="#" class="text-gray-600 nav-link px-2 py-4">Categorias</a>
+      <a routerLink="/home" routerLinkActive="isActive" class="text-gray-600 nav-link px-2 py-4">Home</a>
+      <a routerLink="/about" routerLinkActive="isActive" class="text-gray-600 nav-link px-2 py-4">Sobre</a>
+      <a routerLink="/faqs" routerLinkActive="isActive" class="text-gray-600 nav-link px-2 py-4">FAQs</a>
+      <a routerLink="/category" routerLinkActive="isActive" class="text-gray-600 nav-link px-2 py-4">Categorias</a>
     </div>
 
     <!-- Search Bar -->
-<div class="flex flex-1 justify-center md:justify-end mx-4">
-  <div class="flex w-full lg:w-60 border border-gray-300 rounded-lg focus-within:ring-1 focus-within:ring-red-500">
-    <!-- Search bar -->
-    <input
-      type="text"
-      placeholder="Pesquisar"
-      class="w-full px-4 py-2 rounded-lg focus:outline-none"
-    />
-    <!-- Icon -->
-    <a href="#" class="flex items-center px-4">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="w-5 h-5 text-gray-500">
-        <path
-          fill-rule="evenodd"
-          d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
-    </a>
-  </div>
-</div>
+    <div class="flex flex-1 justify-center md:justify-end mx-4">
+      <app-input placeholder="Pesquisar" (btnClicked)="search()" class="w-full lg:w-60"/>
+    </div>
 
 
     <!-- Cart and Avatar -->
@@ -122,12 +105,12 @@
   </nav>
 
 <!-- Mobile Menu -->
-<div *ngIf="dropdownOpen === 'mobile-menu'" class="md:hidden flex items-center justify-between px-4 items-center rounded-lg">
+<div *ngIf="dropdownOpen === 'mobile-menu'" class="md:hidden flex items-center justify-between px-4 rounded-lg">
   <div class="flex space-x-4 flex-wrap pt-2 ml-2">
-    <a href="#" class="text-gray-600 nav-link pb-4">Home</a>
-    <a href="#" class="text-gray-600 nav-link pb-4">Sobre</a>
-    <a href="#" class="text-gray-600 nav-link pb-4">FAQs</a>
-    <a href="#" class="text-gray-600 nav-link pb-4">Categorias</a>
+    <a routerLink="/" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Home</a>
+    <a routerLink="/About" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Sobre</a>
+    <a routerLink="/FAQs" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">FAQs</a>
+    <a routerLink="/Category" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Categorias</a>
   </div>
 
   <!-- Icons -->

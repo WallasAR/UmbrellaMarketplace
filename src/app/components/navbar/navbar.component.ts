@@ -13,4 +13,8 @@ export class NavbarComponent {
   toggleDropdown(menu: string): void {
     this.dropdownOpen = this.dropdownOpen === menu ? null : menu;
   }
+
+  search(): void {
+    console.log(`clicked!`)
+  }
 }

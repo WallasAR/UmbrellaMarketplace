@@ -1,2 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
+
+@theme {
+  --animate-squash: squash 2s ease-in-out infinite;
+  @keyframes squash {
+    0% {
+      transform: scaleX(1);
+    }
+    50% {
+      transform: scaleX(0.0);
+    }
+    100% {
+      transform: scaleX(-1);
+    }
+  }
+}
