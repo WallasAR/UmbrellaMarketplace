@@ -1,5 +1,5 @@
 <div class="min-h-screen">
-  <app-navbar/>
+  <app-navbar *ngIf="showLayout"/>
   <router-outlet/>
-  <app-footer class="sticky top-[100vh] mb-4"/>
+  <app-footer *ngIf="showLayout" class="sticky top-[100vh] mb-4"/>
 </div>

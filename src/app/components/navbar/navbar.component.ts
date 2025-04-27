@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
   dropdownOpen: string | null = null;
+  token: string | null = localStorage.getItem('token');
 
   toggleDropdown(menu: string): void {
     this.dropdownOpen = this.dropdownOpen === menu ? null : menu;

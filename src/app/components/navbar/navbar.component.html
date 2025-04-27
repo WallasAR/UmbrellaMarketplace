@@ -14,7 +14,7 @@
 
     <!-- Search Bar -->
     <div class="flex flex-1 justify-center md:justify-end mx-4">
-      <app-input placeholder="Pesquisar" (btnClicked)="search()" class="w-full lg:w-60"/>
+      <app-input placeholder="Pesquisar" (btnClicked)="search()" [iconRight]="true" class="w-full lg:w-60"/>
     </div>
 
 
@@ -74,8 +74,12 @@
         -->
         <div *ngIf="dropdownOpen === 'profile'" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 focus:outline-hidden">
           <!-- Active: "bg-gray-100 outline-hidden", Not Active: "" -->
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Perfil</a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+          @if (token) {
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Perfil</a>
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+          } @else {
+            <a routerLink="/auth" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Entrar</a>
+          }
         </div>
       </div>
     </div>
@@ -107,10 +111,10 @@
 <!-- Mobile Menu -->
 <div *ngIf="dropdownOpen === 'mobile-menu'" class="md:hidden flex items-center justify-between px-4 rounded-lg">
   <div class="flex space-x-4 flex-wrap pt-2 ml-2">
-    <a routerLink="/" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Home</a>
-    <a routerLink="/About" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Sobre</a>
-    <a routerLink="/FAQs" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">FAQs</a>
-    <a routerLink="/Category" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Categorias</a>
+    <a routerLink="/home" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Home</a>
+    <a routerLink="/about" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Sobre</a>
+    <a routerLink="/faqs" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">FAQs</a>
+    <a routerLink="/category" routerLinkActive="isActive" class="text-gray-600 nav-link pb-4">Categorias</a>
   </div>
 
   <!-- Icons -->

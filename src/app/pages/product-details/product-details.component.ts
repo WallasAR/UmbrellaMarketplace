@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Product } from '../../models/product.model';
 import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../services/product/product.service';
+import { ProductService } from '../../services/product.service';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -66,5 +66,9 @@ export class ProductDetailsComponent {
     if (current > 1) {
       this.quantity.set(current - 1);
     };
+  }
+
+  addToCart() {
+    console.log('addToCart');
   }
 }

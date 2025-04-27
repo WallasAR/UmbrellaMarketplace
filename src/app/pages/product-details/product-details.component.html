@@ -5,7 +5,7 @@
     <!-- Main Product Section -->
     <div class="flex-1 transition-all duration-300 ease-in-out">
       <div class="relative">
-        <div class="flex items-center justify-center h-80 lg:h-96">
+        <div class="flex items-center justify-center h-80 lg:h-96 overflow: auto;">
           <img [src]="imageArray[currentIndex]" alt="Product Image" class="object-contain w-full h-full max-h-80 lg:max-h-96 rounded-lg">
         </div>
 
@@ -51,7 +51,7 @@
                 <button (click)="increaseQuantity()" class=" w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-r-sm hover:bg-gray-300 cursor-pointer hover:text-white transition-all">+</button>
               </div>
 
-              <app-button label="Carrinho" class="w-full"/>
+              <app-button label="Carrinho" routerLink="/cart" (btnClicked)="addToCart()" class="w-full"/>
             </div>
             <app-button label="Comprar" bgColor="bg-green-400" hoverColor="hover:bg-green-500" class="w-full"/>
           </div>
@@ -63,7 +63,7 @@
         <div class="md:ml-6 md:mt-0 mt-6 border px-4 py-4 lg:py-6 border-gray-300 transition-all duration-300">
           <h2 class="text-lg text-center lg:text-xl font-bold">Calcular Frete</h2>
           <div class="flex gap-2 mt-2">
-            <app-input class="flex-1" placeholder="CEP"/>
+            <app-input class="flex-1" placeholder="CEP" [iconRight]="true"/>
           </div>
 
           <hr class="h-px my-4 bg-gray-200 border-0">

@@ -8,7 +8,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { ProductCardComponent } from './components/product-card/product-card.component'
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ProductListComponent } from './pages/product-list/product-list.component';
 import { ProductDetailsComponent } from './pages/product-details/product-details.component';
 import { ProductCardSkeletonComponent } from './components/product-card-skeleton/product-card-skeleton.component';
@@ -16,6 +16,9 @@ import { InputComponent } from './components/input/input.component';
 import { ButtonComponent } from './components/button/button.component';
 import { ProductDetailsSkeletonComponent } from './components/product-details-skeleton/product-details-skeleton.component';
 import { CartComponent } from './pages/cart/cart.component';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { AuthComponent } from './pages/login/login.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -32,12 +35,16 @@ import { CartComponent } from './pages/cart/cart.component';
     ButtonComponent,
     ProductDetailsSkeletonComponent,
     CartComponent,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
   ],
-  providers: [provideHttpClient()],
+  providers: [
+    provideHttpClient(withInterceptors([authInterceptor]))
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
