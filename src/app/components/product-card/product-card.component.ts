@@ -1,4 +1,4 @@
-import { Component, input, Input } from '@angular/core';
+import { Component, input, Input, signal } from '@angular/core';
 import { Product } from '../../models/product.model';
 
 @Component({
@@ -10,10 +10,19 @@ import { Product } from '../../models/product.model';
 })
 export class ProductCardComponent {
   product = input.required<Product>();
+  isHovered = signal(false)
 
   getFinalPrice(): number {
     return this.product().discount
       ? this.product().price * (1 - this.product().discount / 100)
       : this.product().price;
+  }
+
+  truncateText(text: string, maxLength: number): string {
+    return text?.length > maxLength ? text.substring(0, maxLength) + "..." : text
+  }
+
+  setHovered(state: boolean): void {
+    this.isHovered.set(state)
   }
 }

@@ -19,6 +19,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { AuthComponent } from './pages/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ImgFallbackDirective } from './directives/img-fallback.directive';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProductDetailsSkeletonComponent,
     CartComponent,
     AuthComponent,
+    ImgFallbackDirective
   ],
   imports: [
     BrowserModule,
