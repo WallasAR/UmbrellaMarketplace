@@ -25,6 +25,12 @@
     <button type="submit" class="btn-brand px-6 py-3" [disabled]="loading">{{ loading ? 'Salvando...' : 'Salvar alterações' }}</button>
   </form>
 
+  <section class="mt-8 card-surface p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-2">Notificações push</h2>
+    <p class="text-sm text-gray-500 mb-4">Receba alertas de pedidos e atualizações no navegador.</p>
+    <button type="button" class="btn-brand px-4 py-2" (click)="enablePush()">Ativar notificações</button>
+  </section>
+
   <section class="mt-8">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Minhas receitas</h2>
     @if (!prescriptions.length) {

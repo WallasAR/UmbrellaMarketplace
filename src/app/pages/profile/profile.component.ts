@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserProfile } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
+import { NotificationService } from '../../services/notification.service';
 import { Prescription, PrescriptionService } from '../../services/prescription.service';
 
 @Component({
@@ -18,12 +19,22 @@ export class ProfileComponent implements OnInit {
   constructor(
     private userService: UserService,
     private prescriptionService: PrescriptionService,
-    private toast: ToastService
+    private toast: ToastService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
     this.userService.getProfile().subscribe((profile) => this.profile = profile);
     this.prescriptionService.list().subscribe((items) => this.prescriptions = items);
+  }
+
+  async enablePush() {
+    const enabled = await this.notificationService.enablePushNotifications();
+    if (enabled) {
+      this.toast.show('Notificações push ativadas.', 'success');
+    } else {
+      this.toast.show('Não foi possível ativar notificações push.', 'error');
+    }
   }
 
   save() {
