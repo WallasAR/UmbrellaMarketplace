@@ -39,4 +39,16 @@ test.describe('Admin dashboard (mocked API)', () => {
     await page.getByRole('button', { name: 'Aprovar' }).first().click();
     await approveRequest;
   });
+
+  test('exports platform financial CSV', async ({ page }) => {
+    await page.goto('/admin');
+
+    const exportRequest = page.waitForRequest((req) =>
+      req.method() === 'GET' && req.url().includes('/admin/financial/export')
+    );
+
+    await page.getByRole('button', { name: 'Exportar CSV' }).click();
+    const request = await exportRequest;
+    expect(request.url()).toContain('period=30d');
+  });
 });

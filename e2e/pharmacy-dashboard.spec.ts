@@ -31,4 +31,17 @@ test.describe('Pharmacy dashboard (mocked API)', () => {
     await expect(page.getByRole('heading', { name: 'Receita diária' })).toBeVisible();
     await expect(page.getByText('Receita bruta')).toBeVisible();
   });
+
+  test('financial tab exports CSV report', async ({ page }) => {
+    await page.goto('/pharmacy');
+    await page.getByRole('button', { name: 'Financeiro' }).click();
+
+    const exportRequest = page.waitForRequest((req) =>
+      req.method() === 'GET' && req.url().includes('/pharmacy/financial/export')
+    );
+
+    await page.getByRole('button', { name: 'Exportar CSV' }).click();
+    const request = await exportRequest;
+    expect(request.url()).toContain('period=30d');
+  });
 });

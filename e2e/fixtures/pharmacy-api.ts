@@ -85,6 +85,22 @@ export async function setupPharmacyMocks(page: Page) {
       });
     }
 
+    if (path.endsWith('/financial/export')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'text/csv; charset=utf-8',
+        headers: { 'Content-Disposition': 'attachment; filename="financeiro-30d.csv"' },
+        body: [
+          'Farmácia,Farmácia E2E,Período,30d',
+          'Receita bruta,1540.5,Comissão,154.05,Líquido,1386.45',
+          '',
+          'Data,Receita,Pedidos',
+          '2026-06-01,420,2',
+          '2026-06-02,680.5,3'
+        ].join('\n')
+      });
+    }
+
     return route.fulfill({
       status: 200,
       contentType: 'application/json',

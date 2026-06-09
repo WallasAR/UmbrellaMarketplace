@@ -82,6 +82,15 @@ export async function setupAdminMocks(page: Page) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockAdminMetrics) });
     }
 
+    if (path.endsWith('/financial/export')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'text/csv; charset=utf-8',
+        headers: { 'Content-Disposition': 'attachment; filename="plataforma-30d.csv"' },
+        body: 'Relatório plataforma,Período,30d\nGMV,24500,Comissões,2450,Pedidos,84\n'
+      });
+    }
+
     if (path.endsWith('/financial')) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockAdminFinancial) });
     }
