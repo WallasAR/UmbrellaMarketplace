@@ -49,6 +49,23 @@
   }
 
   @if (activeTab === 'products') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Novo produto</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Nome" [(ngModel)]="productForm.name" aria-label="Nome do produto">
+        <input type="number" min="0" step="0.01" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Preço" [(ngModel)]="productForm.price" aria-label="Preço">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="productForm.category" aria-label="Categoria">
+        <input type="number" min="0" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Estoque inicial" [(ngModel)]="productForm.stock" aria-label="Estoque">
+        <input type="number" min="0" max="100" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Desconto %" [(ngModel)]="productForm.discount" aria-label="Desconto">
+        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description" aria-label="Descrição">
+      </div>
+      <div class="flex flex-wrap gap-4 mt-3 text-sm">
+        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
+        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.allows_subscription"> Permite assinatura</label>
+      </div>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createProduct()">Cadastrar produto</button>
+    </div>
+
     <div class="space-y-3">
       @for (product of products; track product.id) {
         <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
@@ -172,7 +189,8 @@
   }
 
   @if (activeTab === 'financial' && financial) {
-    <div class="flex justify-end mb-4">
+    <div class="flex flex-wrap justify-end gap-3 mb-4">
+      <button type="button" class="px-4 py-2 rounded-lg border border-gray-200" (click)="exportFinancial()">Exportar CSV</button>
       <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="financialPeriod" (change)="changeFinancialPeriod($event)" aria-label="Período financeiro">
         <option value="7d">Últimos 7 dias</option>
         <option value="30d">Últimos 30 dias</option>

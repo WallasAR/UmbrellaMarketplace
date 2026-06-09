@@ -21,6 +21,7 @@ export interface PharmacyProduct {
   discount: number;
   stock: number;
   category: string;
+  description?: string;
   requires_prescription: boolean;
   allows_subscription: boolean;
 }
@@ -109,5 +110,20 @@ export class PharmacyPanelService {
 
   openBillingPortal(): Observable<{ url: string }> {
     return this.http.post<{ url: string }>(`${this.base}/billing/portal`, {});
+  }
+
+  createProduct(payload: Partial<PharmacyProduct> & { name: string; price: number }): Observable<PharmacyProduct> {
+    return this.http.post<PharmacyProduct>(`${this.base}/products`, payload);
+  }
+
+  updateProduct(id: number, payload: Partial<PharmacyProduct>): Observable<PharmacyProduct> {
+    return this.http.put<PharmacyProduct>(`${this.base}/products/${id}`, payload);
+  }
+
+  exportFinancial(period = '30d'): Observable<Blob> {
+    return this.http.get(`${this.base}/financial/export`, {
+      params: { period },
+      responseType: 'blob'
+    });
   }
 }

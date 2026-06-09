@@ -33,6 +33,17 @@ export class PharmacyPanelComponent implements OnInit {
     expiry_date: ''
   };
 
+  productForm = {
+    name: '',
+    price: 0,
+    discount: 0,
+    stock: 0,
+    category: '',
+    description: '',
+    requires_prescription: false,
+    allows_subscription: false
+  };
+
   constructor(
     private pharmacyService: PharmacyPanelService,
     private toast: ToastService
@@ -104,6 +115,39 @@ export class PharmacyPanelComponent implements OnInit {
   changeFinancialPeriod(event: Event) {
     this.financialPeriod = (event.target as HTMLSelectElement).value;
     this.reload();
+  }
+
+  createProduct() {
+    if (!this.productForm.name || !this.productForm.price) {
+      this.toast.show('Informe nome e preço do produto.', 'error');
+      return;
+    }
+
+    this.pharmacyService.createProduct(this.productForm).subscribe({
+      next: () => {
+        this.toast.show('Produto cadastrado.', 'success');
+        this.productForm = {
+          name: '', price: 0, discount: 0, stock: 0, category: '', description: '',
+          requires_prescription: false, allows_subscription: false
+        };
+        this.reload();
+      }
+    });
+  }
+
+  exportFinancial() {
+    this.pharmacyService.exportFinancial(this.financialPeriod).subscribe({
+      next: (blob) => this.downloadCsv(blob, `financeiro-${this.financialPeriod}.csv`)
+    });
+  }
+
+  private downloadCsv(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   updateOperationalStatus(event: Event) {
