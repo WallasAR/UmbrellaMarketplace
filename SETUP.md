@@ -56,6 +56,7 @@ http://localhost:4200
 12. Cadastro de farmácia em `/pharmacy/register` (cliente autenticado).
 13. Painel da farmácia com aba Financeiro em `/pharmacy`.
 14. Admin global em `/admin` com role `admin` (aprovação de farmácias e GMV).
+15. Plano SaaS e assinatura Stripe em `/pharmacy` → aba Plano SaaS.
 
 ## Testes
 
