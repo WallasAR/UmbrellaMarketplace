@@ -97,6 +97,8 @@ E2E de onboarding (`e2e/pharmacy-onboarding.spec.ts`) valida seleção de plano 
 
 E2E de receita (`e2e/prescription-upload.spec.ts`) valida upload de prescrição em produto controlado.
 
+E2E multi-farmácia (`e2e/checkout-multi-pharmacy.spec.ts`) valida checkout com sessões Stripe separadas por farmácia.
+
 Testes contra API real (opcional):
 
 ```bash
@@ -108,6 +110,19 @@ Painel da farmácia permite cadastrar, editar e remover produtos (respeitando li
 Deploy em produção: consulte [DEPLOY.md](./DEPLOY.md). Configs prontas: `vercel.json` e `netlify.toml`.
 
 Notificações push: ative em **Meu perfil** (requer VAPID configurado no backend e HTTPS).
+
+## Pull request (frontend)
+
+Branch sugerida: `feature/medicine-marketplace-flows` → base `angular`.
+
+Antes de abrir o PR:
+
+1. `npm run build`
+2. `npm test -- --no-watch --browsers=ChromeHeadless`
+3. `npm run e2e`
+4. Conferir `apiUrl` em `src/environments/environment.ts` para staging/produção
+
+Compare: https://github.com/WallasAR/UmbrellaMarketplace/compare/angular...feature/medicine-marketplace-flows
 
 ## Observações
 

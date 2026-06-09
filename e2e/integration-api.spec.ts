@@ -40,4 +40,11 @@ test.describe('Integration API', () => {
     expect(response.ok()).toBeTruthy();
     await expect(response.text()).resolves.toMatch(/swagger/i);
   });
+
+  test('onboarding plans endpoint is public', async ({ request }) => {
+    const response = await request.get(`${apiUrl}/onboarding/plans`);
+    expect(response.ok()).toBeTruthy();
+    const body = await response.json();
+    expect(Array.isArray(body)).toBeTruthy();
+  });
 });
