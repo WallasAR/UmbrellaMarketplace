@@ -85,6 +85,8 @@ E2E integrado (`e2e/shopping-flow.spec.ts`) simula login, carrinho e checkout co
 
 E2E do painel farmácia (`e2e/pharmacy-dashboard.spec.ts`) valida métricas, conversão e aba financeira com API mockada.
 
+E2E do painel admin (`e2e/admin-dashboard.spec.ts`) valida métricas da plataforma, financeiro e aprovação de farmácias com API mockada.
+
 Testes contra API real (opcional):
 
 ```bash

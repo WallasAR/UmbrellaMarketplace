@@ -33,4 +33,11 @@ test.describe('Integration API', () => {
     const response = await request.get(`${apiUrl}/orders`);
     expect(response.status()).toBe(401);
   });
+
+  test('swagger docs are reachable', async ({ request }) => {
+    const base = apiUrl!.replace(/\/api\/?$/, '');
+    const response = await request.get(`${base}/docs/`);
+    expect(response.ok()).toBeTruthy();
+    await expect(response.text()).resolves.toMatch(/swagger/i);
+  });
 });
