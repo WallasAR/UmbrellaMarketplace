@@ -65,6 +65,9 @@
           <a routerLink="/profile" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meu perfil</a>
           <a routerLink="/orders" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meus pedidos</a>
           <a routerLink="/subscriptions" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Assinaturas</a>
+          @if (authService.canRegisterPharmacy()) {
+            <a routerLink="/pharmacy/register" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Cadastre sua farmácia</a>
+          }
           @if (authService.isPharmacyStaff()) {
             <a routerLink="/pharmacy" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Painel da farmácia</a>
           }

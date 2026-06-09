@@ -37,6 +37,7 @@ import { ProductFiltersComponent } from './components/product-filters/product-fi
 import { ProductReviewsComponent } from './components/product-reviews/product-reviews.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
+import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 
 @NgModule({
@@ -71,6 +72,7 @@ import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel
     ProductReviewsComponent,
     SubscriptionsComponent,
     PharmacyPanelComponent,
+    PharmacyRegisterComponent,
     CheckoutCancelComponent
   ],
   imports: [

@@ -30,6 +30,10 @@ export class AuthService {
     return hasPharmacy && ['admin', 'operator', 'pharmacist'].includes(role);
   });
 
+  canRegisterPharmacy = computed(() =>
+    this.isAuthenticated() && !this.pharmacyId() && this.userRole() === 'customer'
+  );
+
   constructor(
     private http: HttpClient,
     private router: Router
