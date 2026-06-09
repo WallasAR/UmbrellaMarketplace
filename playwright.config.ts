@@ -1,7 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const integrationMatch = process.env.E2E_API_URL
+  ? undefined
+  : /integration-api\.spec\.ts/;
+
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: integrationMatch,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

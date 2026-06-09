@@ -83,6 +83,14 @@ CI (GitHub Actions) executa build, testes unitários e e2e no push/PR.
 
 E2E integrado (`e2e/shopping-flow.spec.ts`) simula login, carrinho e checkout com API mockada — não depende do backend real.
 
+Testes contra API real (opcional):
+
+```bash
+E2E_API_URL=http://localhost:4000/api npx playwright test e2e/integration-api.spec.ts
+```
+
+Painel da farmácia permite cadastrar produtos (respeitando limite do plano) e exportar CSV financeiro.
+
 ## Observações
 
 - A paleta visual mantém a identidade atual com `#F74838` como cor principal.
