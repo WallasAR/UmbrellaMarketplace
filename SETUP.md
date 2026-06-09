@@ -91,7 +91,9 @@ E2E_API_URL=http://localhost:4000/api npx playwright test e2e/integration-api.sp
 
 Painel da farmácia permite cadastrar, editar e remover produtos (respeitando limite do plano) e exportar CSV financeiro.
 
-Deploy em produção: consulte [DEPLOY.md](./DEPLOY.md).
+Deploy em produção: consulte [DEPLOY.md](./DEPLOY.md). Configs prontas: `vercel.json` e `netlify.toml`.
+
+Notificações push: ative em **Meu perfil** (requer VAPID configurado no backend e HTTPS).
 
 ## Observações
 
