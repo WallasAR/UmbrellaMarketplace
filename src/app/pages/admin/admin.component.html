@@ -1,0 +1,70 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">Painel administrativo</h1>
+  <p class="text-gray-500 mb-8">Gestão de pedidos, usuários e receitas.</p>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="card-surface p-5"><p class="text-sm text-gray-500">Usuários</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.users || 0 }}</p></div>
+    <div class="card-surface p-5"><p class="text-sm text-gray-500">Produtos</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.products || 0 }}</p></div>
+    <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.orders || 0 }}</p></div>
+    <div class="card-surface p-5"><p class="text-sm text-gray-500">Receitas pendentes</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.pendingPrescriptions || 0 }}</p></div>
+  </div>
+
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold mb-4">Pedidos</h2>
+    <div class="space-y-3">
+      @for (order of orders; track order.sessionId) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">#{{ order.sessionId.slice(-8) }}</p>
+            <p class="text-sm text-gray-500">R$ {{ order.total_price | number:'1.2-2' }}</p>
+          </div>
+          <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="order.order_status" (change)="updateOrderStatus(order.sessionId, $event)" aria-label="Atualizar status do pedido">
+            <option value="pending_payment">Aguardando pagamento</option>
+            <option value="processing">Em processamento</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregue</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold mb-4">Receitas pendentes</h2>
+    <div class="space-y-3">
+      @for (rx of prescriptions; track rx.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ rx.Medicine?.name }}</p>
+            <a [href]="rx.file_url" target="_blank" rel="noopener" class="text-sm text-[#F74838] hover:underline">Ver receita</a>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="reviewPrescription(rx.id, 'approved')">Aprovar</button>
+            <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-semibold mb-4">Usuários</h2>
+    <div class="space-y-3">
+      @for (user of users; track user.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ user.name }}</p>
+            <p class="text-sm text-gray-500">{{ user.email }}</p>
+          </div>
+          <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="user.role" (change)="updateRole(user.id, $event)" aria-label="Alterar perfil do usuário">
+            <option value="customer">Cliente</option>
+            <option value="operator">Operador</option>
+            <option value="pharmacist">Farmacêutico</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,12 +17,14 @@ export class NavbarComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public cartService: CartService,
+    public notificationService: NotificationService,
     private router: Router
   ) {}
 
   ngOnInit() {
     if (this.authService.getToken()) {
       this.cartService.loadCart();
+      this.notificationService.load();
     }
   }
 
@@ -52,6 +55,7 @@ export class NavbarComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.cartService.data.set([]);
+    this.notificationService.items.set([]);
     this.closeDropdowns();
   }
 }

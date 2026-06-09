@@ -1,16 +1,26 @@
-<div class="container mx-auto p-4">
-  @if (searchQuery && filteredProducts.length === 0 && products.length > 0) {
-    <p class="text-gray-500 text-center py-8">Nenhum medicamento encontrado para "{{ searchQuery }}".</p>
+<div class="space-y-4">
+  <app-product-filters (filtersChange)="onFiltersChange($event)" />
+
+  @if (error) {
+    <div class="card-surface p-8 text-center">
+      <p class="text-gray-600">Não foi possível carregar os medicamentos.</p>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="loadProducts()">Tentar novamente</button>
+    </div>
+  } @else if (!loading && !products.length) {
+    <div class="card-surface p-8 text-center">
+      <p class="text-gray-600">Nenhum medicamento encontrado com os filtros selecionados.</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      @if (loading) {
+        @for (index of [0, 1, 2, 3, 4, 5, 6, 7, 8]; track index) {
+          <app-product-card-skeleton />
+        }
+      } @else {
+        @for (product of products; track product.id) {
+          <app-product-card [product]="product" />
+        }
+      }
+    </div>
   }
-  <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-    @if (!products.length) {
-      @for (index of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track index) {
-        <app-product-card-skeleton />
-      }
-    } @else {
-      @for (product of filteredProducts; track product.id) {
-        <app-product-card [product]="product" />
-      }
-    }
-  </div>
 </div>

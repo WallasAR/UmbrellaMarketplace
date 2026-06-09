@@ -1,0 +1,80 @@
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">Finalizar compra</h1>
+  <p class="text-gray-500 mb-8">Revise entrega, cupom e itens antes do pagamento.</p>
+
+  @if (!cartService.data().length) {
+    <div class="card-surface p-10 text-center">
+      <p class="text-gray-600 mb-4">Seu carrinho está vazio.</p>
+      <a routerLink="/home" class="btn-brand inline-block px-6 py-3">Ver medicamentos</a>
+    </div>
+  } @else {
+    <div class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-4">
+        <section class="card-surface p-5" aria-labelledby="delivery-title">
+          <h2 id="delivery-title" class="font-semibold text-gray-800 mb-3">Entrega</h2>
+          @if (profile) {
+            <p class="text-sm text-gray-700">{{ profile.name }}</p>
+            <p class="text-sm text-gray-600">{{ profile.address }}</p>
+            <p class="text-sm text-gray-600">CEP: {{ profile.cep }} · Tel: {{ profile.phone }}</p>
+            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Editar endereço</a>
+          } @else {
+            <p class="text-sm text-gray-600">Complete seu perfil para agilizar a entrega.</p>
+            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Completar perfil</a>
+          }
+        </section>
+
+        <section class="card-surface p-5" aria-labelledby="coupon-title">
+          <h2 id="coupon-title" class="font-semibold text-gray-800 mb-3">Cupom de desconto</h2>
+          <div class="flex gap-2">
+            <input class="flex-1 rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="couponCode" placeholder="Digite o cupom" aria-label="Código do cupom" />
+            <button type="button" class="btn-brand px-4 py-2" (click)="applyCoupon()">Aplicar</button>
+          </div>
+        </section>
+
+        <section class="card-surface p-5" aria-labelledby="items-title">
+          <h2 id="items-title" class="font-semibold text-gray-800 mb-3">Itens do pedido</h2>
+          <div class="space-y-3">
+            @for (item of cartService.data(); track item.medicine_id) {
+              <div class="flex justify-between text-sm">
+                <span>{{ item.Medicine.name }} x{{ item.quantity }}</span>
+                <span class="font-medium">R$ {{ (cartService.getItemPrice(item) * item.quantity) | number:'1.2-2' }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <aside class="card-surface p-5 h-fit">
+        <h2 class="font-semibold text-gray-800 mb-4">Resumo</h2>
+        <div class="flex justify-between text-sm mb-2">
+          <span>Subtotal</span>
+          <span>R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between text-sm mb-4">
+          <span>Entrega</span>
+          <span class="text-gray-500">No checkout Stripe</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold mb-6">
+          <span>Total</span>
+          <span class="text-[#F74838]">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
+        </div>
+        <button type="button" class="btn-brand w-full py-3" [disabled]="loading" (click)="finalize()">
+          {{ loading ? 'Processando...' : 'Pagar com segurança' }}
+        </button>
+        <button type="button" class="w-full mt-3 text-sm text-gray-500 hover:text-gray-700" (click)="goBack()">Voltar ao carrinho</button>
+
+        @if (multiSessions.length) {
+          <div class="mt-6 space-y-3">
+            <p class="text-sm font-medium text-gray-700">Pagamentos por farmácia</p>
+            @for (session of multiSessions; track session.pharmacyId) {
+              <a [href]="session.url" class="block rounded-lg border border-[#F74838]/30 p-3 text-sm hover:bg-[#fff1ef]">
+                <span class="font-semibold text-gray-800">{{ session.pharmacyName }}</span>
+                <span class="block text-gray-500">{{ session.items }} item(ns) · Pagar agora</span>
+              </a>
+            }
+          </div>
+        }
+      </aside>
+    </div>
+  }
+</div>

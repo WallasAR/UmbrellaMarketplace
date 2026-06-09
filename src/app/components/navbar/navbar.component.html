@@ -1,6 +1,6 @@
-<nav class="px-4 sm:px-6 flex items-center h-16 w-auto bg-white border-b border-gray-100 shadow-sm">
-  <a routerLink="/home" class="flex shrink-0 items-center">
-    <img class="h-10 hover:animate-squash" src="nav-logo.svg" alt="logo Umbrella Corporation">
+<nav class="px-4 sm:px-6 flex items-center h-16 w-auto bg-white border-b border-gray-100 shadow-sm" aria-label="Navegação principal">
+  <a routerLink="/home" class="flex shrink-0 items-center" aria-label="Umbrella Farmácia - início">
+    <img class="h-10 hover:animate-squash" src="nav-logo.svg" alt="Umbrella Corporation">
   </a>
 
   <div class="hidden md:flex lg:mx-4 mx-2 space-x-1">
@@ -15,38 +15,60 @@
   </div>
 
   <div class="hidden md:flex items-center space-x-3">
-    <div class="relative inline-block text-left">
-      <button (click)="toggleDropdown('cart')" class="relative flex items-center p-2 rounded-full text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+    <div class="relative">
+      <button type="button" (click)="toggleDropdown('cart')" class="relative flex items-center p-2 rounded-full text-gray-600 hover:bg-gray-100" aria-label="Abrir carrinho">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
         @if (cartService.itemCount() > 0) {
-          <span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">{{ cartService.itemCount() }}</span>
+          <span class="absolute -top-1 -right-1 bg-[#F74838] text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">{{ cartService.itemCount() }}</span>
         }
       </button>
       <div *ngIf="dropdownOpen == 'cart'" class="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg z-10 border border-gray-100">
         <div class="p-4">
           <span class="block text-lg font-bold text-gray-800">{{ cartService.itemCount() }} {{ cartService.itemCount() === 1 ? 'item' : 'itens' }}</span>
-          <span class="block text-emerald-600 font-medium">Subtotal: R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
-          <button (click)="goToCart()" class="mt-3 w-full bg-emerald-600 text-white p-2.5 rounded-lg hover:bg-emerald-700 transition font-medium">
-            Ver carrinho
-          </button>
+          <span class="block text-[#F74838] font-medium">Subtotal: R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
+          <button type="button" (click)="goToCart()" class="mt-3 w-full btn-brand p-2.5">Ver carrinho</button>
         </div>
       </div>
     </div>
 
-    <div class="relative ml-1">
-      <button type="button" class="relative flex rounded-full bg-emerald-600 text-sm focus:ring-2 focus:ring-emerald-300 cursor-pointer" (click)="toggleDropdown('profile')">
-        <span class="sr-only">Menu do usuário</span>
+    @if (authService.isAuthenticated()) {
+      <div class="relative">
+      <button type="button" (click)="toggleDropdown('notifications')" class="relative p-2 rounded-full text-gray-600 hover:bg-gray-100" aria-label="Notificações">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .53-.21 1.04-.59 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        @if (notificationService.unreadCount() > 0) {
+          <span class="absolute top-0 right-0 bg-[#F74838] text-white text-[10px] rounded-full px-1">{{ notificationService.unreadCount() }}</span>
+        }
+      </button>
+      <div *ngIf="dropdownOpen === 'notifications'" class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 z-20 p-3 max-h-80 overflow-auto">
+        @for (n of notificationService.items(); track n.id) {
+          <div class="p-2 border-b border-gray-100 text-sm" [class.font-semibold]="!n.read">
+            <p>{{ n.title }}</p>
+            <p class="text-gray-500">{{ n.message }}</p>
+          </div>
+        } @empty {
+          <p class="text-sm text-gray-500 p-2">Sem notificações.</p>
+        }
+      </div>
+      </div>
+    }
+
+    <div class="relative">
+      <button type="button" class="relative flex rounded-full bg-[#F74838] text-sm cursor-pointer" (click)="toggleDropdown('profile')" aria-label="Menu do usuário">
         <div class="size-9 rounded-full flex items-center justify-center text-white font-bold text-sm">
           {{ authService.isAuthenticated() ? 'U' : '?' }}
         </div>
       </button>
-
-      <div *ngIf="dropdownOpen === 'profile'" class="absolute right-0 z-10 mt-2 w-48 rounded-xl bg-white py-1 shadow-lg border border-gray-100">
+      <div *ngIf="dropdownOpen === 'profile'" class="absolute right-0 z-10 mt-2 w-52 rounded-xl bg-white py-1 shadow-lg border border-gray-100">
         @if (authService.isAuthenticated()) {
-          <button (click)="logout()" class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Sair</button>
+          <a routerLink="/profile" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meu perfil</a>
+          <a routerLink="/orders" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meus pedidos</a>
+          <a routerLink="/subscriptions" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Assinaturas</a>
+          @if (authService.isAdmin()) {
+            <a routerLink="/admin" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Painel admin</a>
+          }
+          <button type="button" (click)="logout()" class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Sair</button>
         } @else {
           <a routerLink="/auth" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Entrar</a>
         }
@@ -54,9 +76,8 @@
     </div>
   </div>
 
-  <button type="button" class="relative md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100" (click)="toggleDropdown('mobile-menu')">
-    <span class="sr-only">Menu</span>
-    <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+  <button type="button" class="relative md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100" (click)="toggleDropdown('mobile-menu')" aria-label="Abrir menu">
+    <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
     </svg>
   </button>
@@ -65,12 +86,15 @@
 <div *ngIf="dropdownOpen === 'mobile-menu'" class="md:hidden border-b border-gray-100 bg-white px-4 py-3">
   <div class="flex flex-col space-y-2">
     <a routerLink="/home" (click)="closeDropdowns()" routerLinkActive="isActive" class="text-gray-600 nav-link py-2">Home</a>
-    <a routerLink="/about" (click)="closeDropdowns()" routerLinkActive="isActive" class="text-gray-600 nav-link py-2">Sobre</a>
-    <a routerLink="/faqs" (click)="closeDropdowns()" routerLinkActive="isActive" class="text-gray-600 nav-link py-2">FAQs</a>
-    <a routerLink="/category" (click)="closeDropdowns()" routerLinkActive="isActive" class="text-gray-600 nav-link py-2">Categorias</a>
+    <a routerLink="/category" (click)="closeDropdowns()" class="text-gray-600 nav-link py-2">Categorias</a>
     <a routerLink="/cart" (click)="closeDropdowns()" class="text-gray-600 nav-link py-2">Carrinho ({{ cartService.itemCount() }})</a>
     @if (authService.isAuthenticated()) {
-      <button (click)="logout()" class="text-left text-gray-600 py-2">Sair</button>
+      <a routerLink="/orders" (click)="closeDropdowns()" class="text-gray-600 py-2">Meus pedidos</a>
+      <a routerLink="/profile" (click)="closeDropdowns()" class="text-gray-600 py-2">Perfil</a>
+      @if (authService.isAdmin()) {
+        <a routerLink="/admin" (click)="closeDropdowns()" class="text-gray-600 py-2">Admin</a>
+      }
+      <button type="button" (click)="logout()" class="text-left text-gray-600 py-2">Sair</button>
     } @else {
       <a routerLink="/auth" (click)="closeDropdowns()" class="text-gray-600 py-2">Entrar</a>
     }

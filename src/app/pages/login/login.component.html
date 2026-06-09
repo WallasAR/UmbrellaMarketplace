@@ -1,71 +1,31 @@
-<div class="flex relative items-center justify-center min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 px-4 sm:px-6 md:px-8 lg:px-10">
-  <div class="bg-white p-8 sm:p-12 rounded-2xl shadow-xl w-full max-w-md border border-emerald-100">
+<div class="flex relative items-center justify-center min-h-screen bg-gradient-to-br from-[#fff1ef] via-white to-gray-50 px-4 sm:px-6 md:px-8 lg:px-10">
+  <div class="bg-white p-8 sm:p-12 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
     <div class="mb-6 text-center">
-      <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl">💊</div>
-      <p class="text-emerald-700 text-sm font-medium">Umbrella Farmácia</p>
+      <img src="nav-logo.svg" alt="Umbrella Farmácia" class="h-12 mx-auto mb-3" />
+      <p class="text-[#F74838] text-sm font-medium">Umbrella Farmácia</p>
     </div>
 
     @if (errorMessage) {
-      <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-        {{ errorMessage }}
-      </div>
+      <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700" role="alert">{{ errorMessage }}</div>
     }
 
     <form class="space-y-4" *ngIf="isLogin" [@fadeAnimation] (ngSubmit)="submitLogin()">
-      <p class="text-gray-500 mb-1 text-sm sm:text-base">Acesse sua conta com segurança</p>
+      <p class="text-gray-500 mb-1 text-sm">Acesse sua conta com segurança</p>
       <h2 class="text-2xl text-gray-800 sm:text-3xl font-bold mb-6">Bem-vindo de volta!</h2>
-      <div>
-        <app-input class="w-full text-sm sm:text-base" placeholder="Email" (getInputValue)="getEmail($event)"/>
-      </div>
-      <div>
-        <app-input placeholder="Senha" class="w-full text-sm sm:text-base" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
-      </div>
-
-      <app-button
-        [label]="loading ? 'Entrando...' : 'Entrar'"
-        bgColor="bg-emerald-600"
-        hoverColor="hover:bg-emerald-700"
-        [disabled]="loading"
-        class="w-full text-sm sm:text-base"
-        (btnClicked)="submitLogin()"
-      />
-
-      <p class="text-center text-gray-500 mt-4 sm:mt-6 text-sm sm:text-base">
-        Ainda não tem uma conta?
-        <button type="button" class="text-emerald-600 hover:underline cursor-pointer font-medium" (click)="toggleForm('register')">Registre-se</button>
-      </p>
+      <app-input class="w-full" placeholder="Email" (getInputValue)="getEmail($event)"/>
+      <app-input placeholder="Senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
+      <app-button [label]="loading ? 'Entrando...' : 'Entrar'" bgColor="bg-[#F74838]" hoverColor="hover:bg-[#e03d2f]" [disabled]="loading" class="w-full" (btnClicked)="submitLogin()"/>
+      <p class="text-center text-gray-500 mt-4 text-sm">Ainda não tem uma conta? <button type="button" class="text-[#F74838] hover:underline font-medium" (click)="toggleForm('register')">Registre-se</button></p>
     </form>
 
     <form class="space-y-4" *ngIf="!isLogin" [@fadeAnimation] (ngSubmit)="submitRegister()">
-      <p class="text-gray-500 mb-1 text-sm sm:text-base">Crie sua conta gratuitamente</p>
+      <p class="text-gray-500 mb-1 text-sm">Crie sua conta gratuitamente</p>
       <h2 class="text-2xl text-gray-800 sm:text-3xl font-bold mb-6">Crie sua conta</h2>
-      <div>
-        <app-input class="w-full text-sm sm:text-base" placeholder="Email" (getInputValue)="getEmail($event)"/>
-      </div>
-      <div>
-        <app-input placeholder="Senha" class="w-full text-sm sm:text-base" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
-      </div>
-      <div>
-        <app-input placeholder="Confirmar senha" class="w-full text-sm sm:text-base" [iconRight]="true" icon="pass" (getInputValue)="getConfirmPass($event)"/>
-      </div>
-
-      <app-button
-        [label]="loading ? 'Registrando...' : 'Registrar'"
-        bgColor="bg-emerald-600"
-        hoverColor="hover:bg-emerald-700"
-        [disabled]="loading"
-        class="w-full text-sm sm:text-base"
-        (btnClicked)="submitRegister()"
-      />
-
-      <p class="text-center text-gray-500 mt-4 sm:mt-6 text-sm sm:text-base">
-        Já tem uma conta?
-        <button type="button" class="text-emerald-600 hover:underline cursor-pointer font-medium" (click)="toggleForm('login')">Entrar</button>
-      </p>
+      <app-input class="w-full" placeholder="Email" (getInputValue)="getEmail($event)"/>
+      <app-input placeholder="Senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
+      <app-input placeholder="Confirmar senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getConfirmPass($event)"/>
+      <app-button [label]="loading ? 'Registrando...' : 'Registrar'" bgColor="bg-[#F74838]" hoverColor="hover:bg-[#e03d2f]" [disabled]="loading" class="w-full" (btnClicked)="submitRegister()"/>
+      <p class="text-center text-gray-500 mt-4 text-sm">Já tem uma conta? <button type="button" class="text-[#F74838] hover:underline font-medium" (click)="toggleForm('login')">Entrar</button></p>
     </form>
-
-    <p class="mt-6 text-center text-xs text-gray-400">
-      Ao continuar, você concorda com nossos termos de uso e política de privacidade.
-    </p>
   </div>
 </div>

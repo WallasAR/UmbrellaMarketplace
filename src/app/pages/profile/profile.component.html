@@ -1,0 +1,46 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <h1 class="text-3xl font-bold text-gray-800 mb-8">Meu perfil</h1>
+
+  <form class="card-surface p-6 space-y-4" (ngSubmit)="save()">
+    <div>
+      <label class="text-sm font-medium text-gray-700" for="name">Nome</label>
+      <input id="name" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="profile.name" name="name" />
+    </div>
+    <div>
+      <label class="text-sm font-medium text-gray-700" for="email">Email</label>
+      <input id="email" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 bg-gray-50" [value]="profile.email" disabled />
+    </div>
+    <div>
+      <label class="text-sm font-medium text-gray-700" for="phone">Telefone</label>
+      <input id="phone" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="profile.phone" name="phone" />
+    </div>
+    <div>
+      <label class="text-sm font-medium text-gray-700" for="cep">CEP</label>
+      <input id="cep" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="profile.cep" name="cep" />
+    </div>
+    <div>
+      <label class="text-sm font-medium text-gray-700" for="address">Endereço</label>
+      <textarea id="address" rows="3" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="profile.address" name="address"></textarea>
+    </div>
+    <button type="submit" class="btn-brand px-6 py-3" [disabled]="loading">{{ loading ? 'Salvando...' : 'Salvar alterações' }}</button>
+  </form>
+
+  <section class="mt-8">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Minhas receitas</h2>
+    @if (!prescriptions.length) {
+      <p class="text-gray-500 text-sm">Nenhuma receita enviada.</p>
+    } @else {
+      <div class="space-y-3">
+        @for (rx of prescriptions; track rx.id) {
+          <div class="card-surface p-4 flex justify-between items-center">
+            <div>
+              <p class="font-medium text-gray-800">{{ rx.Medicine?.name }}</p>
+              <p class="text-sm text-gray-500">{{ rx.created_at | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <span class="badge-brand px-3 py-1 rounded-full text-xs">{{ rx.status }}</span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

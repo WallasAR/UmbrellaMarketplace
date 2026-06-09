@@ -1,20 +1,29 @@
 <div class="container mx-auto px-4 py-16 max-w-lg text-center">
   @if (loading) {
-    <div class="text-gray-500">Verificando pagamento...</div>
+    <p class="text-gray-500" role="status">Verificando pagamento...</p>
   } @else if (error) {
-    <div class="text-5xl mb-4">⚠️</div>
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Ops!</h1>
     <p class="text-gray-600 mb-6">{{ error }}</p>
-    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Voltar à loja</button>
+    <button type="button" (click)="goHome()" class="btn-brand px-6 py-3">Voltar à loja</button>
   } @else if (status === 'paid') {
-    <div class="text-5xl mb-4">✅</div>
+  @if (isSubscription) {
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Assinatura confirmada!</h1>
+    <p class="text-gray-600 mb-6">Sua assinatura foi ativada com sucesso.</p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a routerLink="/subscriptions" class="btn-brand px-6 py-3">Ver assinaturas</a>
+      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar comprando</button>
+    </div>
+  } @else {
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento confirmado!</h1>
     <p class="text-gray-600 mb-6">Seu pedido foi processado com sucesso. Obrigado pela compra!</p>
-    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Continuar comprando</button>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a routerLink="/orders" class="btn-brand px-6 py-3">Ver meus pedidos</a>
+      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar comprando</button>
+    </div>
+  }
   } @else {
-    <div class="text-5xl mb-4">⏳</div>
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento pendente</h1>
     <p class="text-gray-600 mb-6">Status: {{ status }}. Aguarde a confirmação.</p>
-    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Voltar à loja</button>
+    <button type="button" (click)="goHome()" class="btn-brand px-6 py-3">Voltar à loja</button>
   }
 </div>

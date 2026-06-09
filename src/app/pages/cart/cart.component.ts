@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CartItem } from '../../models/cart.model';
 import { CartService } from '../../services/cart.service';
-import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -12,20 +10,11 @@ import { Router } from '@angular/router';
 })
 export class CartComponent implements OnInit {
   loading = false;
-  checkoutLoading = false;
   errorMessage = '';
 
-  constructor(
-    public cartService: CartService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(public cartService: CartService) {}
 
   ngOnInit() {
-    if (!this.authService.getToken()) {
-      this.router.navigate(['/auth']);
-      return;
-    }
     this.cartService.loadCart();
   }
 
@@ -70,20 +59,4 @@ export class CartComponent implements OnInit {
     });
   }
 
-  checkout() {
-    if (this.cartItems.length === 0) return;
-
-    this.checkoutLoading = true;
-    this.errorMessage = '';
-    this.cartService.checkoutCart().subscribe({
-      next: (res) => {
-        this.checkoutLoading = false;
-        window.location.href = res.url;
-      },
-      error: (err) => {
-        this.checkoutLoading = false;
-        this.errorMessage = err?.error?.message || 'Não foi possível iniciar o checkout.';
-      }
-    });
-  }
 }

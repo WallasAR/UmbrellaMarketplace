@@ -7,6 +7,9 @@
   <div class="relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-white">
 
     <!-- Stock Indicator -->
+    @if (product().requires_prescription) {
+      <div class="absolute left-2 top-2 z-10 rounded-full badge-brand px-2 py-0.5 text-[10px] font-semibold">Rx</div>
+    }
     @if (product().stock) {
       <div class="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
         <span class="h-1.5 w-1.5 rounded-full" [class]="product().stock > 100 ? 'bg-emerald-500' : 'bg-amber-500'"></span>
@@ -69,7 +72,7 @@
 
         <div class="mt-2">
           <a [routerLink]="['/product', product().id]"
-             class="block w-full rounded-lg bg-emerald-600 py-2 text-center text-xs font-medium text-white transition-colors hover:bg-emerald-700">
+             class="block w-full rounded-lg btn-brand py-2 text-center text-xs font-medium text-white">
             Ver detalhes
           </a>
         </div>

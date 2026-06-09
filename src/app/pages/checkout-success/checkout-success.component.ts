@@ -21,10 +21,20 @@ export class CheckoutSuccessComponent implements OnInit {
     private router: Router
   ) {}
 
+  isSubscription = false;
+
   ngOnInit() {
     const sessionId = this.route.snapshot.queryParamMap.get('sessionId');
+    this.isSubscription = this.route.snapshot.queryParamMap.get('subscription') === '1';
+
     if (!sessionId) {
       this.error = 'Sessão de pagamento não encontrada.';
+      this.loading = false;
+      return;
+    }
+
+    if (this.isSubscription) {
+      this.status = 'paid';
       this.loading = false;
       return;
     }

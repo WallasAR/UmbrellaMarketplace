@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Product } from '../../models/product.model';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { Product, ProductFilters } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -12,38 +11,44 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProductListComponent implements OnInit {
   products: Product[] = [];
-  filteredProducts: Product[] = [];
-  searchQuery = '';
+  loading = true;
+  error = false;
+  filters: ProductFilters = { stock: true, sort: 'name_asc' };
 
   constructor(
-    private http: HttpClient,
+    private productService: ProductService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
-      this.searchQuery = params.get('q') || '';
-      this.applyFilter();
-    });
-    this.getProducts();
-  }
-
-  getProducts() {
-    this.http.get<Product[]>(`${environment.apiUrl}/product/list`).subscribe((res: Product[]) => {
-      this.products = res;
-      this.applyFilter();
+    this.route.queryParamMap.subscribe((params) => {
+      this.filters = {
+        ...this.filters,
+        q: params.get('q') || undefined,
+        category: params.get('category') || undefined
+      };
+      this.loadProducts();
     });
   }
 
-  applyFilter() {
-    if (!this.searchQuery) {
-      this.filteredProducts = this.products;
-      return;
-    }
-    const query = this.searchQuery.toLowerCase();
-    this.filteredProducts = this.products.filter(p =>
-      p.name.toLowerCase().includes(query) ||
-      p.description?.toLowerCase().includes(query)
-    );
+  onFiltersChange(filters: ProductFilters) {
+    this.filters = { ...this.filters, ...filters };
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    this.loading = true;
+    this.error = false;
+    this.productService.getProducts(this.filters).subscribe({
+      next: (products) => {
+        this.products = products;
+        this.loading = false;
+      },
+      error: () => {
+        this.products = [];
+        this.loading = false;
+        this.error = true;
+      }
+    });
   }
 }

@@ -4,8 +4,17 @@ import { Observable, tap } from 'rxjs';
 import { CartItem } from '../models/cart.model';
 import { environment } from '../../environments/environment';
 
-interface CheckoutResponse {
+export interface PharmacyCheckoutSession {
+  pharmacyId: string;
+  pharmacyName: string;
   url: string;
+  items: number;
+}
+
+export interface CheckoutResponse {
+  mode: 'single' | 'multi';
+  url?: string;
+  sessions?: PharmacyCheckoutSession[];
 }
 
 @Injectable({
@@ -47,12 +56,12 @@ export class CartService {
     );
   }
 
-  checkoutCart(): Observable<CheckoutResponse> {
-    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/cart`, {});
+  checkoutCart(couponCode?: string): Observable<CheckoutResponse> {
+    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/cart`, { couponCode });
   }
 
-  checkoutItem(medicineId: number, quantity: number): Observable<CheckoutResponse> {
-    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/item/${medicineId}`, { quantity });
+  checkoutItem(medicineId: number, quantity: number, couponCode?: string): Observable<CheckoutResponse> {
+    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/item/${medicineId}`, { quantity, couponCode });
   }
 
   getItemPrice(item: CartItem): number {

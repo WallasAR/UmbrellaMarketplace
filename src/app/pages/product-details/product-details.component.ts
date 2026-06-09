@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { SubscriptionService } from '../../services/subscription.service';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -25,6 +26,7 @@ export class ProductDetailsComponent {
     private productService: ProductService,
     private cartService: CartService,
     private authService: AuthService,
+    private subscriptionService: SubscriptionService,
     private router: Router
   ) {
     this.route.paramMap.pipe(
@@ -108,14 +110,30 @@ export class ProductDetailsComponent {
     if (!this.requireAuth()) return;
 
     this.loading = true;
-    this.cartService.checkoutItem(this.product.id, this.quantity()).subscribe({
+    this.cartService.addItem(this.product.id, this.quantity()).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/checkout']);
+      },
+      error: () => {
+        this.loading = false;
+        this.showFeedback('Não foi possível iniciar a compra.', 'error');
+      }
+    });
+  }
+
+  subscribe() {
+    if (!this.requireAuth()) return;
+
+    this.loading = true;
+    this.subscriptionService.subscribe(this.product.id, this.quantity()).subscribe({
       next: (res) => {
         this.loading = false;
         window.location.href = res.url;
       },
       error: () => {
         this.loading = false;
-        this.showFeedback('Não foi possível iniciar a compra.', 'error');
+        this.showFeedback('Não foi possível iniciar a assinatura.', 'error');
       }
     });
   }

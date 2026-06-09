@@ -1,0 +1,36 @@
+<div class="card-surface p-4 grid gap-3 md:grid-cols-4" role="search" aria-label="Filtros de medicamentos">
+  <div>
+    <label class="text-xs font-medium text-gray-600" for="category-filter">Categoria</label>
+    <select id="category-filter" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="filters.category" (change)="emitFilters()">
+      <option value="">Todas</option>
+      @for (cat of categories; track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-600" for="sort-filter">Ordenar</label>
+    <select id="sort-filter" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="filters.sort" (change)="emitFilters()">
+      <option value="name_asc">Nome A-Z</option>
+      <option value="price_asc">Menor preço</option>
+      <option value="price_desc">Maior preço</option>
+      <option value="discount_desc">Maior desconto</option>
+    </select>
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-600" for="min-price">Preço mínimo</label>
+    <input id="min-price" type="number" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="filters.minPrice" (change)="emitFilters()" />
+  </div>
+  <div>
+    <label class="text-xs font-medium text-gray-600" for="max-price">Preço máximo</label>
+    <input id="max-price" type="number" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="filters.maxPrice" (change)="emitFilters()" />
+  </div>
+  <label class="flex items-center gap-2 text-sm text-gray-700">
+    <input type="checkbox" [(ngModel)]="filters.discount" (change)="emitFilters()" />
+    Apenas com desconto
+  </label>
+  <label class="flex items-center gap-2 text-sm text-gray-700">
+    <input type="checkbox" [(ngModel)]="filters.stock" (change)="emitFilters()" />
+    Apenas em estoque
+  </label>
+</div>
