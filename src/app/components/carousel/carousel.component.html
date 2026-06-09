@@ -1,33 +1,30 @@
-<div class="flex justify-center mt-6">
-  <div class="relative overflow-hidden rounded-lg shadow-lg" (mouseenter)="pauseAutoSlide()" (mouseleave)="startAutoSlide()">
-    <!-- Carousel wrapper -->
+<div class="px-4 mt-6">
+  <div class="relative overflow-hidden rounded-2xl shadow-lg max-w-6xl mx-auto" (mouseenter)="pauseAutoSlide()" (mouseleave)="startAutoSlide()">
     <div class="flex transition-transform duration-700 ease-in-out"
          [ngStyle]="{'transform': 'translateX(-' + (currentIndex * 100) + '%)'}">
-      <div *ngFor="let image of images" class="min-w-full">
-        <img [src]="image" class="w-full h-48 md:h-64 object-cover" alt="Slide Image">
+      <div *ngFor="let slide of slides" class="min-w-full">
+        <div class="w-full h-48 md:h-64 flex flex-col items-center justify-center text-white px-8 bg-gradient-to-r"
+             [ngClass]="slide.gradient">
+          <h2 class="text-2xl md:text-4xl font-bold text-center mb-2">{{ slide.title }}</h2>
+          <p class="text-sm md:text-lg text-white/90 text-center">{{ slide.subtitle }}</p>
+        </div>
       </div>
     </div>
 
-    <!-- Slider indicators -->
-    <div class="absolute bottom-4 left-1/2 flex space-x-3 -translate-x-1/2">
-      <button *ngFor="let image of images; let i = index"
+    <div class="absolute bottom-4 left-1/2 flex space-x-2 -translate-x-1/2">
+      <button *ngFor="let slide of slides; let i = index"
               (click)="goToSlide(i)"
-              class="w-3 h-3 rounded-full bg-gray-300"
-              [ngClass]="{'bg-blue-500': currentIndex === i}">
+              class="w-2.5 h-2.5 rounded-full transition-all"
+              [ngClass]="currentIndex === i ? 'bg-white w-6' : 'bg-white/50'">
       </button>
     </div>
 
-    <!-- Slider controls -->
     <button (click)="prevSlide()" class="absolute top-0 left-0 z-30 flex items-center h-full px-4 cursor-pointer">
-      <span class="inline-flex items-center justify-center w-10 h-10 text-white">
-        &#10094;
-      </span>
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 transition">&#10094;</span>
     </button>
 
     <button (click)="nextSlide()" class="absolute top-0 right-0 z-30 flex items-center h-full px-4 cursor-pointer">
-      <span class="inline-flex items-center justify-center w-10 h-10 text-white">
-        &#10095;
-      </span>
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 transition">&#10095;</span>
     </button>
   </div>
 </div>
