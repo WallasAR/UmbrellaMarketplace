@@ -48,11 +48,12 @@ http://localhost:4200
 4. Carrinho em `/cart`.
 5. Checkout interno em `/checkout`.
 6. Redirecionamento para Stripe.
-7. Confirmação em `/checkout/success`.
+7. Confirmação em `/checkout/success` ou cancelamento em `/checkout/cancel`.
 8. Histórico em `/orders`.
 9. Perfil e receitas em `/profile`.
 10. Assinaturas em `/subscriptions`.
-11. Admin em `/admin` com usuário que tenha role `admin`, `operator` ou `pharmacist`.
+11. Painel da farmácia em `/pharmacy` com usuário `pharmacist` ou `operator` vinculado a uma farmácia.
+12. Admin global em `/admin` com role `admin`.
 
 ## Testes
 
