@@ -20,4 +20,17 @@ test.describe('Integration API', () => {
     const body = await response.json();
     expect(Array.isArray(body)).toBeTruthy();
   });
+
+  test('notifications vapid endpoint is reachable', async ({ request }) => {
+    const response = await request.get(`${apiUrl}/notifications/vapid-public-key`);
+    expect(response.ok()).toBeTruthy();
+
+    const body = await response.json();
+    expect(body).toHaveProperty('publicKey');
+  });
+
+  test('protected orders endpoint requires auth', async ({ request }) => {
+    const response = await request.get(`${apiUrl}/orders`);
+    expect(response.status()).toBe(401);
+  });
 });

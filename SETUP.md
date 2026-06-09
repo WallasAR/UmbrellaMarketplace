@@ -83,6 +83,8 @@ CI (GitHub Actions) executa build, testes unitários e e2e no push/PR.
 
 E2E integrado (`e2e/shopping-flow.spec.ts`) simula login, carrinho e checkout com API mockada — não depende do backend real.
 
+E2E do painel farmácia (`e2e/pharmacy-dashboard.spec.ts`) valida métricas, conversão e aba financeira com API mockada.
+
 Testes contra API real (opcional):
 
 ```bash
