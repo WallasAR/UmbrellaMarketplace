@@ -11,6 +11,7 @@ export class ButtonComponent {
   label = input('label');
   bgColor = input('bg-black');
   hoverColor = input('hover:bg-gray-800');
+  disabled = input(false);
 
   btnClicked = output();
 }
