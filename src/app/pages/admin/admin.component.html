@@ -9,6 +9,56 @@
     <div class="card-surface p-5"><p class="text-sm text-gray-500">Receitas pendentes</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.pendingPrescriptions || 0 }}</p></div>
   </div>
 
+  @if (financial) {
+    <section class="mb-8">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <h2 class="text-xl font-semibold">Financeiro da plataforma</h2>
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="financialPeriod" (change)="changeFinancialPeriod($event)" aria-label="Período financeiro">
+          <option value="7d">7 dias</option>
+          <option value="30d">30 dias</option>
+          <option value="90d">90 dias</option>
+          <option value="all">Tudo</option>
+        </select>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-4 mb-4">
+        <div class="card-surface p-5"><p class="text-sm text-gray-500">GMV</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ financial.summary.grossRevenue | number:'1.2-2' }}</p></div>
+        <div class="card-surface p-5"><p class="text-sm text-gray-500">Comissões</p><p class="text-2xl font-bold text-gray-700">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
+        <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ financial.summary.orderCount }}</p></div>
+      </div>
+      @if (financial.pharmacies?.length) {
+        <div class="space-y-2">
+          @for (p of financial.pharmacies; track p.pharmacyId) {
+            <div class="card-surface p-3 flex flex-wrap justify-between gap-2">
+              <span class="font-medium">{{ p.pharmacyName }}</span>
+              <span class="text-sm text-gray-600">R$ {{ p.grossRevenue | number:'1.2-2' }} · comissão R$ {{ p.platformFee | number:'1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <section class="mb-8">
+    <h2 class="text-xl font-semibold mb-4">Farmácias pendentes</h2>
+    <div class="space-y-3">
+      @for (pharmacy of pendingPharmacies; track pharmacy.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ pharmacy.name }}</p>
+            <p class="text-sm text-gray-500">{{ pharmacy.city }}/{{ pharmacy.state }} · Plano {{ pharmacy.plan_tier }}</p>
+            <p class="text-sm text-gray-500">{{ pharmacy.owner?.email }}</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="approvePharmacy(pharmacy.id)">Aprovar</button>
+            <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="rejectPharmacy(pharmacy.id)">Recusar</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhuma farmácia pendente.</p>
+      }
+    </div>
+  </section>
+
   <section class="mb-8">
     <h2 class="text-xl font-semibold mb-4">Pedidos</h2>
     <div class="space-y-3">

@@ -5,6 +5,7 @@ import { Order } from '../../models/order.model';
 import { UserProfile } from '../../models/user.model';
 import { Prescription } from '../../services/prescription.service';
 import { ToastService } from '../../services/toast.service';
+import { PendingPharmacy } from '../../services/onboarding.service';
 
 @Component({
   selector: 'app-admin',
@@ -17,6 +18,9 @@ export class AdminComponent implements OnInit {
   orders: Order[] = [];
   users: UserProfile[] = [];
   prescriptions: Prescription[] = [];
+  pendingPharmacies: PendingPharmacy[] = [];
+  financial: any = null;
+  financialPeriod = '30d';
 
   constructor(
     private adminService: AdminService,
@@ -33,6 +37,32 @@ export class AdminComponent implements OnInit {
     this.adminService.getOrders().subscribe((orders) => this.orders = orders);
     this.adminService.getUsers().subscribe((users) => this.users = users);
     this.prescriptionService.listPending().subscribe((items) => this.prescriptions = items);
+    this.adminService.getPendingPharmacies().subscribe((items) => this.pendingPharmacies = items);
+    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+  }
+
+  changeFinancialPeriod(event: Event) {
+    this.financialPeriod = (event.target as HTMLSelectElement).value;
+    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+  }
+
+  approvePharmacy(id: string) {
+    this.adminService.approvePharmacy(id).subscribe({
+      next: () => {
+        this.toast.show('Farmácia aprovada.', 'success');
+        this.reload();
+      }
+    });
+  }
+
+  rejectPharmacy(id: string) {
+    const reason = prompt('Motivo da recusa:') || 'Cadastro recusado';
+    this.adminService.rejectPharmacy(id, reason).subscribe({
+      next: () => {
+        this.toast.show('Farmácia recusada.', 'success');
+        this.reload();
+      }
+    });
   }
 
   updateOrderStatus(sessionId: string, event: Event) {

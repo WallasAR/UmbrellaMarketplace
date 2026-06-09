@@ -7,6 +7,7 @@ import { Order } from '../models/order.model';
 import { UserProfile } from '../models/user.model';
 import { Coupon } from './coupon.service';
 import { Prescription } from './prescription.service';
+import { PendingPharmacy } from './onboarding.service';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -54,5 +55,21 @@ export class AdminService {
 
   getPendingPrescriptions(): Observable<Prescription[]> {
     return this.http.get<Prescription[]>(`${environment.apiUrl}/prescriptions/pending`);
+  }
+
+  getPendingPharmacies(): Observable<PendingPharmacy[]> {
+    return this.http.get<PendingPharmacy[]>(`${environment.apiUrl}/admin/pharmacies/pending`);
+  }
+
+  approvePharmacy(id: string) {
+    return this.http.patch(`${environment.apiUrl}/admin/pharmacies/${id}/approve`, {});
+  }
+
+  rejectPharmacy(id: string, reason: string) {
+    return this.http.patch(`${environment.apiUrl}/admin/pharmacies/${id}/reject`, { reason });
+  }
+
+  getFinancial(period = '30d'): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/admin/financial`, { params: { period } });
   }
 }

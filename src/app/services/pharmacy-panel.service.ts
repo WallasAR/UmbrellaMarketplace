@@ -94,4 +94,8 @@ export class PharmacyPanelService {
   updateOperationalStatus(operational_status: string): Observable<unknown> {
     return this.http.patch(`${this.base}/status`, { operational_status });
   }
+
+  getFinancial(period = '30d'): Observable<any> {
+    return this.http.get(`${this.base}/financial`, { params: { period } });
+  }
 }

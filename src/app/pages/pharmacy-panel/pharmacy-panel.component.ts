@@ -16,7 +16,9 @@ import { ToastService } from '../../services/toast.service';
   styleUrl: './pharmacy-panel.component.css'
 })
 export class PharmacyPanelComponent implements OnInit {
-  activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' = 'dashboard';
+  activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' = 'dashboard';
+  financial: any = null;
+  financialPeriod = '30d';
   dashboard: PharmacyDashboard | null = null;
   products: PharmacyProduct[] = [];
   batches: MedicineBatch[] = [];
@@ -67,6 +69,15 @@ export class PharmacyPanelComponent implements OnInit {
     if (this.activeTab === 'alerts') {
       this.pharmacyService.getAlerts().subscribe((data) => this.alerts = data);
     }
+
+    if (this.activeTab === 'financial') {
+      this.pharmacyService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+    }
+  }
+
+  changeFinancialPeriod(event: Event) {
+    this.financialPeriod = (event.target as HTMLSelectElement).value;
+    this.reload();
   }
 
   updateOperationalStatus(event: Event) {
