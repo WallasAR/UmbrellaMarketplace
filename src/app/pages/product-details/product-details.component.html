@@ -1,90 +1,121 @@
 @if (!product) {
   <app-product-details-skeleton/>
 } @else {
-  <div class="container mx-auto px-8 xl:px-16 py-6 flex flex-col lg:flex-row gap-6 transition-all duration-300 ease-in-out">
-    <!-- Main Product Section -->
-    <div class="flex-1 transition-all duration-300 ease-in-out">
-      <div class="relative">
-        <div class="flex items-center justify-center h-80 lg:h-96 overflow: auto;">
-          <img [src]="imageArray[currentIndex]" appImgFallback="/defaultmed.png" alt="Product Image" class="object-contain w-full h-full max-h-80 lg:max-h-96 rounded-lg">
+  <div class="container mx-auto px-4 sm:px-8 xl:px-16 py-8">
+    @if (feedbackMessage) {
+      <div class="mb-4 rounded-lg px-4 py-3 text-sm"
+           [class]="feedbackType === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'">
+        {{ feedbackMessage }}
+      </div>
+    }
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="flex-1">
+        <div class="relative rounded-2xl bg-gradient-to-br from-gray-50 to-emerald-50 p-6">
+          <div class="flex items-center justify-center h-72 lg:h-96">
+            <img [src]="imageArray[currentIndex]" appImgFallback="/defaultmed.png" alt="Product Image" class="object-contain w-full h-full max-h-80 lg:max-h-96">
+          </div>
+          <button (click)="previousImage()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 cursor-pointer rounded-full shadow-md hover:bg-white transition-all">❮</button>
+          <button (click)="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-2 cursor-pointer rounded-full shadow-md hover:bg-white transition-all">❯</button>
         </div>
 
-        <button (click)="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 cursor-pointer rounded-full shadow-md hover:bg-gray-400 transition-all">❮</button>
-        <button (click)="nextImage()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-300 p-2 cursor-pointer rounded-full shadow-md hover:bg-gray-400 transition-all">❯</button>
-      </div>
-
-      <div class="md:flex justify-around mt-4 hidden gap-2">
-        @for (img of imageArray; track $index) {
-          <img [src]="img" appImgFallback="/defaultmed.png" (click)="changeImage($index)" alt="Product Image" class="object-contain  max-h-20 rounded-lg transition-all duration-300 ease-in-out" [class]="$index === currentIndex ? 'border border-blue-500' : 'border border-gray-200'">
-        }
-      </div>
-    </div>
-
-    <!-- Product Details Section -->
-    <div class="flex-1 transition-all duration-300 ease-in-out">
-      <div class="md:flex justify-between items-start gap-6">
-        <div class="flex-1">
-          <h1 class="text-2xl lg:text-3xl font-bold mb-2">{{ product.name }}</h1>
-          <div class="flex items-center mb-4">
-            <div class="flex items-center gap-1 text-yellow-400">
-              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-            </div>
-            <span class="text-gray-500 ml-2">5.0</span>
-          </div>
-          <p class="text-3xl lg:text-4xl font-bold">R$ {{ product.price.toFixed(2).replace(".", ",") }}</p>
-
-          <hr class="h-px my-4 bg-gray-200 border-0">
-
-          @if (product.stock) {
-            <p class="text-2xl lg:text-3xl font-bold text-green-600">Em estoque</p>
-            <p class="text-sm text-gray-500">{{ product.stock }} Restantes</p>
-          } @else {
-            <p class="text-2xl lg:text-3xl font-bold text-red-600">Sem estoque</p>
+        <div class="md:flex justify-center mt-4 hidden gap-2">
+          @for (img of imageArray; track $index) {
+            <img [src]="img" appImgFallback="/defaultmed.png" (click)="changeImage($index)" alt="Thumbnail"
+                 class="object-contain max-h-20 rounded-lg cursor-pointer transition-all"
+                 [class]="$index === currentIndex ? 'border-2 border-emerald-500' : 'border border-gray-200'">
           }
+        </div>
+      </div>
 
-          @if (product.stock) {
-          <div class="flex xs:flex-col lg:flex-col gap-3">
-            <div class="flex w-full items-center gap-6 lg:mt-4">
-              <div class="flex items-center border rounded-sm border-gray-200 gap-4">
-                <button (click)="decreaseQuantity()" class=" w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-l-sm hover:bg-gray-300 cursor-pointer hover:text-white transition-all">-</button>
-                <span class="text-lg lg:text-xl">{{ quantity() }}</span>
-                <button (click)="increaseQuantity()" class=" w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-r-sm hover:bg-gray-300 cursor-pointer hover:text-white transition-all">+</button>
+      <div class="flex-1">
+        <div class="lg:flex justify-between items-start gap-6">
+          <div class="flex-1">
+            <span class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 mb-3">Medicamento</span>
+            <h1 class="text-2xl lg:text-3xl font-bold mb-3 text-gray-800">{{ product.name }}</h1>
+
+            <div class="mb-4">
+              @if (product.discount) {
+                <div class="flex items-baseline gap-2">
+                  <span class="text-lg text-gray-400 line-through">R$ {{ product.price | number:'1.2-2' }}</span>
+                  <span class="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-600">-{{ product.discount }}%</span>
+                </div>
+                <p class="text-3xl lg:text-4xl font-bold text-emerald-700">R$ {{ finalPrice | number:'1.2-2' }}</p>
+              } @else {
+                <p class="text-3xl lg:text-4xl font-bold text-gray-800">R$ {{ product.price | number:'1.2-2' }}</p>
+              }
+            </div>
+
+            <hr class="h-px my-4 bg-gray-200 border-0">
+
+            @if (product.stock) {
+              <div class="flex items-center gap-2 mb-4">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+              <p class="text-lg font-semibold text-emerald-600">Em estoque</p>
+                <span class="text-sm text-gray-500">({{ product.stock }} disponíveis)</span>
               </div>
 
-              <app-button label="Carrinho" routerLink="/cart" (btnClicked)="addToCart()" class="w-full"/>
-            </div>
-            <app-button label="Comprar" bgColor="bg-green-400" hoverColor="hover:bg-green-500" class="w-full"/>
+              <div class="flex flex-col gap-3">
+                <div class="flex w-full items-center gap-4">
+                  <div class="flex items-center border rounded-xl border-gray-200">
+                    <button (click)="decreaseQuantity()" class="w-10 h-10 flex items-center justify-center rounded-l-xl hover:bg-gray-100 cursor-pointer transition-all">−</button>
+                    <span class="w-12 text-center text-lg font-medium">{{ quantity() }}</span>
+                    <button (click)="increaseQuantity()" class="w-10 h-10 flex items-center justify-center rounded-r-xl hover:bg-gray-100 cursor-pointer transition-all">+</button>
+                  </div>
+                  <app-button
+                    [label]="loading ? 'Adicionando...' : 'Adicionar ao carrinho'"
+                    bgColor="bg-gray-800"
+                    hoverColor="hover:bg-gray-900"
+                    [disabled]="loading"
+                    (btnClicked)="addToCart()"
+                    class="flex-1"
+                  />
+                </div>
+                <app-button
+                  [label]="loading ? 'Processando...' : 'Comprar agora'"
+                  bgColor="bg-emerald-600"
+                  hoverColor="hover:bg-emerald-700"
+                  [disabled]="loading"
+                  (btnClicked)="buyNow()"
+                  class="w-full"
+                />
+              </div>
+            } @else {
+              <button class="bg-gray-300 text-white font-bold py-3 px-6 rounded-xl w-full" disabled>Indisponível</button>
+            }
+
+            <p class="mt-4 text-xs text-gray-400 leading-relaxed">
+              Uso sob orientação médica quando indicado. Mantenha fora do alcance de crianças.
+            </p>
           </div>
-          } @else {
-            <button class="bg-gray-300 text-white font-bold py-2 px-4 rounded-lg lg:mt-4" disabled>Indisponível</button>
-          }
+
+          <div class="lg:ml-6 lg:mt-0 mt-6 border border-gray-200 rounded-2xl px-5 py-5 bg-gray-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-3">Entrega</h2>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="font-medium text-gray-700">Sedex</span>
+                  <p class="text-gray-500 text-sm">5 a 10 dias úteis</p>
+                </div>
+                <span class="font-bold text-gray-800">A calcular</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="font-medium text-gray-700">Entrega expressa</span>
+                  <p class="text-gray-500 text-sm">1 a 3 dias úteis</p>
+                </div>
+                <span class="font-bold text-gray-800">A calcular</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="md:ml-6 md:mt-0 mt-6 border px-4 py-4 lg:py-6 border-gray-300 transition-all duration-300">
-          <h2 class="text-lg text-center lg:text-xl font-bold">Calcular Frete</h2>
-          <div class="flex gap-2 mt-2">
-            <app-input class="flex-1" placeholder="CEP" [iconRight]="true"/>
-          </div>
+        <hr class="h-px my-6 bg-gray-200 border-0">
 
-          <hr class="h-px my-4 bg-gray-200 border-0">
-
-          <div class="mt-4">
-            <div class="flex justify-between">
-              <span>Sedex</span>
-              <span class="font-bold">R$ 50,90</span>
-            </div>
-            <p class="text-gray-500 text-sm">10 a 15 dias úteis</p>
-          </div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 mb-3">Descrição</h2>
+          <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
         </div>
-      </div>
-
-      <hr class="h-px my-4 bg-gray-200 border-0">
-
-      <div class="mt-6">
-        <h2 class="text-xl lg:text-2xl font-bold">Descrição</h2>
-        <p class="text-gray-700 mt-2 text-justify leading-relaxed lg:leading-loose">
-          {{ product.description }}
-        </p>
       </div>
     </div>
   </div>

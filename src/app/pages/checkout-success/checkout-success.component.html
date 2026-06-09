@@ -1,0 +1,20 @@
+<div class="container mx-auto px-4 py-16 max-w-lg text-center">
+  @if (loading) {
+    <div class="text-gray-500">Verificando pagamento...</div>
+  } @else if (error) {
+    <div class="text-5xl mb-4">⚠️</div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Ops!</h1>
+    <p class="text-gray-600 mb-6">{{ error }}</p>
+    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Voltar à loja</button>
+  } @else if (status === 'paid') {
+    <div class="text-5xl mb-4">✅</div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento confirmado!</h1>
+    <p class="text-gray-600 mb-6">Seu pedido foi processado com sucesso. Obrigado pela compra!</p>
+    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Continuar comprando</button>
+  } @else {
+    <div class="text-5xl mb-4">⏳</div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento pendente</h1>
+    <p class="text-gray-600 mb-6">Status: {{ status }}. Aguarde a confirmação.</p>
+    <button (click)="goHome()" class="rounded-lg bg-emerald-600 px-6 py-3 text-white font-medium hover:bg-emerald-700">Voltar à loja</button>
+  }
+</div>
