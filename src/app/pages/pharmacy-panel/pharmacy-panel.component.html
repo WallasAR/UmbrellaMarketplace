@@ -135,6 +135,20 @@
       @if (billing.pharmacy.billing_status === 'pending_payment') {
         <p class="text-amber-600 text-sm mt-3">Ative o plano pago para liberar a operação da farmácia.</p>
       }
+      @if (billing.planUsage) {
+        <p class="text-sm text-gray-600 mt-3">
+          Produtos cadastrados:
+          <span class="font-medium">{{ billing.planUsage.productCount }}</span>
+          @if (billing.planUsage.maxProducts) {
+            / {{ billing.planUsage.maxProducts }}
+          } @else {
+            (ilimitado)
+          }
+        </p>
+        @if (!billing.planUsage.canAddMore) {
+          <p class="text-amber-600 text-sm mt-1">Limite do plano atingido. Faça upgrade para cadastrar mais produtos.</p>
+        }
+      }
     </div>
 
     <div class="grid sm:grid-cols-3 gap-4 mb-6">

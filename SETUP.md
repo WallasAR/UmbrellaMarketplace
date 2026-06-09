@@ -81,6 +81,8 @@ npm run e2e
 
 CI (GitHub Actions) executa build, testes unitários e e2e no push/PR.
 
+E2E integrado (`e2e/shopping-flow.spec.ts`) simula login, carrinho e checkout com API mockada — não depende do backend real.
+
 ## Observações
 
 - A paleta visual mantém a identidade atual com `#F74838` como cor principal.
