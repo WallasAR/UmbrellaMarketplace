@@ -65,6 +65,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  exportFinancial() {
+    this.adminService.exportFinancial(this.financialPeriod).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `plataforma-${this.financialPeriod}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+  }
+
   updateOrderStatus(sessionId: string, event: Event) {
     const order_status = (event.target as HTMLSelectElement).value;
     this.adminService.updateOrderStatus(sessionId, order_status).subscribe({

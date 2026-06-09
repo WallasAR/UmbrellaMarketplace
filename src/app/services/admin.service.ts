@@ -72,4 +72,11 @@ export class AdminService {
   getFinancial(period = '30d'): Observable<any> {
     return this.http.get(`${environment.apiUrl}/admin/financial`, { params: { period } });
   }
+
+  exportFinancial(period = '30d'): Observable<Blob> {
+    return this.http.get(`${environment.apiUrl}/admin/financial/export`, {
+      params: { period },
+      responseType: 'blob'
+    });
+  }
 }
