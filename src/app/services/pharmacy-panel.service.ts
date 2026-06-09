@@ -120,6 +120,14 @@ export class PharmacyPanelService {
     return this.http.put<PharmacyProduct>(`${this.base}/products/${id}`, payload);
   }
 
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/products/${id}`);
+  }
+
+  getMetrics(period = '30d'): Observable<any> {
+    return this.http.get(`${this.base}/metrics`, { params: { period } });
+  }
+
   exportFinancial(period = '30d'): Observable<Blob> {
     return this.http.get(`${this.base}/financial/export`, {
       params: { period },

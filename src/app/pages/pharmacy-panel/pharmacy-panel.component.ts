@@ -21,6 +21,9 @@ export class PharmacyPanelComponent implements OnInit {
   financialPeriod = '30d';
   billing: any = null;
   dashboard: PharmacyDashboard | null = null;
+  metrics: any = null;
+  editingProductId: number | null = null;
+  editForm: Partial<PharmacyProduct> = {};
   products: PharmacyProduct[] = [];
   batches: MedicineBatch[] = [];
   orders: Order[] = [];
@@ -60,6 +63,10 @@ export class PharmacyPanelComponent implements OnInit {
 
   reload() {
     this.pharmacyService.getDashboard().subscribe((data) => this.dashboard = data);
+
+    if (this.activeTab === 'dashboard') {
+      this.pharmacyService.getMetrics('30d').subscribe((data) => this.metrics = data);
+    }
 
     if (this.activeTab === 'products' || this.activeTab === 'batches') {
       this.pharmacyService.getProducts().subscribe((items) => {
@@ -115,6 +122,37 @@ export class PharmacyPanelComponent implements OnInit {
   changeFinancialPeriod(event: Event) {
     this.financialPeriod = (event.target as HTMLSelectElement).value;
     this.reload();
+  }
+
+  startEdit(product: PharmacyProduct) {
+    this.editingProductId = product.id;
+    this.editForm = { ...product };
+  }
+
+  cancelEdit() {
+    this.editingProductId = null;
+    this.editForm = {};
+  }
+
+  saveEdit() {
+    if (!this.editingProductId) return;
+    this.pharmacyService.updateProduct(this.editingProductId, this.editForm).subscribe({
+      next: () => {
+        this.toast.show('Produto atualizado.', 'success');
+        this.cancelEdit();
+        this.reload();
+      }
+    });
+  }
+
+  deleteProduct(id: number) {
+    if (!confirm('Remover este produto?')) return;
+    this.pharmacyService.deleteProduct(id).subscribe({
+      next: () => {
+        this.toast.show('Produto removido.', 'success');
+        this.reload();
+      }
+    });
   }
 
   createProduct() {
