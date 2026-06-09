@@ -1,0 +1,39 @@
+<section class="mt-10 card-surface p-6" aria-labelledby="reviews-title">
+  <div class="flex items-center justify-between mb-4">
+    <h2 id="reviews-title" class="text-xl font-bold text-gray-800">Avaliações</h2>
+    @if (count > 0) {
+      <p class="text-sm text-gray-600"><span class="font-bold text-[#F74838]">{{ average }}</span> · {{ count }} avaliações</p>
+    }
+  </div>
+
+  @if (authService.isAuthenticated()) {
+    <form class="mb-6 space-y-3" (ngSubmit)="submitReview()">
+      <label class="text-sm font-medium text-gray-700" for="rating">Sua nota</label>
+      <select id="rating" class="w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="rating" name="rating">
+        @for (n of [5,4,3,2,1]; track n) {
+          <option [value]="n">{{ n }} estrela(s)</option>
+        }
+      </select>
+      <textarea rows="3" class="w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="comment" name="comment" placeholder="Conte sua experiência com este medicamento"></textarea>
+      <button type="submit" class="btn-brand px-4 py-2" [disabled]="loading">{{ loading ? 'Enviando...' : 'Enviar avaliação' }}</button>
+    </form>
+  }
+
+  @if (!reviews.length) {
+    <p class="text-sm text-gray-500">Este medicamento ainda não foi avaliado.</p>
+  } @else {
+    <div class="space-y-4">
+      @for (review of reviews; track review.id) {
+        <article class="border-b border-gray-100 pb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-[#F74838] font-bold">{{ review.rating }}</span>
+            <span class="text-sm text-gray-500">{{ review.User?.name || 'Cliente' }}</span>
+          </div>
+          @if (review.comment) {
+            <p class="text-sm text-gray-600 mt-1">{{ review.comment }}</p>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

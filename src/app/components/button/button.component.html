@@ -1,6 +1,10 @@
 <div class="flex">
-  <button (click)="btnClicked.emit()" class="text-white cursor-pointer font-bold py-2 w-full px-2 lg:py-3 rounded-lg transition-all"
-          [class]="[bgColor(), hoverColor()]">
+  <button
+    type="button"
+    (click)="btnClicked.emit()"
+    [disabled]="disabled()"
+    class="text-white font-bold py-2 w-full px-2 lg:py-3 rounded-lg transition-all"
+    [class]="[bgColor(), hoverColor(), disabled() ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer']">
     {{ label() }}
   </button>
 </div>

@@ -1,0 +1,10 @@
+<div class="card-surface p-4 border-[#F74838]/20">
+  <h3 class="font-semibold text-gray-800">Medicamento sob prescrição</h3>
+  <p class="text-sm text-gray-600 mt-1">
+    Envie a receita de {{ medicineName() || 'medicamento' }} para liberar a compra.
+  </p>
+  <label class="mt-4 inline-flex items-center gap-2 btn-brand px-4 py-2 cursor-pointer" [attr.aria-busy]="loading">
+    <span>{{ loading ? 'Enviando...' : 'Enviar receita' }}</span>
+    <input type="file" class="sr-only" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)" [disabled]="loading" aria-label="Selecionar arquivo de receita médica" />
+  </label>
+</div>

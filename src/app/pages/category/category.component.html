@@ -1,0 +1,13 @@
+<div class="container mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">Categorias</h1>
+  <p class="text-gray-500 mb-8">Explore medicamentos por categoria de interesse.</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    @for (cat of categories; track cat.name) {
+      <a [routerLink]="['/home']" [queryParams]="{ category: cat.name }" class="card-surface p-6 hover:border-[#F74838]/30 transition group">
+        <div class="w-10 h-10 rounded-full badge-brand flex items-center justify-center text-xs font-bold mb-3">{{ cat.icon }}</div>
+        <h3 class="text-lg font-semibold text-gray-800 group-hover:text-[#F74838]">{{ cat.name }}</h3>
+        <p class="text-sm text-gray-500 mt-1">{{ cat.description }}</p>
+      </a>
+    }
+  </div>
+</div>

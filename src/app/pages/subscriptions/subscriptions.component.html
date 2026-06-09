@@ -1,0 +1,30 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">Minhas assinaturas</h1>
+  <p class="text-gray-500 mb-8">Medicamentos de uso contínuo com entrega recorrente.</p>
+
+  @if (loading) {
+    <p class="text-gray-500">Carregando...</p>
+  } @else if (!subscriptions.length) {
+    <div class="card-surface p-10 text-center">
+      <p class="text-gray-600 mb-4">Você não possui assinaturas ativas.</p>
+      <a routerLink="/home" class="btn-brand inline-block px-6 py-3">Ver medicamentos</a>
+    </div>
+  } @else {
+    <div class="space-y-4">
+      @for (sub of subscriptions; track sub.id) {
+        <article class="card-surface p-5 flex flex-wrap justify-between gap-4 items-center">
+          <div>
+            <h2 class="font-semibold text-gray-800">{{ sub.Medicine?.name }}</h2>
+            <p class="text-sm text-gray-500">Quantidade: {{ sub.quantity }} · Status: {{ sub.status }}</p>
+            @if (sub.next_delivery_at) {
+              <p class="text-sm text-gray-500">Próxima entrega: {{ sub.next_delivery_at | date:'dd/MM/yyyy' }}</p>
+            }
+          </div>
+          @if (sub.status === 'active') {
+            <button type="button" class="px-4 py-2 rounded-lg border border-gray-200 text-sm" (click)="cancel(sub.id)">Cancelar</button>
+          }
+        </article>
+      }
+    </div>
+  }
+</div>

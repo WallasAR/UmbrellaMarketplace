@@ -1,17 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 
 @theme {
+  --color-brand: #F74838;
+  --color-brand-hover: #e03d2f;
+  --color-brand-soft: #fff1ef;
   --animate-squash: squash 2s ease-in-out infinite;
   @keyframes squash {
-    0% {
-      transform: scaleX(1);
-    }
-    50% {
-      transform: scaleX(0.0);
-    }
-    100% {
-      transform: scaleX(-1);
-    }
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(0.0); }
+    100% { transform: scaleX(-1); }
   }
+}
+
+body {
+  @apply bg-gray-50 text-gray-800 antialiased;
+}
+
+.nav-link.isActive {
+  color: #F74838;
+  font-weight: 600;
+  background-color: var(--color-brand-soft);
+}
+
+.btn-brand {
+  @apply rounded-lg font-semibold text-white transition;
+  background-color: var(--color-brand);
+}
+.btn-brand:hover {
+  background-color: var(--color-brand-hover);
+}
+.btn-brand:disabled {
+  @apply opacity-60 cursor-not-allowed;
+}
+
+.badge-brand {
+  background-color: var(--color-brand-soft);
+  color: var(--color-brand);
+}
+
+.card-surface {
+  @apply rounded-2xl border border-gray-100 bg-white shadow-sm;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }

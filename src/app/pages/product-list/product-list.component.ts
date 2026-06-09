@@ -1,35 +1,54 @@
-import { Component, signal } from '@angular/core';
-import { Product } from '../../models/product.model';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { Component, OnInit } from '@angular/core';
+import { Product, ProductFilters } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
   standalone: false,
-
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
-export class ProductListComponent {
-
+export class ProductListComponent implements OnInit {
   products: Product[] = [];
+  loading = true;
+  error = false;
+  filters: ProductFilters = { stock: true, sort: 'name_asc' };
 
-  constructor(private http: HttpClient) { this.getProducts() }
+  constructor(
+    private productService: ProductService,
+    private route: ActivatedRoute
+  ) {}
 
-
-  getProducts() {
-    this.http.get<Product[]>(`${environment.apiUrl}/product/list`).subscribe((res:Product[]) => {
-      this.products = res;
-    })
+  ngOnInit() {
+    this.route.queryParamMap.subscribe((params) => {
+      this.filters = {
+        ...this.filters,
+        q: params.get('q') || undefined,
+        category: params.get('category') || undefined
+      };
+      this.loadProducts();
+    });
   }
 
-  // products = signal<Product[]> ([
-  //   { id: 1, name: 'Produto 1312514332135', img: 'https://www.geolab.com.br/wp-content/uploads/2021/05/Mockup-Gotas-tarja-preta_R2-500x500-1.png', price: 99.99, discount: 10, stock: 2, description: "Produto 1 é indicado para chama papai"},
-  //   { id: 2, name: 'Produto 2', img: 'https://www.germedpharma.com.br/wp-content/uploads/2022/11/embalagens_535x490px_controlados_tarja_vermelha.png', price: 149.99, discount: 0, stock: 1235, description: "Produto 1 é indicado para chama papai" },
-  //   { id: 3, name: 'Produto 3', img: 'https://www.drogariasbrasil.com/products_images/original/7896862918149.png', price: 79.99, discount: 15, stock: 546, description: "Produto 1 é indicado para chama papai" },
-  //   { id: 4, name: 'Produto 4', img: 'https://dmvfarma.vtexassets.com/arquivos/ids/245386-500-auto?v=638561440448470000&width=500&height=auto&aspect=true', price: 199.99, discount: 0, stock: 0,  description: "Produto 1 é indicado para chama papai" },
-  //   { id: 4, name: 'Produto 4', img: 'https://dmvfarma.vtexassets.com/arquivos/ids/245386-500-auto?v=638561440448470000&width=500&height=auto&aspect=true', price: 199.99, discount: 0, stock: 224, description: "Produto 1 é indicado para chama papai" },
-  //   { id: 4, name: 'Produto 4', img: 'https://dmvfarma.vtexassets.com/arquivos/ids/245386-500-auto?v=638561440448470000&width=500&height=auto&aspect=true', price: 199.99, discount: 0, stock: 2, description: "Produto 1 é indicado para chama papai" },
-  //   { id: 4, name: 'Produto 4', img: 'https://dmvfarma.vtexassets.com/arquivos/ids/245386-500-auto?v=638561440448470000&width=500&height=auto&aspect=true', price: 199.99, discount: 0, stock: 2,  description: "Produto 1 é indicado para chama papai" },
-  // ]);
+  onFiltersChange(filters: ProductFilters) {
+    this.filters = { ...this.filters, ...filters };
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    this.loading = true;
+    this.error = false;
+    this.productService.getProducts(this.filters).subscribe({
+      next: (products) => {
+        this.products = products;
+        this.loading = false;
+      },
+      error: () => {
+        this.products = [];
+        this.loading = false;
+        this.error = true;
+      }
+    });
+  }
 }

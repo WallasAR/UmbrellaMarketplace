@@ -1,0 +1,298 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Painel da farmácia</h1>
+      <p class="text-gray-500">{{ dashboard?.pharmacy?.name || 'Carregando...' }}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-8">
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'orders'" (click)="setTab('orders')">Pedidos</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'alerts'" (click)="setTab('alerts')">Alertas</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'financial'" (click)="setTab('financial')">Financeiro</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'billing'" (click)="setTab('billing')">Plano SaaS</button>
+  </div>
+
+  @if (activeTab === 'dashboard' && dashboard) {
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Produtos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.productCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Lotes</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.batchCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.orderCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
+    </div>
+
+    <div class="card-surface p-5 flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <p class="text-sm text-gray-500">Status operacional</p>
+        <p class="font-medium capitalize">{{ dashboard.pharmacy.operational_status }}</p>
+      </div>
+      <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)" aria-label="Status operacional">
+        <option value="open">Aberta</option>
+        <option value="closed">Fechada</option>
+        <option value="out_of_area">Fora da área</option>
+      </select>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4 mt-4">
+      <div class="card-surface p-5">
+        <p class="text-sm text-gray-500">Estoque baixo</p>
+        <p class="text-xl font-bold text-amber-600">{{ dashboard.lowStockCount }}</p>
+      </div>
+      <div class="card-surface p-5">
+        <p class="text-sm text-gray-500">Lotes vencendo</p>
+        <p class="text-xl font-bold text-amber-600">{{ dashboard.expiringSoonCount }}</p>
+      </div>
+    </div>
+
+    @if (metrics) {
+      <div class="grid sm:grid-cols-3 gap-4 mt-4">
+        <div class="card-surface p-5">
+          <p class="text-sm text-gray-500">Taxa de conversão (30d)</p>
+          <p class="text-xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p>
+        </div>
+        <div class="card-surface p-5">
+          <p class="text-sm text-gray-500">Checkouts / Pagos</p>
+          <p class="text-xl font-bold text-gray-800">{{ metrics.checkoutSessions }} / {{ metrics.paidSessions }}</p>
+        </div>
+        <div class="card-surface p-5">
+          <p class="text-sm text-gray-500">Receita paga (30d)</p>
+          <p class="text-xl font-bold text-[#F74838]">R$ {{ metrics.paidRevenue | number:'1.2-2' }}</p>
+        </div>
+      </div>
+      @if (conversionChart.length) {
+        <app-metrics-bar-chart class="block mt-4" title="Conversão diária (%)" [points]="conversionChart" />
+      }
+    }
+  }
+
+  @if (activeTab === 'products') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Novo produto</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Nome" [(ngModel)]="productForm.name" aria-label="Nome do produto">
+        <input type="number" min="0" step="0.01" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Preço" [(ngModel)]="productForm.price" aria-label="Preço">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="productForm.category" aria-label="Categoria">
+        <input type="number" min="0" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Estoque inicial" [(ngModel)]="productForm.stock" aria-label="Estoque">
+        <input type="number" min="0" max="100" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Desconto %" [(ngModel)]="productForm.discount" aria-label="Desconto">
+        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description" aria-label="Descrição">
+      </div>
+      <div class="flex flex-wrap gap-4 mt-3 text-sm">
+        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
+        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.allows_subscription"> Permite assinatura</label>
+      </div>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createProduct()">Cadastrar produto</button>
+    </div>
+
+    <div class="space-y-3">
+      @for (product of products; track product.id) {
+        <div class="card-surface p-4">
+          @if (editingProductId === product.id) {
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <input class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.name" aria-label="Editar nome">
+              <input type="number" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.price" aria-label="Editar preço">
+              <input type="number" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.stock" aria-label="Editar estoque">
+              <input class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.category" aria-label="Editar categoria">
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="saveEdit()">Salvar</button>
+              <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="cancelEdit()">Cancelar</button>
+            </div>
+          } @else {
+            <div class="flex flex-wrap justify-between gap-3 items-center">
+              <div>
+                <p class="font-medium">{{ product.name }}</p>
+                <p class="text-sm text-gray-500">{{ product.category || 'Sem categoria' }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <p class="font-medium">R$ {{ product.price | number:'1.2-2' }}</p>
+                  <p class="text-sm" [class.text-amber-600]="product.stock <= 10" [class.text-gray-500]="product.stock > 10">
+                    Estoque: {{ product.stock }}
+                  </p>
+                </div>
+                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="startEdit(product)">Editar</button>
+                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 text-[#F74838]" (click)="deleteProduct(product.id)">Remover</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum produto cadastrado nesta farmácia.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'batches') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Novo lote</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.medicine_id" aria-label="Medicamento">
+          @for (product of products; track product.id) {
+            <option [value]="product.id">{{ product.name }}</option>
+          }
+        </select>
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Número do lote" [(ngModel)]="batchForm.batch_number" aria-label="Número do lote">
+        <input type="number" min="1" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Quantidade" [(ngModel)]="batchForm.quantity" aria-label="Quantidade">
+        <input type="date" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.expiry_date" aria-label="Validade">
+      </div>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createBatch()">Cadastrar lote</button>
+    </div>
+
+    <div class="space-y-3">
+      @for (batch of batches; track batch.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ batch.Medicine?.name }}</p>
+            <p class="text-sm text-gray-500">Lote {{ batch.batch_number }} · Qtd: {{ batch.quantity }}</p>
+            <p class="text-sm text-gray-500">Validade: {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="deleteBatch(batch.id)">Remover</button>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum lote cadastrado.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'orders') {
+    <div class="space-y-3">
+      @for (order of orders; track order.sessionId) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">#{{ order.sessionId.slice(-8) }}</p>
+            <p class="text-sm text-gray-500">R$ {{ order.total_price | number:'1.2-2' }}</p>
+          </div>
+          <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="order.order_status" (change)="updateOrderStatus(order.sessionId, $event)" aria-label="Status do pedido">
+            <option value="pending_payment">Aguardando pagamento</option>
+            <option value="processing">Em processamento</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregue</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum pedido para esta farmácia.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'billing' && billing) {
+    <div class="card-surface p-6 mb-6">
+      <p class="text-sm text-gray-500">Plano atual</p>
+      <p class="text-2xl font-bold text-[#F74838]">{{ billing.plan.name }}</p>
+      <p class="text-sm text-gray-600 mt-2">
+        R$ {{ billing.plan.monthly_price | number:'1.2-2' }}/mês ·
+        Comissão {{ (billing.plan.commission_rate * 100) | number:'1.0-0' }}% ·
+        Status: <span class="font-medium capitalize">{{ billing.pharmacy.billing_status }}</span>
+      </p>
+      @if (billing.pharmacy.billing_status === 'pending_payment') {
+        <p class="text-amber-600 text-sm mt-3">Ative o plano pago para liberar a operação da farmácia.</p>
+      }
+      @if (billing.planUsage) {
+        <p class="text-sm text-gray-600 mt-3">
+          Produtos cadastrados:
+          <span class="font-medium">{{ billing.planUsage.productCount }}</span>
+          @if (billing.planUsage.maxProducts) {
+            / {{ billing.planUsage.maxProducts }}
+          } @else {
+            (ilimitado)
+          }
+        </p>
+        @if (!billing.planUsage.canAddMore) {
+          <p class="text-amber-600 text-sm mt-1">Limite do plano atingido. Faça upgrade para cadastrar mais produtos.</p>
+        }
+      }
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-4 mb-6">
+      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('free')">
+        <p class="font-semibold">Gratuito</p>
+        <p class="text-sm text-gray-500">R$ 0/mês</p>
+      </button>
+      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('pro')">
+        <p class="font-semibold">Profissional</p>
+        <p class="text-sm text-gray-500">R$ 99,90/mês</p>
+      </button>
+      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('enterprise')">
+        <p class="font-semibold">Empresarial</p>
+        <p class="text-sm text-gray-500">R$ 299,90/mês</p>
+      </button>
+    </div>
+
+    @if (billing.pharmacy.stripe_customer_id) {
+      <button type="button" class="btn-brand px-4 py-2" (click)="manageBilling()">Gerenciar assinatura no Stripe</button>
+    }
+  }
+
+  @if (activeTab === 'financial' && financial) {
+    <div class="flex flex-wrap justify-end gap-3 mb-4">
+      <button type="button" class="px-4 py-2 rounded-lg border border-gray-200" (click)="exportFinancial()">Exportar CSV</button>
+      <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="financialPeriod" (change)="changeFinancialPeriod($event)" aria-label="Período financeiro">
+        <option value="7d">Últimos 7 dias</option>
+        <option value="30d">Últimos 30 dias</option>
+        <option value="90d">Últimos 90 dias</option>
+        <option value="all">Todo o período</option>
+      </select>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita bruta</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ financial.summary.grossRevenue | number:'1.2-2' }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Comissão plataforma</p><p class="text-2xl font-bold text-gray-700">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita líquida</p><p class="text-2xl font-bold text-gray-800">R$ {{ financial.summary.netRevenue | number:'1.2-2' }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos pagos</p><p class="text-2xl font-bold text-[#F74838]">{{ financial.summary.orderCount }}</p></div>
+    </div>
+
+    <app-metrics-bar-chart class="block mb-8" title="Receita diária" [points]="revenueChart" />
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Receita por dia</h2>
+      <div class="space-y-2">
+        @for (day of financial.daily; track day.date) {
+          <div class="card-surface p-3 flex justify-between">
+            <span>{{ day.date | date:'dd/MM/yyyy' }}</span>
+            <span class="font-medium">R$ {{ day.revenue | number:'1.2-2' }} · {{ day.orders }} pedido(s)</span>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Sem vendas no período selecionado.</p>
+        }
+      </div>
+    </section>
+  }
+
+  @if (activeTab === 'alerts' && alerts) {
+    <div class="flex justify-end mb-4">
+      <button type="button" class="btn-brand px-4 py-2" (click)="scanAlerts()">Executar varredura e notificar</button>
+    </div>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Estoque baixo</h2>
+      <div class="space-y-3">
+        @for (item of alerts.lowStock; track item.id) {
+          <div class="card-surface p-4">
+            <p class="font-medium">{{ item.name }}</p>
+            <p class="text-sm text-amber-600">Restam {{ item.stock }} unidades</p>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum alerta de estoque.</p>
+        }
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Lotes próximos do vencimento</h2>
+      <div class="space-y-3">
+        @for (batch of alerts.expiringBatches; track batch.id) {
+          <div class="card-surface p-4">
+            <p class="font-medium">{{ batch.Medicine?.name }}</p>
+            <p class="text-sm text-amber-600">Lote {{ batch.batch_number }} · vence em {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum lote próximo do vencimento.</p>
+        }
+      </div>
+    </section>
+  }
+</div>
