@@ -89,7 +89,9 @@ Testes contra API real (opcional):
 E2E_API_URL=http://localhost:4000/api npx playwright test e2e/integration-api.spec.ts
 ```
 
-Painel da farmácia permite cadastrar produtos (respeitando limite do plano) e exportar CSV financeiro.
+Painel da farmácia permite cadastrar, editar e remover produtos (respeitando limite do plano) e exportar CSV financeiro.
+
+Deploy em produção: consulte [DEPLOY.md](./DEPLOY.md).
 
 ## Observações
 
