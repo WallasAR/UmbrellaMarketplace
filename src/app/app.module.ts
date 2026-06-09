@@ -36,6 +36,8 @@ import { PrescriptionUploadComponent } from './components/prescription-upload/pr
 import { ProductFiltersComponent } from './components/product-filters/product-filters.component';
 import { ProductReviewsComponent } from './components/product-reviews/product-reviews.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
+import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
+import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +69,9 @@ import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.comp
     PrescriptionUploadComponent,
     ProductFiltersComponent,
     ProductReviewsComponent,
-    SubscriptionsComponent
+    SubscriptionsComponent,
+    PharmacyPanelComponent,
+    CheckoutCancelComponent
   ],
   imports: [
     BrowserModule,

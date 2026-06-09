@@ -1,0 +1,157 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Painel da farmácia</h1>
+      <p class="text-gray-500">{{ dashboard?.pharmacy?.name || 'Carregando...' }}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-8">
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'orders'" (click)="setTab('orders')">Pedidos</button>
+    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'alerts'" (click)="setTab('alerts')">Alertas</button>
+  </div>
+
+  @if (activeTab === 'dashboard' && dashboard) {
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Produtos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.productCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Lotes</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.batchCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.orderCount }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
+    </div>
+
+    <div class="card-surface p-5 flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <p class="text-sm text-gray-500">Status operacional</p>
+        <p class="font-medium capitalize">{{ dashboard.pharmacy.operational_status }}</p>
+      </div>
+      <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)" aria-label="Status operacional">
+        <option value="open">Aberta</option>
+        <option value="closed">Fechada</option>
+        <option value="out_of_area">Fora da área</option>
+      </select>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4 mt-4">
+      <div class="card-surface p-5">
+        <p class="text-sm text-gray-500">Estoque baixo</p>
+        <p class="text-xl font-bold text-amber-600">{{ dashboard.lowStockCount }}</p>
+      </div>
+      <div class="card-surface p-5">
+        <p class="text-sm text-gray-500">Lotes vencendo</p>
+        <p class="text-xl font-bold text-amber-600">{{ dashboard.expiringSoonCount }}</p>
+      </div>
+    </div>
+  }
+
+  @if (activeTab === 'products') {
+    <div class="space-y-3">
+      @for (product of products; track product.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ product.name }}</p>
+            <p class="text-sm text-gray-500">{{ product.category || 'Sem categoria' }}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-medium">R$ {{ product.price | number:'1.2-2' }}</p>
+            <p class="text-sm" [class.text-amber-600]="product.stock <= 10" [class.text-gray-500]="product.stock > 10">
+              Estoque: {{ product.stock }}
+            </p>
+          </div>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum produto cadastrado nesta farmácia.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'batches') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Novo lote</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.medicine_id" aria-label="Medicamento">
+          @for (product of products; track product.id) {
+            <option [value]="product.id">{{ product.name }}</option>
+          }
+        </select>
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Número do lote" [(ngModel)]="batchForm.batch_number" aria-label="Número do lote">
+        <input type="number" min="1" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Quantidade" [(ngModel)]="batchForm.quantity" aria-label="Quantidade">
+        <input type="date" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.expiry_date" aria-label="Validade">
+      </div>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createBatch()">Cadastrar lote</button>
+    </div>
+
+    <div class="space-y-3">
+      @for (batch of batches; track batch.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ batch.Medicine?.name }}</p>
+            <p class="text-sm text-gray-500">Lote {{ batch.batch_number }} · Qtd: {{ batch.quantity }}</p>
+            <p class="text-sm text-gray-500">Validade: {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="deleteBatch(batch.id)">Remover</button>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum lote cadastrado.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'orders') {
+    <div class="space-y-3">
+      @for (order of orders; track order.sessionId) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">#{{ order.sessionId.slice(-8) }}</p>
+            <p class="text-sm text-gray-500">R$ {{ order.total_price | number:'1.2-2' }}</p>
+          </div>
+          <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="order.order_status" (change)="updateOrderStatus(order.sessionId, $event)" aria-label="Status do pedido">
+            <option value="pending_payment">Aguardando pagamento</option>
+            <option value="processing">Em processamento</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregue</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum pedido para esta farmácia.</p>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'alerts' && alerts) {
+    <div class="flex justify-end mb-4">
+      <button type="button" class="btn-brand px-4 py-2" (click)="scanAlerts()">Executar varredura e notificar</button>
+    </div>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Estoque baixo</h2>
+      <div class="space-y-3">
+        @for (item of alerts.lowStock; track item.id) {
+          <div class="card-surface p-4">
+            <p class="font-medium">{{ item.name }}</p>
+            <p class="text-sm text-amber-600">Restam {{ item.stock }} unidades</p>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum alerta de estoque.</p>
+        }
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Lotes próximos do vencimento</h2>
+      <div class="space-y-3">
+        @for (batch of alerts.expiringBatches; track batch.id) {
+          <div class="card-surface p-4">
+            <p class="font-medium">{{ batch.Medicine?.name }}</p>
+            <p class="text-sm text-amber-600">Lote {{ batch.batch_number }} · vence em {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum lote próximo do vencimento.</p>
+        }
+      </div>
+    </section>
+  }
+</div>

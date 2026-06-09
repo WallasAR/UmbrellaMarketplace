@@ -1,0 +1,13 @@
+.tab-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  background: #fff;
+}
+
+.tab-active {
+  background: #F74838;
+  border-color: #F74838;
+  color: #fff;
+}

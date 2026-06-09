@@ -14,8 +14,11 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
+import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
+import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { pharmacyGuard } from './guards/pharmacy.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -27,11 +30,13 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'pharmacy', component: PharmacyPanelComponent, canActivate: [authGuard, pharmacyGuard] },
   { path: 'auth', component: AuthComponent },
   { path: 'about', component: AboutComponent },
   { path: 'faqs', component: FaqsComponent },
   { path: 'category', component: CategoryComponent },
   { path: 'checkout/success', component: CheckoutSuccessComponent },
+  { path: 'checkout/cancel', component: CheckoutCancelComponent },
   { path: '**', component: NotFoundComponent }
 ];
 
