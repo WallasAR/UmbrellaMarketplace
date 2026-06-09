@@ -53,7 +53,9 @@ http://localhost:4200
 9. Perfil e receitas em `/profile`.
 10. Assinaturas em `/subscriptions`.
 11. Painel da farmácia em `/pharmacy` com usuário `pharmacist` ou `operator` vinculado a uma farmácia.
-12. Admin global em `/admin` com role `admin`.
+12. Cadastro de farmácia em `/pharmacy/register` (cliente autenticado).
+13. Painel da farmácia com aba Financeiro em `/pharmacy`.
+14. Admin global em `/admin` com role `admin` (aprovação de farmácias e GMV).
 
 ## Testes
 
@@ -75,6 +77,8 @@ E2E com Playwright:
 npx playwright install chromium
 npm run e2e
 ```
+
+CI (GitHub Actions) executa build, testes unitários e e2e no push/PR.
 
 ## Observações
 
