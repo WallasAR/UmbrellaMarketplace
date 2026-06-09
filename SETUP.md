@@ -89,6 +89,10 @@ E2E do painel admin (`e2e/admin-dashboard.spec.ts`) valida métricas da platafor
 
 E2E de perfil (`e2e/profile.spec.ts`) valida edição de dados, listagem de receitas e ativação de push notifications com APIs mockadas.
 
+E2E de assinaturas (`e2e/subscriptions.spec.ts`) valida listagem e cancelamento de planos recorrentes.
+
+E2E de checkout com cupom (`e2e/checkout-coupon.spec.ts`) valida aplicação de cupom e envio no pagamento.
+
 Testes contra API real (opcional):
 
 ```bash

@@ -113,6 +113,19 @@ export async function setupMarketplaceMocks(page: Page) {
       });
     }
 
+    if (method === 'POST' && path.endsWith('/coupons/validate')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'coupon-e2e',
+          code: 'UMBRELLA10',
+          discount_type: 'percentage',
+          discount_value: 10
+        })
+      });
+    }
+
     if (method === 'POST' && path.endsWith('/checkout/cart')) {
       return route.fulfill({
         status: 200,
