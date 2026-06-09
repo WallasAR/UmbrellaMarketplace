@@ -6,7 +6,14 @@
     <p class="text-gray-600 mb-6">{{ error }}</p>
     <button type="button" (click)="goHome()" class="btn-brand px-6 py-3">Voltar à loja</button>
   } @else if (status === 'paid') {
-  @if (isSubscription) {
+  @if (isPharmacyBilling) {
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Plano ativado!</h1>
+    <p class="text-gray-600 mb-6">A assinatura SaaS da sua farmácia foi confirmada.</p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a routerLink="/pharmacy" class="btn-brand px-6 py-3">Ir ao painel da farmácia</a>
+      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar</button>
+    </div>
+  } @else if (isSubscription) {
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Assinatura confirmada!</h1>
     <p class="text-gray-600 mb-6">Sua assinatura foi ativada com sucesso.</p>
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
