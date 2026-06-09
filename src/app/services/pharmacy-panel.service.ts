@@ -98,4 +98,16 @@ export class PharmacyPanelService {
   getFinancial(period = '30d'): Observable<any> {
     return this.http.get(`${this.base}/financial`, { params: { period } });
   }
+
+  getBilling(): Observable<any> {
+    return this.http.get(`${this.base}/billing`);
+  }
+
+  checkoutPlan(plan_tier: string): Observable<{ mode: string; url?: string; activated?: boolean }> {
+    return this.http.post<{ mode: string; url?: string; activated?: boolean }>(`${this.base}/billing/checkout`, { plan_tier });
+  }
+
+  openBillingPortal(): Observable<{ url: string }> {
+    return this.http.post<{ url: string }>(`${this.base}/billing/portal`, {});
+  }
 }

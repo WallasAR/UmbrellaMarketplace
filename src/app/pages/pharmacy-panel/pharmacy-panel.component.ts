@@ -16,9 +16,10 @@ import { ToastService } from '../../services/toast.service';
   styleUrl: './pharmacy-panel.component.css'
 })
 export class PharmacyPanelComponent implements OnInit {
-  activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' = 'dashboard';
+  activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' = 'dashboard';
   financial: any = null;
   financialPeriod = '30d';
+  billing: any = null;
   dashboard: PharmacyDashboard | null = null;
   products: PharmacyProduct[] = [];
   batches: MedicineBatch[] = [];
@@ -73,6 +74,31 @@ export class PharmacyPanelComponent implements OnInit {
     if (this.activeTab === 'financial') {
       this.pharmacyService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
     }
+
+    if (this.activeTab === 'billing') {
+      this.pharmacyService.getBilling().subscribe((data) => this.billing = data);
+    }
+  }
+
+  upgradePlan(planTier: string) {
+    this.pharmacyService.checkoutPlan(planTier).subscribe({
+      next: (res) => {
+        if (res.mode === 'checkout' && res.url) {
+          window.location.href = res.url;
+          return;
+        }
+        this.toast.show('Plano atualizado.', 'success');
+        this.reload();
+      }
+    });
+  }
+
+  manageBilling() {
+    this.pharmacyService.openBillingPortal().subscribe({
+      next: (res) => {
+        if (res.url) window.location.href = res.url;
+      }
+    });
   }
 
   changeFinancialPeriod(event: Event) {
