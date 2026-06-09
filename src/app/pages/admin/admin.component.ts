@@ -21,6 +21,7 @@ export class AdminComponent implements OnInit {
   pendingPharmacies: PendingPharmacy[] = [];
   financial: any = null;
   financialPeriod = '30d';
+  metrics: any = null;
 
   constructor(
     private adminService: AdminService,
@@ -39,11 +40,13 @@ export class AdminComponent implements OnInit {
     this.prescriptionService.listPending().subscribe((items) => this.prescriptions = items);
     this.adminService.getPendingPharmacies().subscribe((items) => this.pendingPharmacies = items);
     this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
   }
 
   changeFinancialPeriod(event: Event) {
     this.financialPeriod = (event.target as HTMLSelectElement).value;
     this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
   }
 
   approvePharmacy(id: string) {

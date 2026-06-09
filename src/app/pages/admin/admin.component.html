@@ -2,6 +2,15 @@
   <h1 class="text-3xl font-bold text-gray-800 mb-2">Painel administrativo</h1>
   <p class="text-gray-500 mb-8">Gestão de pedidos, usuários e receitas.</p>
 
+  @if (metrics) {
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Conversão checkout</p><p class="text-2xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Carrinhos abandonados</p><p class="text-2xl font-bold text-gray-800">{{ metrics.abandonedCarts }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Checkouts / Pagos</p><p class="text-2xl font-bold text-gray-800">{{ metrics.checkoutSessions }} / {{ metrics.paidSessions }}</p></div>
+      <div class="card-surface p-5"><p class="text-sm text-gray-500">Assinaturas ativas</p><p class="text-2xl font-bold text-[#F74838]">{{ metrics.activeSubscriptions }}</p></div>
+    </div>
+  }
+
   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div class="card-surface p-5"><p class="text-sm text-gray-500">Usuários</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.users || 0 }}</p></div>
     <div class="card-surface p-5"><p class="text-sm text-gray-500">Produtos</p><p class="text-2xl font-bold text-[#F74838]">{{ stats.products || 0 }}</p></div>
