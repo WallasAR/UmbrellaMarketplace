@@ -1,0 +1,16 @@
+@if (points.length) {
+<section class="card-surface p-5">
+  <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ title }}</h3>
+  <div class="chart-bars">
+    @for (point of points; track point.label) {
+      <div class="chart-col">
+        <div class="chart-bar-wrap">
+          <div class="chart-bar" [style.height]="barHeight(point.value)"></div>
+        </div>
+        <p class="chart-value">{{ valuePrefix }}{{ point.value | number:'1.0-0' }}</p>
+        <p class="chart-label">{{ point.label }}</p>
+      </div>
+    }
+  </div>
+</section>
+}

@@ -8,6 +8,7 @@ import {
 } from '../../services/pharmacy-panel.service';
 import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
+import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -19,6 +20,7 @@ export class PharmacyPanelComponent implements OnInit {
   activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' = 'dashboard';
   financial: any = null;
   financialPeriod = '30d';
+  revenueChart: ChartPoint[] = [];
   billing: any = null;
   dashboard: PharmacyDashboard | null = null;
   metrics: any = null;
@@ -90,7 +92,13 @@ export class PharmacyPanelComponent implements OnInit {
     }
 
     if (this.activeTab === 'financial') {
-      this.pharmacyService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+      this.pharmacyService.getFinancial(this.financialPeriod).subscribe((data) => {
+        this.financial = data;
+        this.revenueChart = (data?.daily || []).map((d: { date: string; revenue: number }) => ({
+          label: d.date?.slice(5).replace('-', '/') || '',
+          value: d.revenue
+        }));
+      });
     }
 
     if (this.activeTab === 'billing') {

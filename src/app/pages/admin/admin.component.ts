@@ -6,6 +6,7 @@ import { UserProfile } from '../../models/user.model';
 import { Prescription } from '../../services/prescription.service';
 import { ToastService } from '../../services/toast.service';
 import { PendingPharmacy } from '../../services/onboarding.service';
+import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
 @Component({
   selector: 'app-admin',
@@ -22,6 +23,7 @@ export class AdminComponent implements OnInit {
   financial: any = null;
   financialPeriod = '30d';
   metrics: any = null;
+  revenueChart: ChartPoint[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -39,14 +41,27 @@ export class AdminComponent implements OnInit {
     this.adminService.getUsers().subscribe((users) => this.users = users);
     this.prescriptionService.listPending().subscribe((items) => this.prescriptions = items);
     this.adminService.getPendingPharmacies().subscribe((items) => this.pendingPharmacies = items);
-    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => {
+      this.financial = data;
+      this.revenueChart = this.toChartPoints(data?.daily);
+    });
     this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
   }
 
   changeFinancialPeriod(event: Event) {
     this.financialPeriod = (event.target as HTMLSelectElement).value;
-    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => this.financial = data);
+    this.adminService.getFinancial(this.financialPeriod).subscribe((data) => {
+      this.financial = data;
+      this.revenueChart = this.toChartPoints(data?.daily);
+    });
     this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
+  }
+
+  private toChartPoints(daily: Array<{ date: string; revenue: number }> = []) {
+    return daily.map((d) => ({
+      label: d.date?.slice(5).replace('-', '/') || '',
+      value: d.revenue
+    }));
   }
 
   approvePharmacy(id: string) {

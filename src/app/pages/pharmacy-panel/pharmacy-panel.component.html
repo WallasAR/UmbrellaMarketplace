@@ -242,6 +242,8 @@
       <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos pagos</p><p class="text-2xl font-bold text-[#F74838]">{{ financial.summary.orderCount }}</p></div>
     </div>
 
+    <app-metrics-bar-chart class="block mb-8" title="Receita diária" [points]="revenueChart" />
+
     <section>
       <h2 class="text-xl font-semibold mb-4">Receita por dia</h2>
       <div class="space-y-2">

@@ -36,6 +36,7 @@ import { PrescriptionUploadComponent } from './components/prescription-upload/pr
 import { ProductFiltersComponent } from './components/product-filters/product-filters.component';
 import { ProductReviewsComponent } from './components/product-reviews/product-reviews.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
+import { MetricsBarChartComponent } from './components/metrics-bar-chart/metrics-bar-chart.component';
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
 import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
@@ -73,7 +74,8 @@ import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel
     SubscriptionsComponent,
     PharmacyPanelComponent,
     PharmacyRegisterComponent,
-    CheckoutCancelComponent
+    CheckoutCancelComponent,
+    MetricsBarChartComponent
   ],
   imports: [
     BrowserModule,

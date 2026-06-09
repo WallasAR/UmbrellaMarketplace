@@ -37,6 +37,8 @@
         <div class="card-surface p-5"><p class="text-sm text-gray-500">Comissões</p><p class="text-2xl font-bold text-gray-700">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
         <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ financial.summary.orderCount }}</p></div>
       </div>
+      <app-metrics-bar-chart class="block mb-4" title="Receita diária (GMV)" [points]="revenueChart" />
+
       @if (financial.pharmacies?.length) {
         <div class="space-y-2">
           @for (p of financial.pharmacies; track p.pharmacyId) {
