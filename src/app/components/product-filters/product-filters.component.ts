@@ -12,7 +12,7 @@ export class ProductFiltersComponent implements OnInit {
   filtersChange = output<ProductFilters>();
 
   categories: string[] = [];
-  filters: ProductFilters = { sort: 'name_asc', stock: true };
+  filters: ProductFilters = { sort: 'name_asc' };
 
   constructor(private productService: ProductService) {}
 

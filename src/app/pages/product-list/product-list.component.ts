@@ -13,7 +13,7 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   loading = true;
   error = false;
-  filters: ProductFilters = { stock: true, sort: 'name_asc' };
+  filters: ProductFilters = { sort: 'name_asc' };
 
   constructor(
     private productService: ProductService,
