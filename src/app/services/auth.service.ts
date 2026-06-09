@@ -13,6 +13,7 @@ interface JwtPayload {
   id: string;
   email: string;
   role?: string;
+  pharmacy_id?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,8 +21,14 @@ export class AuthService {
   private readonly tokenKey = 'token';
   isAuthenticated = signal(!!localStorage.getItem(this.tokenKey));
   userRole = signal(this.readRoleFromToken());
+  pharmacyId = signal(this.readPharmacyFromToken());
 
-  isAdmin = computed(() => ['admin', 'operator', 'pharmacist'].includes(this.userRole()));
+  isAdmin = computed(() => this.userRole() === 'admin');
+  isPharmacyStaff = computed(() => {
+    const role = this.userRole();
+    const hasPharmacy = Boolean(this.pharmacyId());
+    return hasPharmacy && ['admin', 'operator', 'pharmacist'].includes(role);
+  });
 
   constructor(
     private http: HttpClient,
@@ -44,6 +51,7 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     this.isAuthenticated.set(false);
     this.userRole.set('guest');
+    this.pharmacyId.set(null);
     this.router.navigate(['/home']);
   }
 
@@ -59,6 +67,17 @@ export class AuthService {
     localStorage.setItem(this.tokenKey, token);
     this.isAuthenticated.set(true);
     this.userRole.set(this.readRoleFromToken(token));
+    this.pharmacyId.set(this.readPharmacyFromToken(token));
+  }
+
+  private readPharmacyFromToken(token = this.getToken()): string | null {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
+      return payload.pharmacy_id || null;
+    } catch {
+      return null;
+    }
   }
 
   private readRoleFromToken(token = this.getToken()): string {

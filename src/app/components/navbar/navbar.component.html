@@ -65,6 +65,9 @@
           <a routerLink="/profile" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meu perfil</a>
           <a routerLink="/orders" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Meus pedidos</a>
           <a routerLink="/subscriptions" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Assinaturas</a>
+          @if (authService.isPharmacyStaff()) {
+            <a routerLink="/pharmacy" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Painel da farmácia</a>
+          }
           @if (authService.isAdmin()) {
             <a routerLink="/admin" (click)="closeDropdowns()" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Painel admin</a>
           }
@@ -91,6 +94,9 @@
     @if (authService.isAuthenticated()) {
       <a routerLink="/orders" (click)="closeDropdowns()" class="text-gray-600 py-2">Meus pedidos</a>
       <a routerLink="/profile" (click)="closeDropdowns()" class="text-gray-600 py-2">Perfil</a>
+      @if (authService.isPharmacyStaff()) {
+        <a routerLink="/pharmacy" (click)="closeDropdowns()" class="text-gray-600 py-2">Farmácia</a>
+      }
       @if (authService.isAdmin()) {
         <a routerLink="/admin" (click)="closeDropdowns()" class="text-gray-600 py-2">Admin</a>
       }
