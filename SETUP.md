@@ -93,6 +93,10 @@ E2E de assinaturas (`e2e/subscriptions.spec.ts`) valida listagem e cancelamento 
 
 E2E de checkout com cupom (`e2e/checkout-coupon.spec.ts`) valida aplicação de cupom e envio no pagamento.
 
+E2E de onboarding (`e2e/pharmacy-onboarding.spec.ts`) valida seleção de plano SaaS e envio do cadastro de farmácia.
+
+E2E de receita (`e2e/prescription-upload.spec.ts`) valida upload de prescrição em produto controlado.
+
 Testes contra API real (opcional):
 
 ```bash
