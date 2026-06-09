@@ -21,6 +21,7 @@ export class PharmacyPanelComponent implements OnInit {
   financial: any = null;
   financialPeriod = '30d';
   revenueChart: ChartPoint[] = [];
+  conversionChart: ChartPoint[] = [];
   billing: any = null;
   dashboard: PharmacyDashboard | null = null;
   metrics: any = null;
@@ -67,7 +68,10 @@ export class PharmacyPanelComponent implements OnInit {
     this.pharmacyService.getDashboard().subscribe((data) => this.dashboard = data);
 
     if (this.activeTab === 'dashboard') {
-      this.pharmacyService.getMetrics('30d').subscribe((data) => this.metrics = data);
+      this.pharmacyService.getMetrics('30d').subscribe((data) => {
+        this.metrics = data;
+        this.conversionChart = this.toConversionChartPoints(data?.dailyConversion);
+      });
     }
 
     if (this.activeTab === 'products' || this.activeTab === 'batches') {
@@ -185,6 +189,15 @@ export class PharmacyPanelComponent implements OnInit {
     this.pharmacyService.exportFinancial(this.financialPeriod).subscribe({
       next: (blob) => this.downloadCsv(blob, `financeiro-${this.financialPeriod}.csv`)
     });
+  }
+
+  private toConversionChartPoints(
+    daily: Array<{ date: string; conversionRate: number }> = []
+  ) {
+    return daily.map((d) => ({
+      label: d.date?.slice(5).replace('-', '/') || '',
+      value: d.conversionRate
+    }));
   }
 
   private downloadCsv(blob: Blob, filename: string) {

@@ -24,6 +24,7 @@ export class AdminComponent implements OnInit {
   financialPeriod = '30d';
   metrics: any = null;
   revenueChart: ChartPoint[] = [];
+  conversionChart: ChartPoint[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -45,7 +46,10 @@ export class AdminComponent implements OnInit {
       this.financial = data;
       this.revenueChart = this.toChartPoints(data?.daily);
     });
-    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
+    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => {
+      this.metrics = data;
+      this.conversionChart = this.toConversionChartPoints(data?.dailyConversion);
+    });
   }
 
   changeFinancialPeriod(event: Event) {
@@ -54,13 +58,25 @@ export class AdminComponent implements OnInit {
       this.financial = data;
       this.revenueChart = this.toChartPoints(data?.daily);
     });
-    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => this.metrics = data);
+    this.adminService.getMetrics(this.financialPeriod).subscribe((data) => {
+      this.metrics = data;
+      this.conversionChart = this.toConversionChartPoints(data?.dailyConversion);
+    });
   }
 
   private toChartPoints(daily: Array<{ date: string; revenue: number }> = []) {
     return daily.map((d) => ({
       label: d.date?.slice(5).replace('-', '/') || '',
       value: d.revenue
+    }));
+  }
+
+  private toConversionChartPoints(
+    daily: Array<{ date: string; conversionRate: number }> = []
+  ) {
+    return daily.map((d) => ({
+      label: d.date?.slice(5).replace('-', '/') || '',
+      value: d.conversionRate
     }));
   }
 

@@ -30,26 +30,15 @@ Para CI/CD, use substituição de arquivo ou variável de build do provedor apon
 2. Framework preset: **Angular**.
 3. Build command: `npm run build`
 4. Output directory: `dist/umbrella-marketplace-web/browser`
-5. Adicione rewrite SPA em `vercel.json` (se necessário):
-
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
+5. O arquivo `vercel.json` na raiz já inclui rewrite SPA.
 
 ## Netlify
 
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist/umbrella-marketplace-web/browser"
+O arquivo `netlify.toml` na raiz já define build, publish e redirect SPA.
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
+## Push notifications
+
+Requer HTTPS em produção. Configure VAPID no backend e ative em **Meu perfil** no frontend. O service worker está em `public/sw.js`.
 
 ## Variáveis no backend após deploy do frontend
 
