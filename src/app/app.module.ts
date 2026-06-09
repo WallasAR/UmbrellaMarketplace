@@ -20,6 +20,10 @@ import { authInterceptor } from './interceptors/auth.interceptor';
 import { AuthComponent } from './pages/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ImgFallbackDirective } from './directives/img-fallback.directive';
+import { AboutComponent } from './pages/about/about.component';
+import { FaqsComponent } from './pages/faqs/faqs.component';
+import { CategoryComponent } from './pages/category/category.component';
+import { CheckoutSuccessComponent } from './pages/checkout-success/checkout-success.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +41,11 @@ import { ImgFallbackDirective } from './directives/img-fallback.directive';
     ProductDetailsSkeletonComponent,
     CartComponent,
     AuthComponent,
-    ImgFallbackDirective
+    ImgFallbackDirective,
+    AboutComponent,
+    FaqsComponent,
+    CategoryComponent,
+    CheckoutSuccessComponent
   ],
   imports: [
     BrowserModule,
