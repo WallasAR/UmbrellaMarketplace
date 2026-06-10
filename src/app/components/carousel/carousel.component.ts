@@ -1,9 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { InstitutionalBanner, BannerService } from '../../services/banner.service';
 
 interface Slide {
   title: string;
   subtitle: string;
   gradient: string;
+  linkUrl?: string;
+  imageUrl?: string;
 }
 
 @Component({
@@ -15,16 +18,37 @@ interface Slide {
 export class CarouselComponent implements OnInit, OnDestroy {
   slides: Slide[] = [
     { title: 'Medicamentos com até 40% OFF', subtitle: 'Genéricos de qualidade com preços acessíveis', gradient: 'from-[#F74838] to-[#ff7a6f]' },
-    { title: 'Entrega rápida e segura', subtitle: 'Receba seus medicamentos no conforto de casa', gradient: 'from-[#e03d2f] to-[#F74838]' },
-    { title: 'Cuidado com sua saúde', subtitle: 'Produtos selecionados com qualidade garantida', gradient: 'from-[#c93428] to-[#F74838]' },
-    { title: 'Dermocosméticos em destaque', subtitle: 'Cuidados com a pele das melhores marcas', gradient: 'from-[#F74838] to-[#ff9a92]' }
+    { title: 'Entrega rápida e segura', subtitle: 'Receba seus medicamentos no conforto de casa', gradient: 'from-[#e03d2f] to-[#F74838]' }
   ];
 
   currentIndex = 0;
   autoSlideInterval: ReturnType<typeof setInterval> | null = null;
 
-  ngOnInit() { this.startAutoSlide(); }
+  constructor(private bannerService: BannerService) {}
+
+  ngOnInit() {
+    this.bannerService.listActive().subscribe({
+      next: (banners) => {
+        if (banners?.length) {
+          this.slides = banners.map((banner) => this.toSlide(banner));
+        }
+        this.startAutoSlide();
+      },
+      error: () => this.startAutoSlide()
+    });
+  }
+
   ngOnDestroy() { this.pauseAutoSlide(); }
+
+  private toSlide(banner: InstitutionalBanner): Slide {
+    return {
+      title: banner.title,
+      subtitle: banner.subtitle || '',
+      gradient: banner.gradient || 'from-[#F74838] to-[#ff7a6f]',
+      linkUrl: banner.link_url,
+      imageUrl: banner.image_url
+    };
+  }
 
   startAutoSlide() {
     this.pauseAutoSlide();
