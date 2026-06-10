@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../../services/admin.service';
+import { AdminService, AuditLogEntry } from '../../services/admin.service';
 import { PrescriptionService } from '../../services/prescription.service';
 import { Order } from '../../models/order.model';
 import { UserProfile } from '../../models/user.model';
@@ -27,6 +27,7 @@ export class AdminComponent implements OnInit {
   metrics: any = null;
   revenueChart: ChartPoint[] = [];
   conversionChart: ChartPoint[] = [];
+  auditLogs: AuditLogEntry[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -51,6 +52,10 @@ export class AdminComponent implements OnInit {
     this.adminService.getMetrics(this.financialPeriod).subscribe((data) => {
       this.metrics = data;
       this.conversionChart = this.toConversionChartPoints(data?.dailyConversion);
+    });
+    this.adminService.getAuditLogs(50).subscribe({
+      next: (logs) => this.auditLogs = logs ?? [],
+      error: () => this.auditLogs = []
     });
   }
 

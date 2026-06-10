@@ -91,4 +91,20 @@ export class AdminService {
   reviewKycDocument(id: string, status: 'approved' | 'rejected', notes?: string) {
     return this.http.patch(`${environment.apiUrl}/admin/kyc/${id}/review`, { status, notes });
   }
+
+  getAuditLogs(limit = 50, entityType?: string) {
+    let params: Record<string, string> = { limit: String(limit) };
+    if (entityType) params['entity_type'] = entityType;
+    return this.http.get<AuditLogEntry[]>(`${environment.apiUrl}/admin/audit-logs`, { params });
+  }
+}
+
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  payload?: Record<string, unknown>;
+  created_at: string;
+  User?: { email?: string; name?: string };
 }
