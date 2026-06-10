@@ -59,16 +59,23 @@
       <div class="border-t border-gray-200 p-3 bg-white">
         @if (scanMode) {
           <textarea rows="3" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm mb-2" [(ngModel)]="prescriptionText" placeholder="Cole aqui o texto da receita..."></textarea>
+          <label class="block text-xs text-gray-600 mb-2">
+            Ou envie foto da receita
+            <input type="file" accept="image/*" class="mt-1 block w-full text-xs" (change)="onPrescriptionImageSelected($event)" />
+          </label>
+          @if (prescriptionImage) {
+            <p class="text-xs text-green-700 mb-2">Imagem carregada — pronta para análise.</p>
+          }
           <div class="flex gap-2">
             <button type="button" class="btn-brand flex-1 py-2 text-sm" [disabled]="loading" (click)="scanPrescription()">Analisar</button>
-            <button type="button" class="px-3 py-2 text-sm border rounded-lg" (click)="scanMode = false">Voltar</button>
+            <button type="button" class="px-3 py-2 text-sm border rounded-lg" (click)="scanMode = false; prescriptionImage = undefined">Voltar</button>
           </div>
         } @else {
           <div class="flex gap-2 mb-2">
             <input class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm" [(ngModel)]="input" placeholder="Ex: tenho febre" (keyup.enter)="send()" aria-label="Mensagem para o copilot" />
             <button type="button" class="btn-brand px-3 py-2 text-sm" [disabled]="loading" (click)="send()">Enviar</button>
           </div>
-          <button type="button" class="text-xs text-[#F74838] hover:underline" (click)="scanMode = true">Escanear receita (texto)</button>
+          <button type="button" class="text-xs text-[#F74838] hover:underline" (click)="scanMode = true">Escanear receita (texto ou foto)</button>
         }
       </div>
     </div>

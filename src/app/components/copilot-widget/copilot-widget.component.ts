@@ -26,6 +26,7 @@ export class CopilotWidgetComponent implements OnInit {
   input = '';
   scanMode = false;
   prescriptionText = '';
+  prescriptionImage?: string;
   sessionId?: string;
   sessions: CopilotSession[] = [];
   lastScanProducts: Product[] = [];
@@ -114,26 +115,44 @@ export class CopilotWidgetComponent implements OnInit {
   }
 
   scanPrescription() {
-    if (!this.prescriptionText.trim() || this.loading) return;
+    if ((!this.prescriptionText.trim() && !this.prescriptionImage) || this.loading) return;
     if (!this.requireAuth()) return;
 
     this.loading = true;
-    this.messages.push({ role: 'user', text: 'Escanear receita (texto colado)' });
+    this.messages.push({
+      role: 'user',
+      text: this.prescriptionImage ? 'Escanear receita (imagem)' : 'Escanear receita (texto colado)'
+    });
 
     this.copilotService.scanPrescription({
-      text: this.prescriptionText.trim(),
+      text: this.prescriptionText.trim() || undefined,
+      file_data: this.prescriptionImage,
       session_id: this.sessionId
     }).subscribe({
       next: (res) => {
         this.scanMode = false;
         this.prescriptionText = '';
+        this.prescriptionImage = undefined;
         this.handleResponse(res, true);
       },
       error: () => {
         this.loading = false;
-        this.messages.push({ role: 'assistant', text: 'Não foi possível ler a receita. Cole o texto dos medicamentos.' });
+        this.messages.push({ role: 'assistant', text: 'Não foi possível ler a receita. Cole o texto ou envie uma foto.' });
       }
     });
+  }
+
+  onPrescriptionImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      this.prescriptionImage = result.includes(',') ? result.split(',')[1] : result;
+    };
+    reader.readAsDataURL(file);
   }
 
   addScanToCart(products?: Product[]) {
