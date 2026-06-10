@@ -26,7 +26,9 @@ export const environment = {
 };
 ```
 
-Em produção, mantenha `apiUrl` apontando para a API publicada.
+Em produção, mantenha `apiUrl` apontando para a API publicada (ex.: `https://sua-api.onrender.com/api`).
+
+**Segredos ficam só no backend.** Não configure `CRON_SECRET`, Stripe, OpenAI ou couriers no Angular — apenas `apiUrl` nos arquivos de ambiente.
 
 ## Rodando localmente
 

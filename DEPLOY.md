@@ -24,6 +24,8 @@ export const environment = {
 
 Para CI/CD, use substituição de arquivo ou variável de build do provedor apontando para a API publicada.
 
+Variáveis como `CRON_SECRET`, `OPENAI_API_KEY`, `STRIPE_*` e integrações Uber/99 são configuradas **apenas no backend** (Render Web Service). Consulte `DEPLOY.md` no repositório `UmbrellaMarket-Backend`.
+
 ## Vercel
 
 1. Importe o repositório `UmbrellaMarketplace`.
