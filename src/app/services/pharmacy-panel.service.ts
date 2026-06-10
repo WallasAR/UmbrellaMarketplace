@@ -90,6 +90,19 @@ export interface SponsoredBoost {
   Medicine?: { id: number; name: string; price: number };
 }
 
+export interface PharmacyStaffMember {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  permissions: string[];
+}
+
+export interface PharmacyTeamResponse {
+  permissions: string[];
+  staff: PharmacyStaffMember[];
+}
+
 export interface PriceBenchmark {
   product: { id: number; name: string; my_price: number };
   market_average: number;
@@ -273,5 +286,21 @@ export class PharmacyPanelService {
       reader.onerror = () => observer.error(reader.error);
       reader.readAsDataURL(file);
     });
+  }
+
+  getTeam(): Observable<PharmacyTeamResponse> {
+    return this.http.get<PharmacyTeamResponse>(`${this.base}/team`);
+  }
+
+  addTeamMember(email: string, role: 'operator' | 'pharmacist'): Observable<PharmacyStaffMember> {
+    return this.http.post<PharmacyStaffMember>(`${this.base}/team`, { email, role });
+  }
+
+  updateTeamPermissions(userId: string, permissions: string[]): Observable<PharmacyStaffMember> {
+    return this.http.put<PharmacyStaffMember>(`${this.base}/team/${userId}/permissions`, { permissions });
+  }
+
+  removeTeamMember(userId: string): Observable<{ removed: boolean }> {
+    return this.http.delete<{ removed: boolean }>(`${this.base}/team/${userId}`);
   }
 }

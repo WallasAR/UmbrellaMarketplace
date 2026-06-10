@@ -7,6 +7,8 @@ import {
   PharmacyPanelService,
   PharmacyProduct,
   PriceBenchmark,
+  PharmacyStaffMember,
+  PharmacyTeamResponse,
   SponsoredBoost,
   BoostMetrics
 } from '../../services/pharmacy-panel.service';
@@ -16,7 +18,7 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts';
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts' | 'team';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -74,6 +76,11 @@ export class PharmacyPanelComponent implements OnInit {
   boosts: SponsoredBoost[] = [];
   boostMetrics: BoostMetrics | null = null;
   boostForm = { medicine_id: 0, days: 7, priority: 1 };
+  teamStaff: PharmacyStaffMember[] = [];
+  teamPermissions: string[] = [];
+  teamForm = { email: '', role: 'operator' as 'operator' | 'pharmacist' };
+  editingPermissionsUserId: string | null = null;
+  editingPermissions: string[] = [];
 
   constructor(
     private pharmacyService: PharmacyPanelService,
@@ -95,7 +102,7 @@ export class PharmacyPanelComponent implements OnInit {
     }
 
     if (role === 'pharmacist') {
-      if (tab === 'billing') {
+      if (tab === 'billing' || tab === 'team') {
         return this.authService.isPharmacyOwner();
       }
       return true;
@@ -175,6 +182,19 @@ export class PharmacyPanelComponent implements OnInit {
       this.pharmacyService.getBilling().subscribe((data) => this.billing = data);
       this.pharmacyService.getConnectStatus().subscribe((data) => this.connectStatus = data);
       this.pharmacyService.listKycDocuments().subscribe((docs) => this.kycDocuments = docs);
+    }
+
+    if (this.activeTab === 'team') {
+      this.pharmacyService.getTeam().subscribe({
+        next: (data: PharmacyTeamResponse) => {
+          this.teamStaff = data.staff ?? [];
+          this.teamPermissions = data.permissions ?? [];
+        },
+        error: () => {
+          this.teamStaff = [];
+          this.teamPermissions = [];
+        }
+      });
     }
   }
 
@@ -447,5 +467,66 @@ export class PharmacyPanelComponent implements OnInit {
       above_market: 'Acima da média'
     };
     return map[position] || position;
+  }
+
+  permissionLabel(key: string): string {
+    const labels: Record<string, string> = {
+      dashboard: 'Resumo',
+      orders: 'Pedidos',
+      products: 'Estoque',
+      batches: 'Lotes',
+      alerts: 'Alertas',
+      financial: 'Financeiro',
+      prescriptions: 'Receitas',
+      status: 'Status operacional',
+      billing: 'Plano SaaS',
+      team: 'Equipe'
+    };
+    return labels[key] || key;
+  }
+
+  addTeamMember() {
+    if (!this.teamForm.email.trim()) return;
+    this.pharmacyService.addTeamMember(this.teamForm.email.trim(), this.teamForm.role).subscribe({
+      next: () => {
+        this.toast.show('Membro adicionado à equipe.', 'success');
+        this.teamForm = { email: '', role: 'operator' };
+        this.reload();
+      }
+    });
+  }
+
+  startEditPermissions(member: PharmacyStaffMember) {
+    this.editingPermissionsUserId = member.id;
+    this.editingPermissions = [...member.permissions];
+  }
+
+  toggleEditingPermission(permission: string) {
+    if (this.editingPermissions.includes(permission)) {
+      this.editingPermissions = this.editingPermissions.filter((p) => p !== permission);
+    } else {
+      this.editingPermissions = [...this.editingPermissions, permission];
+    }
+  }
+
+  saveTeamPermissions() {
+    if (!this.editingPermissionsUserId || !this.editingPermissions.length) return;
+    this.pharmacyService.updateTeamPermissions(this.editingPermissionsUserId, this.editingPermissions).subscribe({
+      next: () => {
+        this.toast.show('Permissões atualizadas.', 'success');
+        this.editingPermissionsUserId = null;
+        this.reload();
+      }
+    });
+  }
+
+  removeTeamMember(userId: string) {
+    if (!confirm('Remover este membro da equipe?')) return;
+    this.pharmacyService.removeTeamMember(userId).subscribe({
+      next: () => {
+        this.toast.show('Membro removido.', 'success');
+        this.reload();
+      }
+    });
   }
 }

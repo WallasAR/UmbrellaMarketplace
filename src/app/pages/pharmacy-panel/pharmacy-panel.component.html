@@ -34,6 +34,9 @@
     @if (canShowTab('billing')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'billing'" (click)="setTab('billing')">Plano SaaS</button>
     }
+    @if (canShowTab('team')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'team'" (click)="setTab('team')">Equipe</button>
+    }
   </div>
 
   @if (activeTab === 'dashboard' && dashboard) {
@@ -426,6 +429,63 @@
         }
       </div>
     </div>
+  }
+
+  @if (activeTab === 'team') {
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Equipe da farmácia</h2>
+      <p class="text-sm text-gray-500 mb-4">Convide operadores e farmacêuticos e defina permissões granulares por módulo.</p>
+
+      <div class="card-surface p-4 mb-6 grid sm:grid-cols-3 gap-3">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="E-mail do usuário" [(ngModel)]="teamForm.email" />
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="teamForm.role" aria-label="Função do membro">
+          <option value="operator">Operador</option>
+          <option value="pharmacist">Farmacêutico</option>
+        </select>
+        <button type="button" class="btn-brand px-4 py-2" (click)="addTeamMember()">Adicionar membro</button>
+      </div>
+
+      <div class="space-y-3">
+        @for (member of teamStaff; track member.id) {
+          <div class="card-surface p-4">
+            <div class="flex flex-wrap justify-between gap-3 items-start mb-3">
+              <div>
+                <p class="font-medium">{{ member.name || member.email }}</p>
+                <p class="text-sm text-gray-500">{{ member.email }} · {{ member.role === 'operator' ? 'Operador' : 'Farmacêutico' }}</p>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" class="px-3 py-1 text-sm border rounded-lg" (click)="startEditPermissions(member)">Permissões</button>
+                <button type="button" class="px-3 py-1 text-sm text-[#F74838] border rounded-lg" (click)="removeTeamMember(member.id)">Remover</button>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              @for (perm of member.permissions; track perm) {
+                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ permissionLabel(perm) }}</span>
+              }
+            </div>
+            @if (editingPermissionsUserId === member.id) {
+              <div class="mt-4 pt-4 border-t border-gray-100">
+                <p class="text-sm font-medium mb-2">Editar permissões</p>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
+                  @for (perm of teamPermissions; track perm) {
+                    <label class="flex items-center gap-2 text-sm">
+                      <input type="checkbox" [checked]="editingPermissions.includes(perm)" (change)="toggleEditingPermission(perm)" />
+                      {{ permissionLabel(perm) }}
+                    </label>
+                  }
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" class="btn-brand px-3 py-1.5 text-sm" (click)="saveTeamPermissions()">Salvar</button>
+                  <button type="button" class="px-3 py-1.5 text-sm border rounded-lg" (click)="editingPermissionsUserId = null">Cancelar</button>
+                </div>
+              </div>
+            }
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum membro na equipe além do proprietário.</p>
+        }
+      </div>
+    </section>
   }
 
   @if (activeTab === 'financial' && financial) {
