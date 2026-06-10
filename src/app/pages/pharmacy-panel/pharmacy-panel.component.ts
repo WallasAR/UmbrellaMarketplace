@@ -51,9 +51,16 @@ export class PharmacyPanelComponent implements OnInit {
     stock: 0,
     category: '',
     description: '',
+    active_ingredient: '',
+    laboratory: '',
+    medicine_type: 'reference' as 'reference' | 'generic',
+    dosage: '',
     requires_prescription: false,
     allows_subscription: false
   };
+
+  connectStatus: any = null;
+  kycDocuments: any[] = [];
 
   constructor(
     private pharmacyService: PharmacyPanelService,
@@ -141,7 +148,30 @@ export class PharmacyPanelComponent implements OnInit {
 
     if (this.activeTab === 'billing') {
       this.pharmacyService.getBilling().subscribe((data) => this.billing = data);
+      this.pharmacyService.getConnectStatus().subscribe((data) => this.connectStatus = data);
+      this.pharmacyService.listKycDocuments().subscribe((docs) => this.kycDocuments = docs);
     }
+  }
+
+  connectStripe() {
+    this.pharmacyService.startConnectOnboarding().subscribe({
+      next: (res) => {
+        if (res.url) window.location.href = res.url;
+      }
+    });
+  }
+
+  onKycFileSelected(event: Event, documentType: string) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.pharmacyService.uploadKycDocument(documentType, file).subscribe({
+      next: () => {
+        this.toast.show('Documento enviado para análise.', 'success');
+        this.reload();
+      }
+    });
   }
 
   reviewPrescription(id: string, status: 'approved' | 'rejected') {
@@ -221,6 +251,7 @@ export class PharmacyPanelComponent implements OnInit {
         this.toast.show('Produto cadastrado.', 'success');
         this.productForm = {
           name: '', price: 0, discount: 0, stock: 0, category: '', description: '',
+          active_ingredient: '', laboratory: '', medicine_type: 'reference', dosage: '',
           requires_prescription: false, allows_subscription: false
         };
         this.reload();

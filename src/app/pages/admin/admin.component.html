@@ -66,6 +66,7 @@
             <p class="text-sm text-gray-500">{{ pharmacy.owner?.email }}</p>
           </div>
           <div class="flex gap-2">
+            <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="viewKyc(pharmacy.id)">Ver KYC</button>
             <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="approvePharmacy(pharmacy.id)">Aprovar</button>
             <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="rejectPharmacy(pharmacy.id)">Recusar</button>
           </div>
@@ -75,6 +76,33 @@
       }
     </div>
   </section>
+
+  @if (kycReview) {
+    <section class="mb-8 card-surface p-5">
+      <h2 class="text-xl font-semibold mb-2">KYC — {{ kycReview.pharmacy?.name }}</h2>
+      <p class="text-sm text-gray-500 mb-4">Status: {{ kycReview.pharmacy?.kyc_status }}</p>
+      <div class="space-y-3">
+        @for (doc of kycReview.documents; track doc.id) {
+          <div class="flex flex-wrap justify-between gap-3 items-center border border-gray-100 rounded-lg p-3">
+            <div>
+              <p class="font-medium capitalize">{{ doc.document_type }}</p>
+              <a [href]="doc.file_url" target="_blank" rel="noopener" class="text-sm text-[#F74838] hover:underline">Ver documento</a>
+            </div>
+            @if (doc.status === 'pending') {
+              <div class="flex gap-2">
+                <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="reviewKycDocument(doc.id, 'approved')">Aprovar</button>
+                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="reviewKycDocument(doc.id, 'rejected')">Recusar</button>
+              </div>
+            } @else {
+              <span class="text-sm capitalize" [class.text-green-700]="doc.status === 'approved'" [class.text-red-700]="doc.status === 'rejected'">{{ doc.status }}</span>
+            }
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhum documento enviado.</p>
+        }
+      </div>
+    </section>
+  }
 
   <section class="mb-8">
     <h2 class="text-xl font-semibold mb-4">Pedidos</h2>

@@ -120,6 +120,13 @@
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="productForm.category" aria-label="Categoria">
         <input type="number" min="0" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Estoque inicial" [(ngModel)]="productForm.stock" aria-label="Estoque">
         <input type="number" min="0" max="100" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Desconto %" [(ngModel)]="productForm.discount" aria-label="Desconto">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Princípio ativo" [(ngModel)]="productForm.active_ingredient" aria-label="Princípio ativo">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Laboratório" [(ngModel)]="productForm.laboratory" aria-label="Laboratório">
+        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Dosagem" [(ngModel)]="productForm.dosage" aria-label="Dosagem">
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="productForm.medicine_type" aria-label="Tipo">
+          <option value="reference">Referência</option>
+          <option value="generic">Genérico</option>
+        </select>
         <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description" aria-label="Descrição">
       </div>
       <div class="flex flex-wrap gap-4 mt-3 text-sm">
@@ -268,6 +275,43 @@
     @if (billing.pharmacy.stripe_customer_id) {
       <button type="button" class="btn-brand px-4 py-2" (click)="manageBilling()">Gerenciar assinatura no Stripe</button>
     }
+
+    <div class="card-surface p-6 mt-6">
+      <h3 class="text-lg font-semibold mb-2">Stripe Connect (recebimentos)</h3>
+      @if (connectStatus?.connected) {
+        <p class="text-sm text-green-700">Conta conectada e pronta para receber pagamentos com split automático.</p>
+      } @else {
+        <p class="text-sm text-gray-600 mb-3">Conecte sua conta Stripe para receber os pagamentos dos pedidos com repasse automático da comissão da plataforma.</p>
+        <button type="button" class="btn-brand px-4 py-2" (click)="connectStripe()">Conectar conta Stripe</button>
+      }
+    </div>
+
+    <div class="card-surface p-6 mt-6">
+      <h3 class="text-lg font-semibold mb-2">Documentos KYC</h3>
+      <p class="text-sm text-gray-600 mb-4">Envie CNPJ, alvará sanitário e CRF para validação da farmácia.</p>
+      <div class="grid sm:grid-cols-3 gap-3 mb-4">
+        <label class="block text-sm">
+          <span class="font-medium">CNPJ</span>
+          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'cnpj')" accept=".pdf,.jpg,.jpeg,.png">
+        </label>
+        <label class="block text-sm">
+          <span class="font-medium">Alvará</span>
+          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'alvara')" accept=".pdf,.jpg,.jpeg,.png">
+        </label>
+        <label class="block text-sm">
+          <span class="font-medium">CRF</span>
+          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'crf')" accept=".pdf,.jpg,.jpeg,.png">
+        </label>
+      </div>
+      <div class="space-y-2">
+        @for (doc of kycDocuments; track doc.id) {
+          <div class="flex justify-between text-sm border border-gray-100 rounded-lg px-3 py-2">
+            <span class="capitalize">{{ doc.document_type }}</span>
+            <span class="capitalize" [class.text-green-700]="doc.status === 'approved'" [class.text-amber-700]="doc.status === 'pending'" [class.text-red-700]="doc.status === 'rejected'">{{ doc.status }}</span>
+          </div>
+        }
+      </div>
+    </div>
   }
 
   @if (activeTab === 'financial' && financial) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Product, ProductFilters } from '../models/product.model';
+import { Product, ProductAlternativesResponse, ProductFilters } from '../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -26,5 +26,9 @@ export class ProductService {
 
   getCategories(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/categories`);
+  }
+
+  getAlternatives(id: number | string): Observable<ProductAlternativesResponse> {
+    return this.http.get<ProductAlternativesResponse>(`${this.apiUrl}/${id}/alternatives`);
   }
 }

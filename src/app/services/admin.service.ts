@@ -83,4 +83,12 @@ export class AdminService {
       responseType: 'blob'
     });
   }
+
+  getPharmacyKyc(pharmacyId: string) {
+    return this.http.get<{ pharmacy: any; documents: any[] }>(`${environment.apiUrl}/admin/pharmacies/${pharmacyId}/kyc`);
+  }
+
+  reviewKycDocument(id: string, status: 'approved' | 'rejected', notes?: string) {
+    return this.http.patch(`${environment.apiUrl}/admin/kyc/${id}/review`, { status, notes });
+  }
 }

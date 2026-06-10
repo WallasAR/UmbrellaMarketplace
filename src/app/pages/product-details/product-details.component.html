@@ -70,6 +70,28 @@
 
         <p class="mt-4 text-xs text-gray-400">Uso sob orientação médica quando indicado.</p>
 
+        @if (alternatives?.alternatives?.length) {
+          <section class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <h2 class="text-lg font-semibold text-emerald-900 mb-2">Alternativas mais baratas</h2>
+            @if (alternatives!.savings_percent > 0) {
+              <p class="text-sm text-emerald-800 mb-3">
+                Economize até {{ alternatives!.savings_percent }}% com genéricos equivalentes na região.
+              </p>
+            }
+            <div class="space-y-2">
+              @for (alt of alternatives!.alternatives.slice(0, 3); track alt.id) {
+                <a [routerLink]="['/product', alt.id]" class="flex justify-between items-center rounded-lg bg-white px-3 py-2 text-sm hover:border-[#F74838] border border-transparent">
+                  <span>
+                    <span class="font-medium text-gray-800">{{ alt.name }}</span>
+                    <span class="block text-xs text-gray-500">{{ alt.Pharmacy?.name }} · {{ alt.medicine_type === 'generic' ? 'Genérico' : 'Referência' }}</span>
+                  </span>
+                  <span class="font-semibold text-[#F74838]">R$ {{ alt.final_price | number:'1.2-2' }}</span>
+                </a>
+              }
+            </div>
+          </section>
+        }
+
         <hr class="my-6 border-gray-200">
         <h2 class="text-xl font-bold mb-3">Descrição</h2>
         <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>

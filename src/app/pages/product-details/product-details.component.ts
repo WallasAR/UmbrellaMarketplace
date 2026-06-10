@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { Product } from '../../models/product.model';
+import { Product, ProductAlternativesResponse } from '../../models/product.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
@@ -15,6 +15,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class ProductDetailsComponent {
   product!: Product;
+  alternatives?: ProductAlternativesResponse;
   quantity = signal(1);
   currentIndex = 0;
   loading = false;
@@ -33,6 +34,10 @@ export class ProductDetailsComponent {
       switchMap(params => this.productService.getProductById(params.get('id')!))
     ).subscribe(data => {
       this.product = data;
+      this.productService.getAlternatives(data.id).subscribe({
+        next: (alt) => this.alternatives = alt,
+        error: () => this.alternatives = undefined
+      });
     });
   }
 

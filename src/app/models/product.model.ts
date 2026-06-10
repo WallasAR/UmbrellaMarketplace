@@ -25,6 +25,28 @@ export interface Product {
   pharmacy_id?: string;
   Pharmacy?: PharmacyRef;
   allows_subscription?: boolean;
+  medicine_type?: 'reference' | 'generic';
+  dosage?: string;
+}
+
+export interface ProductAlternative {
+  id: number;
+  name: string;
+  price: number;
+  discount: number;
+  final_price: number;
+  medicine_type?: 'reference' | 'generic';
+  laboratory?: string;
+  Pharmacy?: PharmacyRef;
+  Images: Product['Images'];
+}
+
+export interface ProductAlternativesResponse {
+  product: Product & { final_price: number };
+  alternatives: ProductAlternative[];
+  cheapest: ProductAlternative | null;
+  cheapest_generic: ProductAlternative | null;
+  savings_percent: number;
 }
 
 export interface ProductFilters {

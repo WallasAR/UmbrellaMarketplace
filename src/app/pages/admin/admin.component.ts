@@ -20,6 +20,8 @@ export class AdminComponent implements OnInit {
   users: UserProfile[] = [];
   prescriptions: Prescription[] = [];
   pendingPharmacies: PendingPharmacy[] = [];
+  selectedKycPharmacyId: string | null = null;
+  kycReview: { pharmacy: any; documents: any[] } | null = null;
   financial: any = null;
   financialPeriod = '30d';
   metrics: any = null;
@@ -127,6 +129,23 @@ export class AdminComponent implements OnInit {
       next: () => {
         this.toast.show(`Receita ${status === 'approved' ? 'aprovada' : 'recusada'}.`, 'success');
         this.reload();
+      }
+    });
+  }
+
+  viewKyc(pharmacyId: string) {
+    this.selectedKycPharmacyId = pharmacyId;
+    this.adminService.getPharmacyKyc(pharmacyId).subscribe({
+      next: (data) => this.kycReview = data,
+      error: () => this.kycReview = null
+    });
+  }
+
+  reviewKycDocument(id: string, status: 'approved' | 'rejected') {
+    this.adminService.reviewKycDocument(id, status).subscribe({
+      next: () => {
+        this.toast.show(`Documento ${status === 'approved' ? 'aprovado' : 'recusado'}.`, 'success');
+        if (this.selectedKycPharmacyId) this.viewKyc(this.selectedKycPharmacyId);
       }
     });
   }

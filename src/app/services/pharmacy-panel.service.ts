@@ -25,6 +25,25 @@ export interface PharmacyProduct {
   description?: string;
   requires_prescription: boolean;
   allows_subscription: boolean;
+  active_ingredient?: string;
+  laboratory?: string;
+  medicine_type?: 'reference' | 'generic';
+  dosage?: string;
+}
+
+export interface ConnectStatus {
+  connected: boolean;
+  charges_enabled?: boolean;
+  payouts_enabled?: boolean;
+  onboarding_status: string;
+}
+
+export interface KycDocument {
+  id: string;
+  document_type: string;
+  file_url: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at?: string;
 }
 
 export interface MedicineBatch {
@@ -142,5 +161,33 @@ export class PharmacyPanelService {
 
   reviewPrescription(id: string, status: 'approved' | 'rejected', notes?: string): Observable<Prescription> {
     return this.http.patch<Prescription>(`${this.base}/prescriptions/${id}/review`, { status, notes });
+  }
+
+  getConnectStatus(): Observable<ConnectStatus> {
+    return this.http.get<ConnectStatus>(`${this.base}/connect/status`);
+  }
+
+  startConnectOnboarding(): Observable<{ url: string }> {
+    return this.http.post<{ url: string }>(`${this.base}/connect/onboard`, {});
+  }
+
+  listKycDocuments(): Observable<KycDocument[]> {
+    return this.http.get<KycDocument[]>(`${this.base}/kyc/documents`);
+  }
+
+  uploadKycDocument(documentType: string, file: File): Observable<KycDocument> {
+    return new Observable((observer) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        this.http.post<KycDocument>(`${this.base}/kyc/documents`, {
+          document_type: documentType,
+          file_name: file.name,
+          file_data: base64
+        }).subscribe(observer);
+      };
+      reader.onerror = () => observer.error(reader.error);
+      reader.readAsDataURL(file);
+    });
   }
 }
