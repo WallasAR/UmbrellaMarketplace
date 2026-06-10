@@ -30,15 +30,26 @@ export interface PickupOrder {
   Pharmacy?: { name: string; address?: string; phone?: string };
 }
 
+export interface CourierOption {
+  id: string;
+  label: string;
+  available: boolean;
+  mode?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DeliveryService {
   constructor(private http: HttpClient) {}
+
+  listCouriers(): Observable<CourierOption[]> {
+    return this.http.get<CourierOption[]>(`${environment.apiUrl}/delivery/couriers`);
+  }
 
   quote(payload: {
     pharmacy_ids: string[];
     destination_lat: number;
     destination_lng: number;
-    courier?: 'local' | 'uber';
+    courier?: 'local' | 'uber' | '99';
   }): Observable<DeliveryQuote[]> {
     return this.http.post<DeliveryQuote[]>(`${environment.apiUrl}/delivery/quote`, payload);
   }

@@ -31,4 +31,8 @@ export class ProductService {
   getAlternatives(id: number | string): Observable<ProductAlternativesResponse> {
     return this.http.get<ProductAlternativesResponse>(`${this.apiUrl}/${id}/alternatives`);
   }
+
+  trackSponsoredClick(id: number, source = 'listing'): Observable<unknown> {
+    return this.http.post(`${this.apiUrl}/${id}/sponsored-click`, { source });
+  }
 }

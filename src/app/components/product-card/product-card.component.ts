@@ -1,5 +1,7 @@
-import { Component, input, Input, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { Product } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-product-card',
@@ -10,7 +12,12 @@ import { Product } from '../../models/product.model';
 })
 export class ProductCardComponent {
   product = input.required<Product>();
-  isHovered = signal(false)
+  isHovered = signal(false);
+
+  constructor(
+    private productService: ProductService,
+    private authService: AuthService
+  ) {}
 
   getFinalPrice(): number {
     return this.product().discount
@@ -23,6 +30,11 @@ export class ProductCardComponent {
   }
 
   setHovered(state: boolean): void {
-    this.isHovered.set(state)
+    this.isHovered.set(state);
+  }
+
+  onProductClick() {
+    if (!this.product().sponsored || !this.authService.getToken()) return;
+    this.productService.trackSponsoredClick(this.product().id, 'listing').subscribe();
   }
 }

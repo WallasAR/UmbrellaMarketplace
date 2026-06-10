@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { Product } from '../models/product.model';
 
 export interface CopilotResponse {
+  session_id?: string;
   reply: string;
   intent: string;
   symptom?: string;
@@ -12,15 +13,56 @@ export interface CopilotResponse {
   parsed_lines?: string[];
 }
 
+export interface CopilotSession {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CopilotMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  metadata?: { products?: Array<{ id: number; name: string }> };
+  created_at: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CopilotService {
   constructor(private http: HttpClient) {}
 
-  chat(message: string): Observable<CopilotResponse> {
-    return this.http.post<CopilotResponse>(`${environment.apiUrl}/copilot/chat`, { message });
+  listSessions(): Observable<CopilotSession[]> {
+    return this.http.get<CopilotSession[]>(`${environment.apiUrl}/copilot/sessions`);
   }
 
-  scanPrescription(payload: { text?: string; file_data?: string }): Observable<CopilotResponse> {
+  getSessionMessages(sessionId: string): Observable<CopilotMessage[]> {
+    return this.http.get<CopilotMessage[]>(`${environment.apiUrl}/copilot/sessions/${sessionId}/messages`);
+  }
+
+  chat(message: string, sessionId?: string): Observable<CopilotResponse> {
+    return this.http.post<CopilotResponse>(`${environment.apiUrl}/copilot/chat`, {
+      message,
+      session_id: sessionId
+    });
+  }
+
+  scanPrescription(payload: {
+    text?: string;
+    file_data?: string;
+    session_id?: string;
+  }): Observable<CopilotResponse> {
     return this.http.post<CopilotResponse>(`${environment.apiUrl}/copilot/prescription-scan`, payload);
+  }
+
+  prescriptionToCart(payload: {
+    text?: string;
+    file_data?: string;
+    items?: Array<{ medicine_id: number; quantity?: number }>;
+  }): Observable<{ message: string; cart: { added: number; updated: number } }> {
+    return this.http.post<{ message: string; cart: { added: number; updated: number } }>(
+      `${environment.apiUrl}/copilot/prescription-to-cart`,
+      payload
+    );
   }
 }

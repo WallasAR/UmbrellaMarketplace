@@ -74,6 +74,7 @@
 
         <div class="mt-2">
           <a [routerLink]="['/product', product().id]"
+             (click)="onProductClick()"
              class="block w-full rounded-lg btn-brand py-2 text-center text-xs font-medium text-white">
             Ver detalhes
           </a>

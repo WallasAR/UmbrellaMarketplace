@@ -22,7 +22,12 @@ export class CheckoutComponent implements OnInit {
   multiSessions: PharmacyCheckoutSession[] = [];
   prescriptions: Prescription[] = [];
   fulfillmentMode: 'delivery' | 'pickup' = 'delivery';
-  courier: 'local' | 'uber' = 'local';
+  courier: 'local' | 'uber' | '99' = 'local';
+  couriers: Array<{ id: string; label: string }> = [
+    { id: 'local', label: 'Entrega local' },
+    { id: 'uber', label: 'Uber' },
+    { id: '99', label: '99 Entrega' }
+  ];
   deliveryQuotes: DeliveryQuote[] = [];
   userLat?: number;
   userLng?: number;
@@ -41,6 +46,11 @@ export class CheckoutComponent implements OnInit {
   ngOnInit() {
     this.cartService.loadCart();
     this.loadPrescriptions();
+    this.deliveryService.listCouriers().subscribe({
+      next: (items) => {
+        if (items?.length) this.couriers = items.map((c) => ({ id: c.id, label: c.label }));
+      }
+    });
     this.userService.getProfile().subscribe({
       next: (profile) => {
         this.profile = profile;

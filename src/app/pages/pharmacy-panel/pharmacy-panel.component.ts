@@ -7,7 +7,8 @@ import {
   PharmacyPanelService,
   PharmacyProduct,
   PriceBenchmark,
-  SponsoredBoost
+  SponsoredBoost,
+  BoostMetrics
 } from '../../services/pharmacy-panel.service';
 import { Prescription } from '../../services/prescription.service';
 import { AuthService } from '../../services/auth.service';
@@ -69,6 +70,7 @@ export class PharmacyPanelComponent implements OnInit {
   priceBenchmark: PriceBenchmark | null = null;
   benchmarkProductId: number | null = null;
   boosts: SponsoredBoost[] = [];
+  boostMetrics: BoostMetrics | null = null;
   boostForm = { medicine_id: 0, days: 7, priority: 1 };
 
   constructor(
@@ -128,6 +130,7 @@ export class PharmacyPanelComponent implements OnInit {
         }
       });
       this.pharmacyService.getBoosts().subscribe((items) => this.boosts = items);
+      this.pharmacyService.getBoostMetrics('30d').subscribe((data) => this.boostMetrics = data);
     }
 
     if (this.activeTab === 'products' || this.activeTab === 'batches') {

@@ -17,7 +17,7 @@ export interface CheckoutPayload {
   destination_lat?: number;
   destination_lng?: number;
   destination_address?: string;
-  courier?: 'local' | 'uber';
+  courier?: 'local' | 'uber' | '99';
   delivery_quotes?: Record<string, { price: number; eta_minutes?: number; courier?: string }>;
 }
 
@@ -68,6 +68,20 @@ export class CartService {
       next: (items) => this.data.set(items ?? []),
       error: () => this.data.set([])
     });
+  }
+
+  bulkAdd(items: Array<{ medicine_id: number; quantity?: number }>): Observable<{
+    message: string;
+    added: number;
+    updated: number;
+    skipped: unknown[];
+  }> {
+    return this.http.post<{
+      message: string;
+      added: number;
+      updated: number;
+      skipped: unknown[];
+    }>(`${environment.apiUrl}/cart/bulk-add`, { items }).pipe(tap(() => this.loadCart()));
   }
 
   addItem(medicineId: number, quantity: number): Observable<{ message: string }> {

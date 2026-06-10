@@ -72,6 +72,12 @@ export interface PharmacyDelivery {
   User?: { name?: string; email?: string };
 }
 
+export interface BoostMetrics {
+  period: string;
+  total_clicks: number;
+  by_medicine: Array<{ medicine_id: number; medicine_name?: string; clicks: number }>;
+}
+
 export interface SponsoredBoost {
   id: string;
   medicine_id: number;
@@ -219,6 +225,10 @@ export class PharmacyPanelService {
 
   confirmPickup(pickupCode: string): Observable<unknown> {
     return this.http.post(`${this.base}/pickup/confirm`, { pickup_code: pickupCode });
+  }
+
+  getBoostMetrics(period = '30d'): Observable<BoostMetrics> {
+    return this.http.get<BoostMetrics>(`${this.base}/boosts/metrics`, { params: { period } });
   }
 
   getBoosts(): Observable<SponsoredBoost[]> {

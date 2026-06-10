@@ -46,8 +46,9 @@
               <div class="flex items-center justify-between mb-3">
                 <p class="text-sm font-medium text-gray-700">Cotação de frete</p>
                 <select class="text-sm rounded border border-gray-200 px-2 py-1" [(ngModel)]="courier" (change)="fetchDeliveryQuotes()">
-                  <option value="local">Entrega local</option>
-                  <option value="uber">Uber (simulado)</option>
+                  @for (option of couriers; track option.id) {
+                    <option [value]="option.id">{{ option.label }}</option>
+                  }
                 </select>
               </div>
               @if (userLat == null) {
