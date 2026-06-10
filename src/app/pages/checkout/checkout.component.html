@@ -172,7 +172,7 @@
         }
 
         <button type="button" class="btn-brand w-full py-3" [disabled]="loading || !canFinalize()" (click)="finalize()">
-          {{ loading ? 'Processando...' : 'Pagar com segurança' }}
+          {{ loading ? 'Processando...' : (cartService.groupedByPharmacy().length > 1 ? 'Pagar tudo em uma transação' : 'Pagar com segurança') }}
         </button>
         <button type="button" class="w-full mt-3 text-sm text-gray-500 hover:text-gray-700" (click)="goBack()">Voltar ao carrinho</button>
 

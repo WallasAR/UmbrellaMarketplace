@@ -82,8 +82,8 @@
           <span class="font-semibold">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
         </div>
         @if (pharmacyGroups.length > 1) {
-          <p class="text-xs text-amber-700 bg-amber-50 rounded-lg p-2 mb-4">
-            Seu carrinho possui itens de {{ pharmacyGroups.length }} farmácias. O pagamento será feito separadamente para cada uma.
+          <p class="text-xs text-green-700 bg-green-50 rounded-lg p-2 mb-4">
+            Seu carrinho possui itens de {{ pharmacyGroups.length }} farmácias. O pagamento será feito em uma única transação com repasse automático a cada loja.
           </p>
         }
         <hr class="my-4 border-gray-200">

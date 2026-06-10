@@ -20,6 +20,7 @@ export class CheckoutComponent implements OnInit {
   couponApplied = false;
   loading = false;
   multiSessions: PharmacyCheckoutSession[] = [];
+  unifiedCheckout = false;
   prescriptions: Prescription[] = [];
   fulfillmentMode: 'delivery' | 'pickup' = 'delivery';
   courier: 'local' | 'uber' | '99' = 'local';
@@ -174,6 +175,7 @@ export class CheckoutComponent implements OnInit {
 
     this.loading = true;
     this.multiSessions = [];
+    this.unifiedCheckout = false;
 
     this.cartService.checkoutCart({
       couponCode: this.couponApplied ? this.couponCode : undefined,
@@ -186,6 +188,13 @@ export class CheckoutComponent implements OnInit {
     }).subscribe({
       next: (res) => {
         this.loading = false;
+        if (res.mode === 'unified') {
+          this.unifiedCheckout = true;
+          this.toast.show(
+            `Pagamento unificado para ${res.pharmacy_count || 'várias'} farmácias. Redirecionando...`,
+            'info'
+          );
+        }
         if (res.mode === 'multi' && res.sessions?.length) {
           this.multiSessions = res.sessions;
           this.toast.show('Seu carrinho possui itens de farmácias diferentes. Finalize cada pagamento abaixo.', 'info');

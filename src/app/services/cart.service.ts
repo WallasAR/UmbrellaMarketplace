@@ -22,9 +22,11 @@ export interface CheckoutPayload {
 }
 
 export interface CheckoutResponse {
-  mode: 'single' | 'multi';
+  mode: 'single' | 'multi' | 'unified';
   url?: string;
   sessions?: PharmacyCheckoutSession[];
+  order_group_id?: string;
+  pharmacy_count?: number;
   fulfillment_mode?: string;
 }
 
