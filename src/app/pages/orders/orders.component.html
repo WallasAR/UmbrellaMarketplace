@@ -1,9 +1,53 @@
 <div class="container mx-auto px-4 py-8 max-w-4xl">
   <h1 class="text-3xl font-bold text-gray-800 mb-2">Meus pedidos</h1>
-  <p class="text-gray-500 mb-8">Acompanhe o status das suas compras.</p>
+  <p class="text-gray-500 mb-4">Acompanhe o status das suas compras.</p>
+
+  <div class="flex gap-2 mb-8">
+    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'all'" [class.border-[#F74838]]="viewMode === 'all'" [class.bg-[#fff1ef]]="viewMode === 'all'" (click)="setViewMode('all')">Todos</button>
+    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'groups'" [class.border-[#F74838]]="viewMode === 'groups'" [class.bg-[#fff1ef]]="viewMode === 'groups'" (click)="setViewMode('groups')">Multi-farmácia</button>
+  </div>
 
   @if (loading) {
     <p class="text-gray-500">Carregando pedidos...</p>
+  } @else if (viewMode === 'groups') {
+    @if (!orderGroups.length) {
+      <div class="card-surface p-10 text-center">
+        <p class="text-gray-600 mb-4">Nenhum pedido agrupado (multi-farmácia) encontrado.</p>
+        <a routerLink="/home" class="btn-brand inline-block px-6 py-3">Comprar medicamentos</a>
+      </div>
+    } @else {
+      <div class="space-y-4">
+        @for (group of orderGroups; track group.id) {
+          <article class="card-surface p-5 border-l-4 border-[#F74838]">
+            <div class="flex flex-wrap justify-between gap-3 mb-4">
+              <div>
+                <h2 class="font-semibold text-gray-800">Compra multi-farmácia</h2>
+                <p class="text-sm text-gray-500">{{ group.created_at | date:'dd/MM/yyyy HH:mm' }} · {{ group.session_count }} pagamentos</p>
+              </div>
+              <div class="text-right">
+                <span class="badge-brand px-3 py-1 rounded-full text-xs font-medium">{{ statusLabel(group.status) }}</span>
+                <p class="font-bold text-[#F74838] mt-2">R$ {{ group.total_price | number:'1.2-2' }}</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              @for (order of group.sessions; track order.sessionId) {
+                <div class="rounded-lg bg-gray-50 p-3">
+                  <div class="flex justify-between gap-2 text-sm">
+                    <span class="font-medium">#{{ order.sessionId.slice(-8) }}</span>
+                    <span>{{ statusLabel(order.order_status) }}</span>
+                  </div>
+                  <ul class="mt-2 space-y-1 text-xs text-gray-600">
+                    @for (item of order.items; track item.medicine_id) {
+                      <li>{{ item.Medicine?.name || 'Medicamento' }} x{{ item.quantity }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
   } @else if (!orders.length) {
     <div class="card-surface p-10 text-center">
       <p class="text-gray-600 mb-4">Você ainda não realizou pedidos.</p>
@@ -17,6 +61,9 @@
             <div>
               <h2 class="font-semibold text-gray-800">Pedido #{{ order.sessionId.slice(-8) }}</h2>
               <p class="text-sm text-gray-500">{{ order.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+              @if (order.order_group_id) {
+                <p class="text-xs text-[#F74838] mt-1">Parte de compra multi-farmácia</p>
+              }
             </div>
             <div class="text-right">
               <span class="badge-brand px-3 py-1 rounded-full text-xs font-medium">{{ statusLabel(order.order_status) }}</span>
@@ -44,6 +91,9 @@
               <p class="text-sm text-gray-600">{{ deliveryStatusLabel(order.delivery.status) }}</p>
               @if (order.delivery.eta_minutes) {
                 <p class="text-xs text-gray-500 mt-1">Previsão: ~{{ order.delivery.eta_minutes }} min</p>
+              }
+              @if (order.delivery.tracking_url) {
+                <a [href]="order.delivery.tracking_url" target="_blank" rel="noopener" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Acompanhar entrega</a>
               }
               @if (order.delivery_fee) {
                 <p class="text-xs text-gray-500">Frete: R$ {{ order.delivery_fee | number:'1.2-2' }}</p>

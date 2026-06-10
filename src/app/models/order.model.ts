@@ -14,6 +14,7 @@ export interface OrderDelivery {
   status: string;
   quoted_price: number;
   eta_minutes?: number;
+  tracking_url?: string;
 }
 
 export interface OrderPickup {
@@ -29,9 +30,19 @@ export interface Order {
   payment_method?: string;
   fulfillment_mode?: 'delivery' | 'pickup';
   delivery_fee?: number;
+  order_group_id?: string | null;
   created_at?: string;
   total_price: number;
   items: OrderItem[];
   delivery?: OrderDelivery;
   pickup?: OrderPickup;
+}
+
+export interface OrderGroup {
+  id: string;
+  status: string;
+  created_at: string;
+  total_price: number;
+  session_count: number;
+  sessions: Order[];
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Order } from '../../models/order.model';
+import { Order, OrderGroup } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
 @Component({
@@ -10,11 +10,38 @@ import { OrderService } from '../../services/order.service';
 })
 export class OrdersComponent implements OnInit {
   orders: Order[] = [];
+  orderGroups: OrderGroup[] = [];
+  viewMode: 'all' | 'groups' = 'all';
   loading = true;
 
   constructor(private orderService: OrderService) {}
 
   ngOnInit() {
+    this.loadOrders();
+  }
+
+  setViewMode(mode: 'all' | 'groups') {
+    this.viewMode = mode;
+    this.loadOrders();
+  }
+
+  loadOrders() {
+    this.loading = true;
+
+    if (this.viewMode === 'groups') {
+      this.orderService.listOrderGroups().subscribe({
+        next: (groups) => {
+          this.orderGroups = groups.filter((g) => g.session_count > 0);
+          this.loading = false;
+        },
+        error: () => {
+          this.orderGroups = [];
+          this.loading = false;
+        }
+      });
+      return;
+    }
+
     this.orderService.listOrders().subscribe({
       next: (orders) => {
         this.orders = orders;
@@ -34,7 +61,8 @@ export class OrdersComponent implements OnInit {
       shipped: 'Enviado',
       delivered: 'Entregue',
       cancelled: 'Cancelado',
-      paid: 'Pago'
+      paid: 'Pago',
+      partial: 'Parcialmente pago'
     };
     return map[status] || status;
   }
