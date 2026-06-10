@@ -1,4 +1,9 @@
 <div class="space-y-4">
+  @if (activeSymptom) {
+    <div class="rounded-lg bg-[#fff1ef] border border-[#F74838]/20 px-4 py-3 text-sm text-gray-700">
+      Resultados para sintoma: <strong>{{ activeSymptom }}</strong>
+    </div>
+  }
   <app-product-filters (filtersChange)="onFiltersChange($event)" />
 
   @if (error) {

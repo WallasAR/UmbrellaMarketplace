@@ -27,6 +27,8 @@ export interface Product {
   allows_subscription?: boolean;
   medicine_type?: 'reference' | 'generic';
   dosage?: string;
+  symptoms?: string[];
+  sponsored?: boolean;
 }
 
 export interface ProductAlternative {

@@ -16,6 +16,9 @@
     @if (canShowTab('products')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
     }
+    @if (canShowTab('products')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'boosts'" (click)="setTab('boosts')">Anúncios</button>
+    }
     @if (canShowTab('batches')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
     }
@@ -109,6 +112,41 @@
         }
       </div>
     </section>
+  }
+
+  @if (activeTab === 'boosts') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="text-lg font-semibold mb-4">Impulsionar produto</h2>
+      <p class="text-sm text-gray-500 mb-4">Destaque um medicamento na home e nas listagens por um período.</p>
+      <div class="grid sm:grid-cols-3 gap-3">
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.medicine_id" aria-label="Produto">
+          @for (product of products; track product.id) {
+            <option [value]="product.id">{{ product.name }}</option>
+          }
+        </select>
+        <input type="number" min="1" max="90" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.days" placeholder="Dias" aria-label="Dias" />
+        <input type="number" min="1" max="10" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.priority" placeholder="Prioridade" aria-label="Prioridade" />
+      </div>
+      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createBoost()">Ativar patrocínio</button>
+    </div>
+
+    <div class="space-y-3">
+      @for (boost of boosts; track boost.id) {
+        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ boost.Medicine?.name }}</p>
+            <p class="text-sm text-gray-500">Até {{ boost.ends_at | date:'dd/MM/yyyy' }} · Prioridade {{ boost.priority }}</p>
+          </div>
+          @if (boost.active) {
+            <button type="button" class="text-sm text-[#F74838]" (click)="removeBoost(boost.id)">Desativar</button>
+          } @else {
+            <span class="text-sm text-gray-400">Inativo</span>
+          }
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum anúncio patrocinado ativo.</p>
+      }
+    </div>
   }
 
   @if (activeTab === 'products') {

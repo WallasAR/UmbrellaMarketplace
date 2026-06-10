@@ -6,7 +6,8 @@ import {
   PharmacyDelivery,
   PharmacyPanelService,
   PharmacyProduct,
-  PriceBenchmark
+  PriceBenchmark,
+  SponsoredBoost
 } from '../../services/pharmacy-panel.service';
 import { Prescription } from '../../services/prescription.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +15,7 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions';
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -67,6 +68,8 @@ export class PharmacyPanelComponent implements OnInit {
   pickupCodeInput = '';
   priceBenchmark: PriceBenchmark | null = null;
   benchmarkProductId: number | null = null;
+  boosts: SponsoredBoost[] = [];
+  boostForm = { medicine_id: 0, days: 7, priority: 1 };
 
   constructor(
     private pharmacyService: PharmacyPanelService,
@@ -115,6 +118,16 @@ export class PharmacyPanelComponent implements OnInit {
         this.metrics = data;
         this.conversionChart = this.toConversionChartPoints(data?.dailyConversion);
       });
+    }
+
+    if (this.activeTab === 'boosts') {
+      this.pharmacyService.getProducts().subscribe((items) => {
+        this.products = items;
+        if (!this.boostForm.medicine_id && items.length) {
+          this.boostForm.medicine_id = items[0].id;
+        }
+      });
+      this.pharmacyService.getBoosts().subscribe((items) => this.boosts = items);
     }
 
     if (this.activeTab === 'products' || this.activeTab === 'batches') {
@@ -379,6 +392,25 @@ export class PharmacyPanelComponent implements OnInit {
     this.pharmacyService.getPriceBenchmark(productId).subscribe({
       next: (data) => this.priceBenchmark = data,
       error: () => this.priceBenchmark = null
+    });
+  }
+
+  createBoost() {
+    if (!this.boostForm.medicine_id) return;
+    this.pharmacyService.createBoost(this.boostForm.medicine_id, this.boostForm.days, this.boostForm.priority).subscribe({
+      next: () => {
+        this.toast.show('Anúncio patrocinado ativado.', 'success');
+        this.reload();
+      }
+    });
+  }
+
+  removeBoost(id: string) {
+    this.pharmacyService.removeBoost(id).subscribe({
+      next: () => {
+        this.toast.show('Anúncio desativado.', 'success');
+        this.reload();
+      }
     });
   }
 

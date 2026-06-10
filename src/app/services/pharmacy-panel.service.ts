@@ -72,6 +72,16 @@ export interface PharmacyDelivery {
   User?: { name?: string; email?: string };
 }
 
+export interface SponsoredBoost {
+  id: string;
+  medicine_id: number;
+  priority: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+  Medicine?: { id: number; name: string; price: number };
+}
+
 export interface PriceBenchmark {
   product: { id: number; name: string; my_price: number };
   market_average: number;
@@ -209,6 +219,22 @@ export class PharmacyPanelService {
 
   confirmPickup(pickupCode: string): Observable<unknown> {
     return this.http.post(`${this.base}/pickup/confirm`, { pickup_code: pickupCode });
+  }
+
+  getBoosts(): Observable<SponsoredBoost[]> {
+    return this.http.get<SponsoredBoost[]>(`${this.base}/boosts`);
+  }
+
+  createBoost(medicineId: number, days = 7, priority = 1): Observable<SponsoredBoost> {
+    return this.http.post<SponsoredBoost>(`${this.base}/boosts`, {
+      medicine_id: medicineId,
+      days,
+      priority
+    });
+  }
+
+  removeBoost(id: string): Observable<SponsoredBoost> {
+    return this.http.delete<SponsoredBoost>(`${this.base}/boosts/${id}`);
   }
 
   getPriceBenchmark(productId: number): Observable<PriceBenchmark> {

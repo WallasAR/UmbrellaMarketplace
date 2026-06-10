@@ -40,6 +40,7 @@ import { MetricsBarChartComponent } from './components/metrics-bar-chart/metrics
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
 import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
+import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widget.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel
     PharmacyPanelComponent,
     PharmacyRegisterComponent,
     CheckoutCancelComponent,
-    MetricsBarChartComponent
+    MetricsBarChartComponent,
+    CopilotWidgetComponent
   ],
   imports: [
     BrowserModule,

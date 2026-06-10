@@ -1,0 +1,59 @@
+<div class="fixed bottom-5 right-5 z-50">
+  @if (open()) {
+    <div class="mb-3 w-[min(100vw-2rem,22rem)] rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-hidden">
+      <div class="bg-[#F74838] px-4 py-3 text-white flex justify-between items-center">
+        <div>
+          <p class="font-semibold text-sm">Copilot Umbrella</p>
+          <p class="text-xs opacity-90">Assistente farmacêutico</p>
+        </div>
+        <button type="button" class="text-white/90 hover:text-white" (click)="toggle()" aria-label="Fechar copilot">✕</button>
+      </div>
+
+      <div class="h-72 overflow-y-auto p-3 space-y-3 bg-gray-50">
+        @for (msg of messages; track $index) {
+          <div [class.text-right]="msg.role === 'user'">
+            <div class="inline-block max-w-[90%] rounded-xl px-3 py-2 text-sm whitespace-pre-line"
+              [class.bg-white]="msg.role === 'assistant'"
+              [class.bg-[#fff1ef]]="msg.role === 'user'"
+              [class.border]="msg.role === 'assistant'"
+              [class.border-gray-200]="msg.role === 'assistant'">
+              {{ msg.text }}
+            </div>
+            @if (msg.products?.length) {
+              <div class="mt-2 space-y-1 text-left">
+                @for (product of msg.products!.slice(0, 4); track product.id) {
+                  <a [routerLink]="['/product', product.id]" class="block text-xs rounded-lg bg-white border border-gray-200 px-2 py-1 hover:border-[#F74838]">
+                    {{ product.name }}
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+        @if (loading) {
+          <p class="text-xs text-gray-500">Pensando...</p>
+        }
+      </div>
+
+      <div class="border-t border-gray-200 p-3 bg-white">
+        @if (scanMode) {
+          <textarea rows="3" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm mb-2" [(ngModel)]="prescriptionText" placeholder="Cole aqui o texto da receita..."></textarea>
+          <div class="flex gap-2">
+            <button type="button" class="btn-brand flex-1 py-2 text-sm" [disabled]="loading" (click)="scanPrescription()">Analisar</button>
+            <button type="button" class="px-3 py-2 text-sm border rounded-lg" (click)="scanMode = false">Voltar</button>
+          </div>
+        } @else {
+          <div class="flex gap-2 mb-2">
+            <input class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm" [(ngModel)]="input" placeholder="Ex: tenho febre" (keyup.enter)="send()" aria-label="Mensagem para o copilot" />
+            <button type="button" class="btn-brand px-3 py-2 text-sm" [disabled]="loading" (click)="send()">Enviar</button>
+          </div>
+          <button type="button" class="text-xs text-[#F74838] hover:underline" (click)="scanMode = true">Escanear receita (texto)</button>
+        }
+      </div>
+    </div>
+  }
+
+  <button type="button" class="btn-brand rounded-full h-14 w-14 shadow-lg text-xl" (click)="toggle()" aria-label="Abrir copilot">
+    💬
+  </button>
+</div>
