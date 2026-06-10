@@ -183,6 +183,7 @@
           <option value="generic">Genérico</option>
         </select>
         <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description" aria-label="Descrição">
+        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Sintomas (separados por vírgula, ex: febre, dor de cabeça)" [(ngModel)]="productForm.symptomsInput" aria-label="Sintomas">
       </div>
       <div class="flex flex-wrap gap-4 mt-3 text-sm">
         <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
@@ -213,6 +214,9 @@
             </div>
           }
         </div>
+        @if (priceHistoryChart.length) {
+          <app-metrics-bar-chart class="block mt-4" title="Histórico de preço (90d)" [points]="priceHistoryChart" />
+        }
       </div>
     }
 
@@ -306,6 +310,9 @@
               <p class="font-medium">Pedido #{{ delivery.purchase_id.slice(-8) }}</p>
               <p class="text-sm text-gray-500">{{ delivery.User?.name || delivery.User?.email }}</p>
               <p class="text-sm text-gray-500">{{ deliveryStatusLabel(delivery.status) }} · R$ {{ delivery.quoted_price | number:'1.2-2' }}</p>
+              @if (delivery.tracking_url) {
+                <a [href]="delivery.tracking_url" target="_blank" rel="noopener" class="text-xs text-[#F74838] hover:underline">Link de rastreio</a>
+              }
             </div>
             @if (delivery.status !== 'delivered') {
               <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="advanceDelivery(delivery.id)">Avançar status</button>

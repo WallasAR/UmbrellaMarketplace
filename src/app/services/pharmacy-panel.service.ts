@@ -29,6 +29,7 @@ export interface PharmacyProduct {
   laboratory?: string;
   medicine_type?: 'reference' | 'generic';
   dosage?: string;
+  symptoms?: string[];
 }
 
 export interface ConnectStatus {
@@ -67,6 +68,7 @@ export interface PharmacyDelivery {
   status: string;
   quoted_price: number;
   eta_minutes?: number;
+  tracking_url?: string;
   destination_address?: string;
   courier?: string;
   User?: { name?: string; email?: string };

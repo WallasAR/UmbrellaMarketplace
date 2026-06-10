@@ -59,6 +59,7 @@ export class PharmacyPanelComponent implements OnInit {
     laboratory: '',
     medicine_type: 'reference' as 'reference' | 'generic',
     dosage: '',
+    symptomsInput: '',
     requires_prescription: false,
     allows_subscription: false
   };
@@ -69,6 +70,7 @@ export class PharmacyPanelComponent implements OnInit {
   pickupCodeInput = '';
   priceBenchmark: PriceBenchmark | null = null;
   benchmarkProductId: number | null = null;
+  priceHistoryChart: ChartPoint[] = [];
   boosts: SponsoredBoost[] = [];
   boostMetrics: BoostMetrics | null = null;
   boostForm = { medicine_id: 0, days: 7, priority: 1 };
@@ -269,12 +271,16 @@ export class PharmacyPanelComponent implements OnInit {
       return;
     }
 
-    this.pharmacyService.createProduct(this.productForm).subscribe({
+    this.pharmacyService.createProduct({
+      ...this.productForm,
+      symptoms: this.parseSymptoms(this.productForm.symptomsInput)
+    }).subscribe({
       next: () => {
         this.toast.show('Produto cadastrado.', 'success');
         this.productForm = {
           name: '', price: 0, discount: 0, stock: 0, category: '', description: '',
           active_ingredient: '', laboratory: '', medicine_type: 'reference', dosage: '',
+          symptomsInput: '',
           requires_prescription: false, allows_subscription: false
         };
         this.reload();
@@ -392,10 +398,27 @@ export class PharmacyPanelComponent implements OnInit {
 
   loadPriceBenchmark(productId: number) {
     this.benchmarkProductId = productId;
+    this.priceHistoryChart = [];
     this.pharmacyService.getPriceBenchmark(productId).subscribe({
       next: (data) => this.priceBenchmark = data,
       error: () => this.priceBenchmark = null
     });
+    this.pharmacyService.getPriceHistory(productId, '90d').subscribe({
+      next: (rows) => {
+        this.priceHistoryChart = (rows as Array<{ recorded_at?: string; final_price?: number }>).map((row) => ({
+          label: row.recorded_at?.slice(5, 10).replace('-', '/') || '',
+          value: Number(row.final_price || 0)
+        }));
+      },
+      error: () => this.priceHistoryChart = []
+    });
+  }
+
+  private parseSymptoms(input: string): string[] {
+    return input
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length >= 2);
   }
 
   createBoost() {
