@@ -5,6 +5,8 @@ import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 import { SubscriptionService } from '../../services/subscription.service';
+import { PriceAlertService } from '../../services/price-alert.service';
+import { ToastService } from '../../services/toast.service';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -21,6 +23,8 @@ export class ProductDetailsComponent {
   loading = false;
   feedbackMessage = '';
   feedbackType: 'success' | 'error' | '' = '';
+  alertTargetPrice = 0;
+  alertLoading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +32,8 @@ export class ProductDetailsComponent {
     private cartService: CartService,
     private authService: AuthService,
     private subscriptionService: SubscriptionService,
+    private priceAlertService: PriceAlertService,
+    private toast: ToastService,
     private router: Router
   ) {
     this.route.paramMap.pipe(
@@ -139,6 +145,26 @@ export class ProductDetailsComponent {
       error: () => {
         this.loading = false;
         this.showFeedback('Não foi possível iniciar a assinatura.', 'error');
+      }
+    });
+  }
+
+  createPriceAlert() {
+    if (!this.requireAuth()) return;
+    if (!this.alertTargetPrice || this.alertTargetPrice >= this.finalPrice) {
+      this.toast.show('Informe um preço alvo menor que o preço atual.', 'error');
+      return;
+    }
+
+    this.alertLoading = true;
+    this.priceAlertService.create(this.product.id, this.alertTargetPrice).subscribe({
+      next: () => {
+        this.alertLoading = false;
+        this.toast.show('Alerta de preço criado! Você será avisado quando baixar.', 'success');
+      },
+      error: () => {
+        this.alertLoading = false;
+        this.toast.show('Não foi possível criar o alerta.', 'error');
       }
     });
   }

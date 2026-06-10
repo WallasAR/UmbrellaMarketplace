@@ -38,4 +38,25 @@ export class OrdersComponent implements OnInit {
     };
     return map[status] || status;
   }
+
+  deliveryStatusLabel(status: string) {
+    const map: Record<string, string> = {
+      pending: 'Aguardando despacho',
+      awaiting_driver: 'Aguardando motorista',
+      picked_up: 'Coletado na farmácia',
+      in_transit: 'A caminho',
+      delivered: 'Entregue',
+      cancelled: 'Cancelada'
+    };
+    return map[status] || status;
+  }
+
+  pickupStatusLabel(status: string) {
+    const map: Record<string, string> = {
+      ready: 'Pronto para retirada',
+      picked_up: 'Retirado',
+      expired: 'Expirado'
+    };
+    return map[status] || status;
+  }
 }

@@ -28,6 +28,28 @@
               <li>{{ item.Medicine?.name || 'Medicamento' }} x{{ item.quantity }}</li>
             }
           </ul>
+
+          @if (order.fulfillment_mode === 'pickup' && order.pickup && order.payment_status === 'paid') {
+            <div class="mt-4 rounded-lg border border-dashed border-[#F74838]/40 bg-[#fff1ef] p-4 text-center">
+              <p class="text-xs text-gray-500 mb-1">Código de retirada</p>
+              <p class="text-2xl font-mono font-bold tracking-widest text-[#F74838]">{{ order.pickup.pickup_code }}</p>
+              <p class="text-sm text-gray-600 mt-2">{{ pickupStatusLabel(order.pickup.status) }}</p>
+              <p class="text-xs text-gray-400 mt-1">Válido até {{ order.pickup.expires_at | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          }
+
+          @if (order.fulfillment_mode !== 'pickup' && order.delivery && order.payment_status === 'paid') {
+            <div class="mt-4 rounded-lg bg-gray-50 p-4">
+              <p class="text-sm font-medium text-gray-700 mb-1">Rastreamento da entrega</p>
+              <p class="text-sm text-gray-600">{{ deliveryStatusLabel(order.delivery.status) }}</p>
+              @if (order.delivery.eta_minutes) {
+                <p class="text-xs text-gray-500 mt-1">Previsão: ~{{ order.delivery.eta_minutes }} min</p>
+              }
+              @if (order.delivery_fee) {
+                <p class="text-xs text-gray-500">Frete: R$ {{ order.delivery_fee | number:'1.2-2' }}</p>
+              }
+            </div>
+          }
         </article>
       }
     </div>

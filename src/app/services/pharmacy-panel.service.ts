@@ -61,6 +61,30 @@ export interface PharmacyAlerts {
   staffNotified: number;
 }
 
+export interface PharmacyDelivery {
+  id: string;
+  purchase_id: string;
+  status: string;
+  quoted_price: number;
+  eta_minutes?: number;
+  destination_address?: string;
+  courier?: string;
+  User?: { name?: string; email?: string };
+}
+
+export interface PriceBenchmark {
+  product: { id: number; name: string; my_price: number };
+  market_average: number;
+  market_cheapest: number;
+  position: 'cheapest' | 'competitive' | 'above_market';
+  competitors: Array<{
+    medicine_id: number;
+    pharmacy_name?: string;
+    final_price: number;
+    is_mine: boolean;
+  }>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PharmacyPanelService {
   private readonly base = `${environment.apiUrl}/pharmacy`;
@@ -173,6 +197,28 @@ export class PharmacyPanelService {
 
   listKycDocuments(): Observable<KycDocument[]> {
     return this.http.get<KycDocument[]>(`${this.base}/kyc/documents`);
+  }
+
+  getDeliveries(): Observable<PharmacyDelivery[]> {
+    return this.http.get<PharmacyDelivery[]>(`${this.base}/deliveries`);
+  }
+
+  advanceDelivery(id: string): Observable<PharmacyDelivery> {
+    return this.http.post<PharmacyDelivery>(`${this.base}/deliveries/${id}/advance`, {});
+  }
+
+  confirmPickup(pickupCode: string): Observable<unknown> {
+    return this.http.post(`${this.base}/pickup/confirm`, { pickup_code: pickupCode });
+  }
+
+  getPriceBenchmark(productId: number): Observable<PriceBenchmark> {
+    return this.http.get<PriceBenchmark>(`${this.base}/products/${productId}/price-benchmark`);
+  }
+
+  getPriceHistory(productId: number, period = '90d'): Observable<unknown[]> {
+    return this.http.get<unknown[]>(`${this.base}/products/${productId}/price-history`, {
+      params: { period }
+    });
   }
 
   uploadKycDocument(documentType: string, file: File): Observable<KycDocument> {

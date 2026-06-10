@@ -32,6 +32,25 @@
   </section>
 
   <section class="mt-8">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Alertas de preço</h2>
+    @if (!priceAlerts.length) {
+      <p class="text-gray-500 text-sm">Nenhum alerta ativo. Crie um na página do produto.</p>
+    } @else {
+      <div class="space-y-3">
+        @for (alert of priceAlerts; track alert.id) {
+          <div class="card-surface p-4 flex flex-wrap justify-between items-center gap-3">
+            <div>
+              <p class="font-medium text-gray-800">{{ alert.Medicine?.name || 'Medicamento' }}</p>
+              <p class="text-sm text-gray-500">Avisar quando baixar de R$ {{ alert.target_price | number:'1.2-2' }}</p>
+            </div>
+            <button type="button" class="text-sm text-[#F74838]" (click)="removePriceAlert(alert.id)">Remover</button>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="mt-8">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Minhas receitas</h2>
     @if (!prescriptions.length) {
       <p class="text-gray-500 text-sm">Nenhuma receita enviada.</p>

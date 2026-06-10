@@ -70,6 +70,17 @@
 
         <p class="mt-4 text-xs text-gray-400">Uso sob orientação médica quando indicado.</p>
 
+        <section class="mt-6 rounded-xl border border-gray-200 p-4">
+          <h2 class="text-sm font-semibold text-gray-800 mb-2">Alerta de preço</h2>
+          <p class="text-xs text-gray-500 mb-3">Avise-me quando o preço baixar para:</p>
+          <div class="flex gap-2">
+            <input type="number" step="0.01" min="0.01" class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm" [(ngModel)]="alertTargetPrice" placeholder="Ex: {{ (finalPrice * 0.9) | number:'1.2-2' }}" aria-label="Preço alvo" />
+            <button type="button" class="btn-brand px-4 py-2 text-sm" [disabled]="alertLoading" (click)="createPriceAlert()">
+              {{ alertLoading ? 'Salvando...' : 'Criar alerta' }}
+            </button>
+          </div>
+        </section>
+
         @if (alternatives?.alternatives?.length) {
           <section class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
             <h2 class="text-lg font-semibold text-emerald-900 mb-2">Alternativas mais baratas</h2>

@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { NotificationService } from '../../services/notification.service';
 import { Prescription, PrescriptionService } from '../../services/prescription.service';
+import { PriceAlert, PriceAlertService } from '../../services/price-alert.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,11 +15,13 @@ import { Prescription, PrescriptionService } from '../../services/prescription.s
 export class ProfileComponent implements OnInit {
   profile: Partial<UserProfile> = {};
   prescriptions: Prescription[] = [];
+  priceAlerts: PriceAlert[] = [];
   loading = false;
 
   constructor(
     private userService: UserService,
     private prescriptionService: PrescriptionService,
+    private priceAlertService: PriceAlertService,
     private toast: ToastService,
     private notificationService: NotificationService
   ) {}
@@ -26,6 +29,19 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.userService.getProfile().subscribe((profile) => this.profile = profile);
     this.prescriptionService.list().subscribe((items) => this.prescriptions = items);
+    this.priceAlertService.list().subscribe({
+      next: (items) => this.priceAlerts = items ?? [],
+      error: () => this.priceAlerts = []
+    });
+  }
+
+  removePriceAlert(id: string) {
+    this.priceAlertService.remove(id).subscribe({
+      next: () => {
+        this.priceAlerts = this.priceAlerts.filter((alert) => alert.id !== id);
+        this.toast.show('Alerta removido.', 'success');
+      }
+    });
   }
 
   async enablePush() {

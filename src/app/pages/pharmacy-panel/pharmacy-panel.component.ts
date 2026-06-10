@@ -3,8 +3,10 @@ import {
   MedicineBatch,
   PharmacyAlerts,
   PharmacyDashboard,
+  PharmacyDelivery,
   PharmacyPanelService,
-  PharmacyProduct
+  PharmacyProduct,
+  PriceBenchmark
 } from '../../services/pharmacy-panel.service';
 import { Prescription } from '../../services/prescription.service';
 import { AuthService } from '../../services/auth.service';
@@ -61,6 +63,10 @@ export class PharmacyPanelComponent implements OnInit {
 
   connectStatus: any = null;
   kycDocuments: any[] = [];
+  deliveries: PharmacyDelivery[] = [];
+  pickupCodeInput = '';
+  priceBenchmark: PriceBenchmark | null = null;
+  benchmarkProductId: number | null = null;
 
   constructor(
     private pharmacyService: PharmacyPanelService,
@@ -126,6 +132,7 @@ export class PharmacyPanelComponent implements OnInit {
 
     if (this.activeTab === 'orders') {
       this.pharmacyService.getOrders().subscribe((items) => this.orders = items);
+      this.pharmacyService.getDeliveries().subscribe((items) => this.deliveries = items);
     }
 
     if (this.activeTab === 'prescriptions') {
@@ -334,5 +341,53 @@ export class PharmacyPanelComponent implements OnInit {
         this.toast.show('Varredura de alertas concluída.', 'success');
       }
     });
+  }
+
+  confirmPickup() {
+    if (!this.pickupCodeInput.trim()) return;
+    this.pharmacyService.confirmPickup(this.pickupCodeInput.trim()).subscribe({
+      next: () => {
+        this.toast.show('Retirada confirmada com sucesso.', 'success');
+        this.pickupCodeInput = '';
+        this.reload();
+      }
+    });
+  }
+
+  advanceDelivery(id: string) {
+    this.pharmacyService.advanceDelivery(id).subscribe({
+      next: () => {
+        this.toast.show('Status da entrega atualizado.', 'success');
+        this.reload();
+      }
+    });
+  }
+
+  deliveryStatusLabel(status: string) {
+    const map: Record<string, string> = {
+      pending: 'Pendente',
+      awaiting_driver: 'Aguardando motorista',
+      picked_up: 'Coletado',
+      in_transit: 'Em trânsito',
+      delivered: 'Entregue'
+    };
+    return map[status] || status;
+  }
+
+  loadPriceBenchmark(productId: number) {
+    this.benchmarkProductId = productId;
+    this.pharmacyService.getPriceBenchmark(productId).subscribe({
+      next: (data) => this.priceBenchmark = data,
+      error: () => this.priceBenchmark = null
+    });
+  }
+
+  benchmarkPositionLabel(position: string) {
+    const map: Record<string, string> = {
+      cheapest: 'Menor preço do mercado',
+      competitive: 'Preço competitivo',
+      above_market: 'Acima da média'
+    };
+    return map[position] || position;
   }
 }

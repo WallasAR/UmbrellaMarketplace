@@ -4,6 +4,7 @@ import { CartService, PharmacyCheckoutSession } from '../../services/cart.servic
 import { UserService } from '../../services/user.service';
 import { CouponService } from '../../services/coupon.service';
 import { Prescription, PrescriptionService } from '../../services/prescription.service';
+import { DeliveryQuote, DeliveryService } from '../../services/delivery.service';
 import { UserProfile } from '../../models/user.model';
 import { ToastService } from '../../services/toast.service';
 
@@ -20,12 +21,19 @@ export class CheckoutComponent implements OnInit {
   loading = false;
   multiSessions: PharmacyCheckoutSession[] = [];
   prescriptions: Prescription[] = [];
+  fulfillmentMode: 'delivery' | 'pickup' = 'delivery';
+  courier: 'local' | 'uber' = 'local';
+  deliveryQuotes: DeliveryQuote[] = [];
+  userLat?: number;
+  userLng?: number;
+  quotingDelivery = false;
 
   constructor(
     public cartService: CartService,
     private userService: UserService,
     private couponService: CouponService,
     private prescriptionService: PrescriptionService,
+    private deliveryService: DeliveryService,
     private toast: ToastService,
     private router: Router
   ) {}
@@ -34,7 +42,10 @@ export class CheckoutComponent implements OnInit {
     this.cartService.loadCart();
     this.loadPrescriptions();
     this.userService.getProfile().subscribe({
-      next: (profile) => this.profile = profile,
+      next: (profile) => {
+        this.profile = profile;
+        this.requestLocation();
+      },
       error: () => this.profile = undefined
     });
   }
@@ -43,14 +54,30 @@ export class CheckoutComponent implements OnInit {
     return this.cartService.prescriptionRequiredItems();
   }
 
+  get totalDeliveryFee(): number {
+    return this.deliveryQuotes.reduce((sum, quote) => sum + quote.price, 0);
+  }
+
+  get deliveryQuotesMap(): Record<string, { price: number; eta_minutes?: number; courier?: string }> {
+    return Object.fromEntries(
+      this.deliveryQuotes.map((quote) => [
+        quote.pharmacy_id,
+        { price: quote.price, eta_minutes: quote.eta_minutes, courier: quote.courier }
+      ])
+    );
+  }
+
   prescriptionStatus(medicineId: number): Prescription['status'] | null {
     return this.prescriptionService.getStatusForMedicine(this.prescriptions, medicineId);
   }
 
   canFinalize(): boolean {
-    return this.prescriptionItems.every((item) =>
+    const prescriptionsOk = this.prescriptionItems.every((item) =>
       this.prescriptionService.isApproved(this.prescriptions, item.medicine_id)
     );
+    if (!prescriptionsOk) return false;
+    if (this.fulfillmentMode === 'delivery' && !this.deliveryQuotes.length) return false;
+    return true;
   }
 
   loadPrescriptions() {
@@ -62,6 +89,56 @@ export class CheckoutComponent implements OnInit {
 
   onPrescriptionUploaded() {
     this.loadPrescriptions();
+  }
+
+  setFulfillmentMode(mode: 'delivery' | 'pickup') {
+    this.fulfillmentMode = mode;
+    if (mode === 'delivery') {
+      this.fetchDeliveryQuotes();
+    } else {
+      this.deliveryQuotes = [];
+    }
+  }
+
+  requestLocation() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.userLat = position.coords.latitude;
+        this.userLng = position.coords.longitude;
+        if (this.fulfillmentMode === 'delivery') this.fetchDeliveryQuotes();
+      },
+      () => undefined
+    );
+  }
+
+  fetchDeliveryQuotes() {
+    const pharmacyIds = [
+      ...new Set(
+        this.cartService.data()
+          .map((item) => item.Medicine?.pharmacy_id)
+          .filter((id): id is string => Boolean(id))
+      )
+    ];
+
+    if (!pharmacyIds.length || this.userLat == null || this.userLng == null) return;
+
+    this.quotingDelivery = true;
+    this.deliveryService.quote({
+      pharmacy_ids: pharmacyIds,
+      destination_lat: this.userLat,
+      destination_lng: this.userLng,
+      courier: this.courier
+    }).subscribe({
+      next: (quotes) => {
+        this.deliveryQuotes = quotes;
+        this.quotingDelivery = false;
+      },
+      error: () => {
+        this.deliveryQuotes = [];
+        this.quotingDelivery = false;
+      }
+    });
   }
 
   applyCoupon() {
@@ -81,14 +158,22 @@ export class CheckoutComponent implements OnInit {
     if (!this.cartService.data().length) return;
 
     if (!this.canFinalize()) {
-      this.toast.show('Envie e aguarde a aprovação das receitas obrigatórias antes de pagar.', 'error');
+      this.toast.show('Envie as receitas e configure a entrega antes de pagar.', 'error');
       return;
     }
 
     this.loading = true;
     this.multiSessions = [];
 
-    this.cartService.checkoutCart(this.couponApplied ? this.couponCode : undefined).subscribe({
+    this.cartService.checkoutCart({
+      couponCode: this.couponApplied ? this.couponCode : undefined,
+      fulfillment_mode: this.fulfillmentMode,
+      destination_lat: this.userLat,
+      destination_lng: this.userLng,
+      destination_address: this.profile?.address,
+      courier: this.courier,
+      delivery_quotes: this.fulfillmentMode === 'delivery' ? this.deliveryQuotesMap : {}
+    }).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.mode === 'multi' && res.sessions?.length) {

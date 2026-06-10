@@ -11,10 +11,21 @@ export interface PharmacyCheckoutSession {
   items: number;
 }
 
+export interface CheckoutPayload {
+  couponCode?: string;
+  fulfillment_mode?: 'delivery' | 'pickup';
+  destination_lat?: number;
+  destination_lng?: number;
+  destination_address?: string;
+  courier?: 'local' | 'uber';
+  delivery_quotes?: Record<string, { price: number; eta_minutes?: number; courier?: string }>;
+}
+
 export interface CheckoutResponse {
   mode: 'single' | 'multi';
   url?: string;
   sessions?: PharmacyCheckoutSession[];
+  fulfillment_mode?: string;
 }
 
 @Injectable({
@@ -79,8 +90,8 @@ export class CartService {
     );
   }
 
-  checkoutCart(couponCode?: string): Observable<CheckoutResponse> {
-    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/cart`, { couponCode });
+  checkoutCart(payload: CheckoutPayload = {}): Observable<CheckoutResponse> {
+    return this.http.post<CheckoutResponse>(`${environment.apiUrl}/checkout/cart`, payload);
   }
 
   checkoutItem(medicineId: number, quantity: number, couponCode?: string): Observable<CheckoutResponse> {

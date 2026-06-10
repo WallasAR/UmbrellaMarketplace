@@ -136,6 +136,31 @@
       <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createProduct()">Cadastrar produto</button>
     </div>
 
+    @if (priceBenchmark && benchmarkProductId) {
+      <div class="card-surface p-5 mb-6 border border-[#F74838]/20">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="font-semibold text-gray-800">Termômetro de preços — {{ priceBenchmark.product.name }}</h3>
+          <button type="button" class="text-sm text-gray-500" (click)="priceBenchmark = null; benchmarkProductId = null">Fechar</button>
+        </div>
+        <p class="text-sm text-gray-600 mb-2">
+          Seu preço: <strong>R$ {{ priceBenchmark.product.my_price | number:'1.2-2' }}</strong> ·
+          Média do mercado: R$ {{ priceBenchmark.market_average | number:'1.2-2' }} ·
+          Menor preço: R$ {{ priceBenchmark.market_cheapest | number:'1.2-2' }}
+        </p>
+        <p class="text-sm font-medium mb-3" [class.text-green-700]="priceBenchmark.position === 'cheapest'" [class.text-amber-700]="priceBenchmark.position === 'competitive'" [class.text-red-700]="priceBenchmark.position === 'above_market'">
+          {{ benchmarkPositionLabel(priceBenchmark.position) }}
+        </p>
+        <div class="space-y-1 text-sm">
+          @for (comp of priceBenchmark.competitors.slice(0, 5); track comp.medicine_id) {
+            <div class="flex justify-between" [class.font-semibold]="comp.is_mine">
+              <span>{{ comp.is_mine ? 'Você' : (comp.pharmacy_name || 'Farmácia') }}</span>
+              <span>R$ {{ comp.final_price | number:'1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
     <div class="space-y-3">
       @for (product of products; track product.id) {
         <div class="card-surface p-4">
@@ -163,6 +188,7 @@
                     Estoque: {{ product.stock }}
                   </p>
                 </div>
+                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="loadPriceBenchmark(product.id)">Termômetro</button>
                 <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="startEdit(product)">Editar</button>
                 <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 text-[#F74838]" (click)="deleteProduct(product.id)">Remover</button>
               </div>
@@ -208,6 +234,32 @@
   }
 
   @if (activeTab === 'orders') {
+    <div class="card-surface p-5 mb-6">
+      <h2 class="font-semibold text-gray-800 mb-3">Confirmar retirada (Click & Collect)</h2>
+      <div class="flex gap-2">
+        <input class="flex-1 rounded-lg border border-gray-200 px-3 py-2 font-mono uppercase" [(ngModel)]="pickupCodeInput" placeholder="Código de retirada" aria-label="Código de retirada" />
+        <button type="button" class="btn-brand px-4 py-2" (click)="confirmPickup()">Confirmar</button>
+      </div>
+    </div>
+
+    @if (deliveries.length) {
+      <div class="mb-6 space-y-3">
+        <h2 class="font-semibold text-gray-800">Entregas em andamento</h2>
+        @for (delivery of deliveries; track delivery.id) {
+          <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+            <div>
+              <p class="font-medium">Pedido #{{ delivery.purchase_id.slice(-8) }}</p>
+              <p class="text-sm text-gray-500">{{ delivery.User?.name || delivery.User?.email }}</p>
+              <p class="text-sm text-gray-500">{{ deliveryStatusLabel(delivery.status) }} · R$ {{ delivery.quoted_price | number:'1.2-2' }}</p>
+            </div>
+            @if (delivery.status !== 'delivered') {
+              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="advanceDelivery(delivery.id)">Avançar status</button>
+            }
+          </div>
+        }
+      </div>
+    }
+
     <div class="space-y-3">
       @for (order of orders; track order.sessionId) {
         <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">

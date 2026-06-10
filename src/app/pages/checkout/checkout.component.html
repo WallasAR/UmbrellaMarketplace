@@ -11,15 +11,66 @@
     <div class="grid lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-4">
         <section class="card-surface p-5" aria-labelledby="delivery-title">
-          <h2 id="delivery-title" class="font-semibold text-gray-800 mb-3">Entrega</h2>
+          <h2 id="delivery-title" class="font-semibold text-gray-800 mb-3">Como receber</h2>
+          <div class="flex gap-2 mb-4">
+            <button type="button"
+              class="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition"
+              [class.border-[#F74838]]="fulfillmentMode === 'delivery'"
+              [class.bg-[#fff1ef]]="fulfillmentMode === 'delivery'"
+              (click)="setFulfillmentMode('delivery')">
+              Entrega
+            </button>
+            <button type="button"
+              class="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition"
+              [class.border-[#F74838]]="fulfillmentMode === 'pickup'"
+              [class.bg-[#fff1ef]]="fulfillmentMode === 'pickup'"
+              (click)="setFulfillmentMode('pickup')">
+              Retirada na farmácia
+            </button>
+          </div>
+
           @if (profile) {
             <p class="text-sm text-gray-700">{{ profile.name }}</p>
-            <p class="text-sm text-gray-600">{{ profile.address }}</p>
-            <p class="text-sm text-gray-600">CEP: {{ profile.cep }} · Tel: {{ profile.phone }}</p>
-            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Editar endereço</a>
+            @if (fulfillmentMode === 'delivery') {
+              <p class="text-sm text-gray-600">{{ profile.address }}</p>
+              <p class="text-sm text-gray-600">CEP: {{ profile.cep }} · Tel: {{ profile.phone }}</p>
+            }
+            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Editar perfil</a>
           } @else {
             <p class="text-sm text-gray-600">Complete seu perfil para agilizar a entrega.</p>
             <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Completar perfil</a>
+          }
+
+          @if (fulfillmentMode === 'delivery') {
+            <div class="mt-4 pt-4 border-t border-gray-100">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-medium text-gray-700">Cotação de frete</p>
+                <select class="text-sm rounded border border-gray-200 px-2 py-1" [(ngModel)]="courier" (change)="fetchDeliveryQuotes()">
+                  <option value="local">Entrega local</option>
+                  <option value="uber">Uber (simulado)</option>
+                </select>
+              </div>
+              @if (userLat == null) {
+                <button type="button" class="text-sm text-[#F74838] hover:underline" (click)="requestLocation()">
+                  Permitir localização para cotar frete
+                </button>
+              } @else if (quotingDelivery) {
+                <p class="text-sm text-gray-500">Calculando frete...</p>
+              } @else if (deliveryQuotes.length) {
+                <div class="space-y-2">
+                  @for (quote of deliveryQuotes; track quote.pharmacy_id) {
+                    <div class="flex justify-between text-sm rounded-lg bg-gray-50 px-3 py-2">
+                      <span>{{ quote.pharmacy_name }} · ~{{ quote.eta_minutes }} min</span>
+                      <span class="font-medium">R$ {{ quote.price | number:'1.2-2' }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-sm text-gray-500">Não foi possível cotar o frete. Verifique sua localização.</p>
+              }
+            </div>
+          } @else {
+            <p class="mt-3 text-sm text-gray-600">Após o pagamento, você receberá um código QR para retirada no balcão.</p>
           }
         </section>
 
@@ -93,17 +144,29 @@
           <span>R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
         </div>
         <div class="flex justify-between text-sm mb-4">
-          <span>Entrega</span>
-          <span class="text-gray-500">No checkout Stripe</span>
+          <span>{{ fulfillmentMode === 'pickup' ? 'Retirada' : 'Frete' }}</span>
+          <span>
+            @if (fulfillmentMode === 'pickup') {
+              Grátis
+            } @else if (totalDeliveryFee) {
+              R$ {{ totalDeliveryFee | number:'1.2-2' }}
+            } @else {
+              —
+            }
+          </span>
         </div>
         <div class="flex justify-between text-lg font-bold mb-6">
           <span>Total</span>
-          <span class="text-[#F74838]">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
+          <span class="text-[#F74838]">R$ {{ (cartService.subtotal() + (fulfillmentMode === 'delivery' ? totalDeliveryFee : 0)) | number:'1.2-2' }}</span>
         </div>
 
-        @if (prescriptionItems.length && !canFinalize()) {
+        @if (!canFinalize()) {
           <p class="text-xs text-amber-700 bg-amber-50 rounded-lg p-2 mb-4">
-            Aguarde a aprovação das receitas ou envie os documentos pendentes.
+            @if (prescriptionItems.length) {
+              Aguarde a aprovação das receitas ou envie os documentos pendentes.
+            } @else if (fulfillmentMode === 'delivery' && !deliveryQuotes.length) {
+              Permita a localização e aguarde a cotação de frete.
+            }
           </p>
         }
 
