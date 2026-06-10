@@ -33,6 +33,9 @@
               [class.bg-[#fff1ef]]="msg.role === 'user'"
               [class.border]="msg.role === 'assistant'"
               [class.border-gray-200]="msg.role === 'assistant'">
+              @if (msg.isLlm) {
+                <span class="block text-[10px] uppercase tracking-wide text-indigo-600 mb-1">Resposta com IA</span>
+              }
               {{ msg.text }}
             </div>
             @if (msg.products?.length) {

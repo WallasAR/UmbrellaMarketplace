@@ -24,7 +24,7 @@ export interface CopilotMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  metadata?: { products?: Array<{ id: number; name: string }> };
+  metadata?: { products?: Array<{ id: number; name: string }>; intent?: string };
   created_at: string;
 }
 

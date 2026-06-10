@@ -11,6 +11,7 @@ interface ChatMessage {
   text: string;
   products?: Product[];
   canAddToCart?: boolean;
+  isLlm?: boolean;
 }
 
 @Component({
@@ -92,7 +93,8 @@ export class CopilotWidgetComponent implements OnInit {
       role: msg.role,
       text: msg.content,
       products: products.length ? products as Product[] : undefined,
-      canAddToCart: msg.role === 'assistant' && products.length > 0
+      canAddToCart: msg.role === 'assistant' && products.length > 0,
+      isLlm: msg.metadata?.intent === 'llm_chat'
     };
   }
 
@@ -198,7 +200,8 @@ export class CopilotWidgetComponent implements OnInit {
       role: 'assistant',
       text: res.reply,
       products: res.products,
-      canAddToCart: fromScan && !!res.products?.length
+      canAddToCart: fromScan && !!res.products?.length,
+      isLlm: res.intent === 'llm_chat'
     });
 
     this.loadSessions();
