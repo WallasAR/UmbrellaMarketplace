@@ -97,6 +97,35 @@ export class AdminService {
     if (entityType) params['entity_type'] = entityType;
     return this.http.get<AuditLogEntry[]>(`${environment.apiUrl}/admin/audit-logs`, { params });
   }
+
+  getBanners() {
+    return this.http.get<InstitutionalBanner[]>(`${environment.apiUrl}/admin/banners`);
+  }
+
+  createBanner(payload: Partial<InstitutionalBanner>) {
+    return this.http.post<InstitutionalBanner>(`${environment.apiUrl}/admin/banners`, payload);
+  }
+
+  updateBanner(id: string, payload: Partial<InstitutionalBanner>) {
+    return this.http.patch<InstitutionalBanner>(`${environment.apiUrl}/admin/banners/${id}`, payload);
+  }
+
+  deleteBanner(id: string) {
+    return this.http.delete(`${environment.apiUrl}/admin/banners/${id}`);
+  }
+}
+
+export interface InstitutionalBanner {
+  id: string;
+  title: string;
+  subtitle?: string;
+  image_url?: string;
+  link_url?: string;
+  category?: string;
+  sponsor?: string;
+  gradient?: string;
+  priority?: number;
+  active?: boolean;
 }
 
 export interface AuditLogEntry {

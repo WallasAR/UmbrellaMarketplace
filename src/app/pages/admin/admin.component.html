@@ -144,6 +144,36 @@
   </section>
 
   <section class="mb-8">
+    <h2 class="text-xl font-semibold mb-4">Banners institucionais</h2>
+    <div class="card-surface p-4 mb-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Título" [(ngModel)]="bannerForm.title" />
+      <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Subtítulo" [(ngModel)]="bannerForm.subtitle" />
+      <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Link (URL)" [(ngModel)]="bannerForm.link_url" />
+      <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="bannerForm.category" />
+      <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Patrocinador" [(ngModel)]="bannerForm.sponsor" />
+      <button type="button" class="btn-brand px-4 py-2" (click)="createBanner()">Publicar banner</button>
+    </div>
+    <div class="space-y-2">
+      @for (banner of banners; track banner.id) {
+        <div class="card-surface p-3 flex flex-wrap justify-between gap-3 items-center">
+          <div>
+            <p class="font-medium">{{ banner.title }}</p>
+            <p class="text-sm text-gray-500">{{ banner.subtitle || banner.sponsor || 'Sem subtítulo' }}</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="px-3 py-1 text-sm border rounded-lg" (click)="toggleBanner(banner)">
+              {{ banner.active ? 'Desativar' : 'Ativar' }}
+            </button>
+            <button type="button" class="px-3 py-1 text-sm text-[#F74838] border rounded-lg" (click)="deleteBanner(banner.id)">Remover</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="text-gray-500">Nenhum banner cadastrado.</p>
+      }
+    </div>
+  </section>
+
+  <section class="mb-8">
     <h2 class="text-xl font-semibold mb-4">Audit log</h2>
     <div class="space-y-2 max-h-96 overflow-y-auto">
       @for (log of auditLogs; track log.id) {
