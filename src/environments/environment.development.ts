@@ -1,4 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://umbrellacorp-api.onrender.com/api'
+  apiUrl: 'https://umbrellacorp-api.onrender.com/api',
+  supabaseUrl: '',
+  supabaseKey: ''
 };

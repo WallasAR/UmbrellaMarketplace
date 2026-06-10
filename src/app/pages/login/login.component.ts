@@ -122,4 +122,15 @@ export class AuthComponent {
     this.isLogin = formType === 'login';
     this.errorMessage = '';
   }
+
+  async socialLogin(provider: string) {
+    try {
+      this.loading = true;
+      const lowerProvider = provider.toLowerCase() as 'google' | 'facebook';
+      await this.authService.socialLogin(lowerProvider);
+    } catch (error) {
+      this.loading = false;
+      this.errorMessage = `Erro ao inicializar login com ${provider}. Tente novamente.`;
+    }
+  }
 }

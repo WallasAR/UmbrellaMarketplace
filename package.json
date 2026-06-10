@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@supabase/supabase-js": "^2.108.1",
     "@tailwindcss/postcss": "^4.0.3",
     "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
@@ -31,6 +32,7 @@
     "@angular-devkit/build-angular": "^19.1.5",
     "@angular/cli": "^19.1.5",
     "@angular/compiler-cli": "^19.1.0",
+    "@playwright/test": "^1.49.1",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
@@ -38,7 +40,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "@playwright/test": "^1.49.1",
     "typescript": "~5.7.2"
   }
 }

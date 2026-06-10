@@ -3,6 +3,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 interface AuthResponse {
   message: string;
@@ -64,10 +65,40 @@ export class AuthService {
     this.isAuthenticated() && !this.pharmacyId() && this.userRole() === 'customer'
   );
 
+  private supabase: SupabaseClient;
+
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        this.http.post<AuthResponse>(`${environment.apiUrl}/auth/social`, { token: session.access_token }).subscribe({
+          next: (res) => {
+            this.setToken(res.token);
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            console.error('Failed to sync social login with backend', err);
+            this.supabase.auth.signOut();
+            this.router.navigate(['/login']);
+          }
+        });
+      }
+    });
+  }
+
+  async socialLogin(provider: 'google' | 'facebook') {
+    const { error } = await this.supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.origin + '/login'
+      }
+    });
+    if (error) throw error;
+  }
 
   signIn(email: string, pass: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, pass }).pipe(
