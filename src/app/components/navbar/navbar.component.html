@@ -8,6 +8,7 @@
     <a routerLink="/about" routerLinkActive="isActive" class="text-gray-600 nav-link px-3 py-4 rounded-lg hover:bg-gray-50">Sobre</a>
     <a routerLink="/faqs" routerLinkActive="isActive" class="text-gray-600 nav-link px-3 py-4 rounded-lg hover:bg-gray-50">FAQs</a>
     <a routerLink="/category" routerLinkActive="isActive" class="text-gray-600 nav-link px-3 py-4 rounded-lg hover:bg-gray-50">Categorias</a>
+    <a routerLink="/pharmacies/nearby" routerLinkActive="isActive" class="text-gray-600 nav-link px-3 py-4 rounded-lg hover:bg-gray-50">Farmácias próximas</a>
   </div>
 
   <div class="flex flex-1 justify-center md:justify-end mx-4">
@@ -93,6 +94,7 @@
   <div class="flex flex-col space-y-2">
     <a routerLink="/home" (click)="closeDropdowns()" routerLinkActive="isActive" class="text-gray-600 nav-link py-2">Home</a>
     <a routerLink="/category" (click)="closeDropdowns()" class="text-gray-600 nav-link py-2">Categorias</a>
+    <a routerLink="/pharmacies/nearby" (click)="closeDropdowns()" class="text-gray-600 nav-link py-2">Farmácias próximas</a>
     <a routerLink="/cart" (click)="closeDropdowns()" class="text-gray-600 nav-link py-2">Carrinho ({{ cartService.itemCount() }})</a>
     @if (authService.isAuthenticated()) {
       <a routerLink="/orders" (click)="closeDropdowns()" class="text-gray-600 py-2">Meus pedidos</a>

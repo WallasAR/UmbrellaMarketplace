@@ -39,6 +39,7 @@ import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.comp
 import { MetricsBarChartComponent } from './components/metrics-bar-chart/metrics-bar-chart.component';
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
 import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
+import { NearbyPharmaciesComponent } from './pages/nearby-pharmacies/nearby-pharmacies.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widget.component';
 
@@ -77,7 +78,8 @@ import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widg
     PharmacyRegisterComponent,
     CheckoutCancelComponent,
     MetricsBarChartComponent,
-    CopilotWidgetComponent
+    CopilotWidgetComponent,
+    NearbyPharmaciesComponent
   ],
   imports: [
     BrowserModule,

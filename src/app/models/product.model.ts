@@ -60,4 +60,8 @@ export interface ProductFilters {
   sort?: 'price_asc' | 'price_desc' | 'discount_desc' | 'name_asc';
   discount?: boolean;
   stock?: boolean;
+  symptom?: string;
+  lat?: number;
+  lng?: number;
+  radius_km?: number;
 }

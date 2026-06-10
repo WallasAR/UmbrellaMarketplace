@@ -13,6 +13,9 @@ export class ProductFiltersComponent implements OnInit {
 
   categories: string[] = [];
   filters: ProductFilters = { sort: 'name_asc' };
+  nearbyEnabled = false;
+  geoLoading = false;
+  geoError = '';
 
   constructor(private productService: ProductService) {}
 
@@ -26,5 +29,42 @@ export class ProductFiltersComponent implements OnInit {
 
   emitFilters() {
     this.filtersChange.emit({ ...this.filters });
+  }
+
+  toggleNearby(enabled: boolean) {
+    this.nearbyEnabled = enabled;
+    if (!enabled) {
+      this.filters = { ...this.filters, lat: undefined, lng: undefined, radius_km: undefined };
+      this.emitFilters();
+      return;
+    }
+
+    this.geoLoading = true;
+    this.geoError = '';
+
+    if (!navigator.geolocation) {
+      this.geoError = 'Geolocalização indisponível';
+      this.nearbyEnabled = false;
+      this.geoLoading = false;
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.filters = {
+          ...this.filters,
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          radius_km: 15
+        };
+        this.geoLoading = false;
+        this.emitFilters();
+      },
+      () => {
+        this.geoError = 'Permissão de localização negada';
+        this.nearbyEnabled = false;
+        this.geoLoading = false;
+      }
+    );
   }
 }

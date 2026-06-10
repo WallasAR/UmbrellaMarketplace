@@ -33,4 +33,15 @@
     <input type="checkbox" [(ngModel)]="filters.stock" (change)="emitFilters()" />
     Apenas em estoque
   </label>
+  <div>
+    <label class="text-xs font-medium text-gray-600" for="symptom-filter">Sintoma</label>
+    <input id="symptom-filter" type="text" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="filters.symptom" (change)="emitFilters()" placeholder="Ex: febre" />
+  </div>
+  <label class="flex items-center gap-2 text-sm text-gray-700">
+    <input type="checkbox" [checked]="nearbyEnabled" (change)="toggleNearby($any($event.target).checked)" [disabled]="geoLoading" />
+    Farmácias próximas (15 km)
+  </label>
+  @if (geoError) {
+    <p class="text-xs text-red-600">{{ geoError }}</p>
+  }
 </div>
