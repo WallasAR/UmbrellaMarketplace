@@ -113,6 +113,42 @@ export async function setupMarketplaceMocks(page: Page) {
       });
     }
 
+    if (method === 'GET' && path.endsWith('/prescriptions')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([])
+      });
+    }
+
+    if (method === 'GET' && path.endsWith('/delivery/couriers')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { id: 'local', label: 'Entrega local', available: true, mode: 'local' },
+          { id: 'uber', label: 'Uber Direct', available: true, mode: 'simulated' },
+          { id: '99', label: '99 Entrega', available: true, mode: 'simulated' }
+        ])
+      });
+    }
+
+    if (method === 'POST' && path.endsWith('/delivery/quote')) {
+      const body = route.request().postDataJSON() as { pharmacy_ids?: string[] };
+      const quotes = (body.pharmacy_ids || ['ph-default']).map((pharmacyId) => ({
+        pharmacy_id: pharmacyId,
+        pharmacy_name: 'Farmácia E2E',
+        price: 9.9,
+        eta_minutes: 45,
+        courier: 'local'
+      }));
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(quotes)
+      });
+    }
+
     if (method === 'POST' && path.endsWith('/coupons/validate')) {
       return route.fulfill({
         status: 200,

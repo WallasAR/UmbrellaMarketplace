@@ -74,12 +74,20 @@ export async function setupAdminMocks(page: Page) {
     const path = url.pathname.replace(/.*\/api\/admin/, '/api/admin');
     const method = route.request().method();
 
-    if (path.endsWith('/dashboard')) {
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockAdminStats) });
+    if (path.includes('/audit-logs')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
     }
 
-    if (path.endsWith('/metrics')) {
+    if (path.includes('/banners') && method === 'GET') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
+    }
+
+    if (path.includes('/metrics')) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockAdminMetrics) });
+    }
+
+    if (path.endsWith('/dashboard')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockAdminStats) });
     }
 
     if (path.endsWith('/financial/export')) {
@@ -103,7 +111,7 @@ export async function setupAdminMocks(page: Page) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([mockAdminUser]) });
     }
 
-    if (path.endsWith('/pharmacies/pending')) {
+    if (path.includes('/pharmacies/pending')) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([mockPendingPharmacy]) });
     }
 

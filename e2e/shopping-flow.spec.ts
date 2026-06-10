@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createMockToken, mockProduct, setupMarketplaceMocks } from './fixtures/marketplace-api';
+import { checkoutPayButton, selectPickupOnCheckout } from './fixtures/checkout-helpers';
 
 test.describe('Integrated shopping flow (mocked API)', () => {
   test.beforeEach(async ({ page }) => {
@@ -57,7 +58,8 @@ test.describe('Integrated shopping flow (mocked API)', () => {
     await page.goto('/product/1');
     await page.getByRole('button', { name: 'Adicionar ao carrinho' }).click();
     await page.goto('/checkout');
-    await page.getByRole('button', { name: 'Pagar com segurança' }).click();
+    await selectPickupOnCheckout(page);
+    await checkoutPayButton(page).click();
 
     await expect.poll(() => checkoutRequested).toBe(true);
   });

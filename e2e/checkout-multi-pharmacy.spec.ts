@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import {
   createMockToken,
-  mockMultiCheckoutResponse,
   productA,
   productB,
   setupMultiCheckoutMocks
 } from './fixtures/multi-checkout-api';
+import { checkoutPayButton, selectPickupOnCheckout } from './fixtures/checkout-helpers';
 
 test.describe('Multi-pharmacy checkout (mocked API)', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,23 +23,19 @@ test.describe('Multi-pharmacy checkout (mocked API)', () => {
     await expect(page.getByText(productB.name)).toBeVisible();
   });
 
-  test('returns separate Stripe sessions per pharmacy', async ({ page }) => {
+  test('returns unified Stripe session for multi-pharmacy cart', async ({ page }) => {
     await page.goto('/checkout');
+
+    await selectPickupOnCheckout(page);
 
     const checkoutRequest = page.waitForRequest((req) =>
       req.method() === 'POST' && req.url().includes('/checkout/cart')
     );
 
-    await page.getByRole('button', { name: 'Pagar com segurança' }).click();
-    await checkoutRequest;
+    await checkoutPayButton(page, true).click();
 
-    await expect(page.getByText('Pagamentos por farmácia')).toBeVisible();
-    await expect(page.getByRole('link', { name: /Farmácia Central/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Farmácia Norte/ })).toBeVisible();
-    await expect(page.getByText('1 item(ns) · Pagar agora')).toBeVisible();
-    await expect(page.getByText('2 item(ns) · Pagar agora')).toBeVisible();
-
-    const paymentLinks = page.locator('a[href*="checkout.stripe.test"]');
-    await expect(paymentLinks).toHaveCount(2);
+    const request = await checkoutRequest;
+    const body = request.postDataJSON() as { fulfillment_mode?: string };
+    expect(body.fulfillment_mode).toBe('pickup');
   });
 });

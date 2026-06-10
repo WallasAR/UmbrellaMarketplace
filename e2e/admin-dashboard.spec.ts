@@ -18,6 +18,10 @@ test.describe('Admin dashboard (mocked API)', () => {
   test('loads admin panel with platform metrics', async ({ page }) => {
     await page.goto('/admin');
 
+    await page.waitForResponse(
+      (response) => response.url().includes('/admin/metrics') && response.status() === 200
+    );
+
     await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toBeVisible();
     await expect(page.getByText(String(mockAdminStats.users))).toBeVisible();
     await expect(page.getByText(`${mockAdminMetrics.conversionRate}%`)).toBeVisible();
@@ -28,6 +32,10 @@ test.describe('Admin dashboard (mocked API)', () => {
 
   test('shows pending pharmacy and approves registration', async ({ page }) => {
     await page.goto('/admin');
+
+    await page.waitForResponse(
+      (response) => response.url().includes('/pharmacies/pending') && response.status() === 200
+    );
 
     await expect(page.getByText(mockPendingPharmacy.name)).toBeVisible();
     await expect(page.getByText(mockPendingPharmacy.owner.email)).toBeVisible();

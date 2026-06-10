@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createMockToken, mockProduct, setupMarketplaceMocks } from './fixtures/marketplace-api';
+import { checkoutPayButton, selectPickupOnCheckout } from './fixtures/checkout-helpers';
 
 test.describe('Checkout with coupon (mocked API)', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,7 +33,8 @@ test.describe('Checkout with coupon (mocked API)', () => {
       req.method() === 'POST' && req.url().includes('/checkout/cart')
     );
 
-    await page.getByRole('button', { name: 'Pagar com segurança' }).click();
+    await selectPickupOnCheckout(page);
+    await checkoutPayButton(page).click();
 
     const paymentRequest = await checkoutRequest;
     const checkoutBody = paymentRequest.postDataJSON() as { couponCode: string };

@@ -55,6 +55,12 @@ export const mockMultiCheckoutResponse = {
   ]
 };
 
+export const mockUnifiedCheckoutResponse = {
+  mode: 'unified',
+  url: 'https://checkout.stripe.test/unified-session',
+  pharmacy_count: 2
+};
+
 export async function setupMultiCheckoutMocks(page: Page) {
   await setupMarketplaceMocks(page);
 
@@ -70,7 +76,7 @@ export async function setupMultiCheckoutMocks(page: Page) {
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(mockMultiCheckoutResponse)
+      body: JSON.stringify(mockUnifiedCheckoutResponse)
     })
   );
 }

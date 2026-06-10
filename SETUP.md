@@ -99,7 +99,7 @@ E2E de onboarding (`e2e/pharmacy-onboarding.spec.ts`) valida seleção de plano 
 
 E2E de receita (`e2e/prescription-upload.spec.ts`) valida upload de prescrição em produto controlado.
 
-E2E multi-farmácia (`e2e/checkout-multi-pharmacy.spec.ts`) valida checkout com sessões Stripe separadas por farmácia.
+E2E multi-farmácia (`e2e/checkout-multi-pharmacy.spec.ts`) valida checkout unificado com retirada na farmácia.
 
 Testes contra API real (opcional):
 
