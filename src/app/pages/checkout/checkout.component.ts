@@ -4,7 +4,7 @@ import { CartService, PharmacyCheckoutSession } from '../../services/cart.servic
 import { UserService } from '../../services/user.service';
 import { CouponService } from '../../services/coupon.service';
 import { Prescription, PrescriptionService } from '../../services/prescription.service';
-import { DeliveryQuote, DeliveryService } from '../../services/delivery.service';
+import { DeliveryQuote, DeliveryService, CourierOption } from '../../services/delivery.service';
 import { UserProfile } from '../../models/user.model';
 import { ToastService } from '../../services/toast.service';
 
@@ -24,10 +24,10 @@ export class CheckoutComponent implements OnInit {
   prescriptions: Prescription[] = [];
   fulfillmentMode: 'delivery' | 'pickup' = 'delivery';
   courier: 'local' | 'uber' | '99' = 'local';
-  couriers: Array<{ id: string; label: string }> = [
-    { id: 'local', label: 'Entrega local' },
-    { id: 'uber', label: 'Uber' },
-    { id: '99', label: '99 Entrega' }
+  couriers: CourierOption[] = [
+    { id: 'local', label: 'Entrega local', available: true, mode: 'local' },
+    { id: 'uber', label: 'Uber', available: true, mode: 'simulated' },
+    { id: '99', label: '99 Entrega', available: true, mode: 'simulated' }
   ];
   deliveryQuotes: DeliveryQuote[] = [];
   userLat?: number;
@@ -49,7 +49,7 @@ export class CheckoutComponent implements OnInit {
     this.loadPrescriptions();
     this.deliveryService.listCouriers().subscribe({
       next: (items) => {
-        if (items?.length) this.couriers = items.map((c) => ({ id: c.id, label: c.label }));
+        if (items?.length) this.couriers = items;
       }
     });
     this.userService.getProfile().subscribe({
@@ -59,6 +59,16 @@ export class CheckoutComponent implements OnInit {
       },
       error: () => this.profile = undefined
     });
+  }
+
+  get selectedCourier(): CourierOption | undefined {
+    return this.couriers.find((c) => c.id === this.courier);
+  }
+
+  courierModeLabel(mode?: string): string {
+    if (mode === 'api') return 'Integração ativa';
+    if (mode === 'simulated') return 'Cotação estimada';
+    return 'Entrega própria';
   }
 
   get prescriptionItems() {

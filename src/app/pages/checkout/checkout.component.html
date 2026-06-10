@@ -51,6 +51,13 @@
                   }
                 </select>
               </div>
+              @if (selectedCourier && selectedCourier.id !== 'local') {
+                <p class="text-xs mb-2"
+                  [class.text-green-700]="selectedCourier.mode === 'api'"
+                  [class.text-amber-700]="selectedCourier.mode === 'simulated'">
+                  {{ courierModeLabel(selectedCourier.mode) }}
+                </p>
+              }
               @if (userLat == null) {
                 <button type="button" class="text-sm text-[#F74838] hover:underline" (click)="requestLocation()">
                   Permitir localização para cotar frete
