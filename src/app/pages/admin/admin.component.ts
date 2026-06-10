@@ -38,6 +38,7 @@ export class AdminComponent implements OnInit {
     gradient: 'from-[#F74838] to-[#ff7a6f]',
     priority: 0
   };
+  bannerImageFile?: File;
 
   constructor(
     private adminService: AdminService,
@@ -75,16 +76,42 @@ export class AdminComponent implements OnInit {
 
   createBanner() {
     if (!this.bannerForm.title.trim()) return;
-    this.adminService.createBanner(this.bannerForm).subscribe({
-      next: () => {
-        this.toast.show('Banner criado.', 'success');
-        this.bannerForm = {
-          title: '', subtitle: '', link_url: '', category: '', sponsor: '',
-          gradient: 'from-[#F74838] to-[#ff7a6f]', priority: 0
-        };
-        this.reload();
-      }
-    });
+
+    const publish = (payload: Partial<InstitutionalBanner>) => {
+      this.adminService.createBanner(payload).subscribe({
+        next: () => {
+          this.toast.show('Banner criado.', 'success');
+          this.bannerForm = {
+            title: '', subtitle: '', link_url: '', category: '', sponsor: '',
+            gradient: 'from-[#F74838] to-[#ff7a6f]', priority: 0
+          };
+          this.bannerImageFile = undefined;
+          this.reload();
+        }
+      });
+    };
+
+    if (this.bannerImageFile) {
+      this.adminService.createBannerWithFile(this.bannerForm, this.bannerImageFile).subscribe({
+        next: () => {
+          this.toast.show('Banner criado.', 'success');
+          this.bannerForm = {
+            title: '', subtitle: '', link_url: '', category: '', sponsor: '',
+            gradient: 'from-[#F74838] to-[#ff7a6f]', priority: 0
+          };
+          this.bannerImageFile = undefined;
+          this.reload();
+        }
+      });
+      return;
+    }
+
+    publish(this.bannerForm);
+  }
+
+  onBannerImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.bannerImageFile = input.files?.[0];
   }
 
   toggleBanner(banner: InstitutionalBanner) {

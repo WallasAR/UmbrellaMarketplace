@@ -151,6 +151,10 @@
       <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Link (URL)" [(ngModel)]="bannerForm.link_url" />
       <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="bannerForm.category" />
       <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Patrocinador" [(ngModel)]="bannerForm.sponsor" />
+      <label class="block text-sm">
+        <span class="text-gray-600">Imagem do banner</span>
+        <input type="file" accept="image/*" class="mt-1 block w-full text-sm" (change)="onBannerImageSelected($event)" />
+      </label>
       <button type="button" class="btn-brand px-4 py-2" (click)="createBanner()">Publicar banner</button>
     </div>
     <div class="space-y-2">
@@ -159,6 +163,9 @@
           <div>
             <p class="font-medium">{{ banner.title }}</p>
             <p class="text-sm text-gray-500">{{ banner.subtitle || banner.sponsor || 'Sem subtítulo' }}</p>
+            @if (banner.image_url) {
+              <img [src]="banner.image_url" [alt]="banner.title" class="mt-2 h-12 object-cover rounded" />
+            }
           </div>
           <div class="flex gap-2">
             <button type="button" class="px-3 py-1 text-sm border rounded-lg" (click)="toggleBanner(banner)">

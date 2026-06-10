@@ -106,6 +106,25 @@ export class AdminService {
     return this.http.post<InstitutionalBanner>(`${environment.apiUrl}/admin/banners`, payload);
   }
 
+  createBannerWithFile(
+    payload: Partial<InstitutionalBanner>,
+    file: File
+  ): Observable<InstitutionalBanner> {
+    return new Observable((observer) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        this.http.post<InstitutionalBanner>(`${environment.apiUrl}/admin/banners`, {
+          ...payload,
+          file_name: file.name,
+          file_data: base64
+        }).subscribe(observer);
+      };
+      reader.onerror = () => observer.error(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   updateBanner(id: string, payload: Partial<InstitutionalBanner>) {
     return this.http.patch<InstitutionalBanner>(`${environment.apiUrl}/admin/banners/${id}`, payload);
   }
