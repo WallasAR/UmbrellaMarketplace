@@ -48,6 +48,33 @@
         }
       </div>
 
+      @if (insightsLoading) {
+        <p class="text-sm text-gray-500">Analisando combinações do carrinho...</p>
+      } @else if (insights && (insights.interactions.length || insights.cross_sell.length)) {
+        <section class="card-surface p-5 border border-[#F74838]/20">
+          <h2 class="text-lg font-semibold text-gray-800 mb-3">Copilot — orientações do carrinho</h2>
+          @for (warning of insights.interactions; track $index) {
+            <div class="rounded-lg p-3 mb-2 text-sm" [class.bg-red-50]="warning.severity === 'high'" [class.bg-amber-50]="warning.severity !== 'high'">
+              <p class="font-medium" [class.text-red-800]="warning.severity === 'high'" [class.text-amber-800]="warning.severity !== 'high'">Interação medicamentosa</p>
+              <p class="text-gray-700 mt-1">{{ warning.message }}</p>
+            </div>
+          }
+          @for (tip of insights.cross_sell; track $index) {
+            <div class="rounded-lg bg-[#fff1ef] p-3 mb-2 text-sm">
+              <p class="font-medium text-[#F74838]">Sugestão complementar</p>
+              <p class="text-gray-700 mt-1">{{ tip.message }}</p>
+              @if (tip.products.length) {
+                <div class="flex flex-wrap gap-2 mt-2">
+                  @for (product of tip.products; track product.id) {
+                    <a [routerLink]="['/product', product.id]" class="text-xs rounded-full border border-[#F74838]/30 px-3 py-1 hover:bg-white">{{ product.name }}</a>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+
       <aside class="w-full lg:w-96 card-surface p-6 h-fit">
         <h2 class="text-lg font-bold text-gray-800 mb-4">Resumo do pedido</h2>
         <div class="flex justify-between text-sm mb-2">

@@ -65,4 +65,20 @@ export class CopilotService {
       payload
     );
   }
+
+  getCartInsights(): Observable<CartInsights> {
+    return this.http.get<CartInsights>(`${environment.apiUrl}/copilot/cart-insights`);
+  }
+}
+
+export interface CartInsightProduct {
+  id: number;
+  name: string;
+  price: number;
+}
+
+export interface CartInsights {
+  item_count: number;
+  interactions: Array<{ severity: string; message: string; matched_ingredients?: string[] }>;
+  cross_sell: Array<{ message: string; products: CartInsightProduct[] }>;
 }
