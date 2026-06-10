@@ -22,12 +22,42 @@ export class AuthService {
   isAuthenticated = signal(!!localStorage.getItem(this.tokenKey));
   userRole = signal(this.readRoleFromToken());
   pharmacyId = signal(this.readPharmacyFromToken());
+  userId = signal(this.readUserIdFromToken());
 
   isAdmin = computed(() => this.userRole() === 'admin');
+  isOperator = computed(() => this.userRole() === 'operator');
+  isPharmacist = computed(() => this.userRole() === 'pharmacist');
+
   isPharmacyStaff = computed(() => {
     const role = this.userRole();
     const hasPharmacy = Boolean(this.pharmacyId());
     return hasPharmacy && ['admin', 'operator', 'pharmacist'].includes(role);
+  });
+
+  canReviewPrescriptions = computed(() => {
+    const role = this.userRole();
+    return role === 'admin' || role === 'pharmacist';
+  });
+
+  canManageProducts = computed(() => {
+    const role = this.userRole();
+    return role === 'admin' || role === 'pharmacist';
+  });
+
+  canAccessBilling = computed(() => {
+    const role = this.userRole();
+    return role === 'admin' || role === 'pharmacist';
+  });
+
+  isPharmacyOwner = signal(false);
+
+  setPharmacyOwner(isOwner: boolean) {
+    this.isPharmacyOwner.set(isOwner);
+  }
+
+  canManageOrders = computed(() => {
+    const role = this.userRole();
+    return ['admin', 'operator', 'pharmacist'].includes(role);
   });
 
   canRegisterPharmacy = computed(() =>
@@ -56,6 +86,8 @@ export class AuthService {
     this.isAuthenticated.set(false);
     this.userRole.set('guest');
     this.pharmacyId.set(null);
+    this.userId.set(null);
+    this.isPharmacyOwner.set(false);
     this.router.navigate(['/home']);
   }
 
@@ -72,6 +104,17 @@ export class AuthService {
     this.isAuthenticated.set(true);
     this.userRole.set(this.readRoleFromToken(token));
     this.pharmacyId.set(this.readPharmacyFromToken(token));
+    this.userId.set(this.readUserIdFromToken(token));
+  }
+
+  private readUserIdFromToken(token = this.getToken()): string | null {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1])) as JwtPayload;
+      return payload.id || null;
+    } catch {
+      return null;
+    }
   }
 
   private readPharmacyFromToken(token = this.getToken()): string | null {

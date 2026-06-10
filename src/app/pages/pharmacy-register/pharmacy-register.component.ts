@@ -24,8 +24,12 @@ export class PharmacyRegisterComponent implements OnInit {
     state: '',
     cep: '',
     phone: '',
-    plan_tier: 'free'
+    plan_tier: 'free',
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined
   };
+
+  locating = false;
 
   constructor(
     private onboardingService: OnboardingService,
@@ -56,6 +60,27 @@ export class PharmacyRegisterComponent implements OnInit {
         }
       }
     });
+  }
+
+  useCurrentLocation() {
+    if (!navigator.geolocation) {
+      this.toast.show('Geolocalização não suportada neste navegador.', 'error');
+      return;
+    }
+
+    this.locating = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.form.latitude = position.coords.latitude;
+        this.form.longitude = position.coords.longitude;
+        this.locating = false;
+        this.toast.show('Localização capturada com sucesso.', 'success');
+      },
+      () => {
+        this.locating = false;
+        this.toast.show('Não foi possível obter sua localização.', 'error');
+      }
+    );
   }
 
   submit() {

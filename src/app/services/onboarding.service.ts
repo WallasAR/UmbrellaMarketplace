@@ -49,7 +49,18 @@ export class OnboardingService {
     return this.http.get<OnboardingStatus>(`${this.base}/status`);
   }
 
-  register(payload: Record<string, string>): Observable<unknown> {
+  register(payload: {
+    name: string;
+    cnpj: string;
+    address: string;
+    city: string;
+    state: string;
+    cep: string;
+    phone: string;
+    plan_tier: string;
+    latitude?: number;
+    longitude?: number;
+  }): Observable<unknown> {
     return this.http.post(`${this.base}/register`, payload);
   }
 }

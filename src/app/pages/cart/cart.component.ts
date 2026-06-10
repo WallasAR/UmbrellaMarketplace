@@ -22,6 +22,10 @@ export class CartComponent implements OnInit {
     return this.cartService.data();
   }
 
+  get pharmacyGroups() {
+    return this.cartService.groupedByPharmacy();
+  }
+
   getItemImage(item: CartItem): string {
     return item.Medicine?.Images?.[0]?.thumb_img || '/defaultmed.png';
   }

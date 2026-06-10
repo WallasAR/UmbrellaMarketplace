@@ -6,9 +6,13 @@ import {
   PharmacyPanelService,
   PharmacyProduct
 } from '../../services/pharmacy-panel.service';
+import { Prescription } from '../../services/prescription.service';
+import { AuthService } from '../../services/auth.service';
 import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
+
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -17,7 +21,7 @@ import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart
   styleUrl: './pharmacy-panel.component.css'
 })
 export class PharmacyPanelComponent implements OnInit {
-  activeTab: 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' = 'dashboard';
+  activeTab: PharmacyTab = 'dashboard';
   financial: any = null;
   financialPeriod = '30d';
   revenueChart: ChartPoint[] = [];
@@ -31,6 +35,7 @@ export class PharmacyPanelComponent implements OnInit {
   batches: MedicineBatch[] = [];
   orders: Order[] = [];
   alerts: PharmacyAlerts | null = null;
+  pendingPrescriptions: Prescription[] = [];
 
   batchForm = {
     medicine_id: 0,
@@ -52,6 +57,7 @@ export class PharmacyPanelComponent implements OnInit {
 
   constructor(
     private pharmacyService: PharmacyPanelService,
+    public authService: AuthService,
     private toast: ToastService
   ) {}
 
@@ -59,13 +65,37 @@ export class PharmacyPanelComponent implements OnInit {
     this.reload();
   }
 
-  setTab(tab: typeof this.activeTab) {
+  canShowTab(tab: PharmacyTab): boolean {
+    const role = this.authService.getRole();
+
+    if (role === 'admin') return true;
+
+    if (role === 'operator') {
+      return ['dashboard', 'orders'].includes(tab);
+    }
+
+    if (role === 'pharmacist') {
+      if (tab === 'billing') {
+        return this.authService.isPharmacyOwner();
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  setTab(tab: PharmacyTab) {
+    if (!this.canShowTab(tab)) return;
     this.activeTab = tab;
     this.reload();
   }
 
   reload() {
-    this.pharmacyService.getDashboard().subscribe((data) => this.dashboard = data);
+    this.pharmacyService.getDashboard().subscribe((data) => {
+      this.dashboard = data;
+      const ownerId = (data?.pharmacy as { owner_user_id?: string } | undefined)?.owner_user_id;
+      this.authService.setPharmacyOwner(Boolean(ownerId && ownerId === this.authService.userId()));
+    });
 
     if (this.activeTab === 'dashboard') {
       this.pharmacyService.getMetrics('30d').subscribe((data) => {
@@ -91,6 +121,10 @@ export class PharmacyPanelComponent implements OnInit {
       this.pharmacyService.getOrders().subscribe((items) => this.orders = items);
     }
 
+    if (this.activeTab === 'prescriptions') {
+      this.pharmacyService.listPendingPrescriptions().subscribe((items) => this.pendingPrescriptions = items);
+    }
+
     if (this.activeTab === 'alerts') {
       this.pharmacyService.getAlerts().subscribe((data) => this.alerts = data);
     }
@@ -108,6 +142,15 @@ export class PharmacyPanelComponent implements OnInit {
     if (this.activeTab === 'billing') {
       this.pharmacyService.getBilling().subscribe((data) => this.billing = data);
     }
+  }
+
+  reviewPrescription(id: string, status: 'approved' | 'rejected') {
+    this.pharmacyService.reviewPrescription(id, status).subscribe({
+      next: () => {
+        this.toast.show(status === 'approved' ? 'Receita aprovada.' : 'Receita recusada.', 'success');
+        this.reload();
+      }
+    });
   }
 
   upgradePlan(planTier: string) {

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { CartItem } from '../models/cart.model';
+import { CartItem, CartPharmacyGroup } from '../models/cart.model';
 import { environment } from '../../environments/environment';
 
 export interface PharmacyCheckoutSession {
@@ -25,6 +25,29 @@ export class CartService {
   itemCount = computed(() => this.data().reduce((sum, item) => sum + item.quantity, 0));
   subtotal = computed(() =>
     this.data().reduce((sum, item) => sum + this.getItemPrice(item) * item.quantity, 0)
+  );
+
+  groupedByPharmacy = computed<CartPharmacyGroup[]>(() => {
+    const groups = new Map<string, CartPharmacyGroup>();
+
+    for (const item of this.data()) {
+      const pharmacyId = item.Medicine?.pharmacy_id || 'unknown';
+      const pharmacyName = item.Medicine?.Pharmacy?.name || 'Farmácia';
+
+      if (!groups.has(pharmacyId)) {
+        groups.set(pharmacyId, { pharmacyId, pharmacyName, items: [], subtotal: 0 });
+      }
+
+      const group = groups.get(pharmacyId)!;
+      group.items.push(item);
+      group.subtotal += this.getItemPrice(item) * item.quantity;
+    }
+
+    return Array.from(groups.values());
+  });
+
+  prescriptionRequiredItems = computed(() =>
+    this.data().filter((item) => item.Medicine?.requires_prescription)
   );
 
   constructor(private http: HttpClient) {}

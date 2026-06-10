@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Order } from '../models/order.model';
+import { Prescription } from './prescription.service';
 
 export interface PharmacyDashboard {
-  pharmacy: { id: string; name: string; operational_status: string; plan_tier: string };
+  pharmacy: { id: string; name: string; operational_status: string; plan_tier: string; owner_user_id?: string };
   productCount: number;
   batchCount: number;
   orderCount: number;
@@ -133,5 +134,13 @@ export class PharmacyPanelService {
       params: { period },
       responseType: 'blob'
     });
+  }
+
+  listPendingPrescriptions(): Observable<Prescription[]> {
+    return this.http.get<Prescription[]>(`${this.base}/prescriptions/pending`);
+  }
+
+  reviewPrescription(id: string, status: 'approved' | 'rejected', notes?: string): Observable<Prescription> {
+    return this.http.patch<Prescription>(`${this.base}/prescriptions/${id}/review`, { status, notes });
   }
 }

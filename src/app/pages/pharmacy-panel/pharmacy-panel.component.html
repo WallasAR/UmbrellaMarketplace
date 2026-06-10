@@ -7,13 +7,30 @@
   </div>
 
   <div class="flex flex-wrap gap-2 mb-8">
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'orders'" (click)="setTab('orders')">Pedidos</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'alerts'" (click)="setTab('alerts')">Alertas</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'financial'" (click)="setTab('financial')">Financeiro</button>
-    <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'billing'" (click)="setTab('billing')">Plano SaaS</button>
+    @if (canShowTab('dashboard')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
+    }
+    @if (canShowTab('prescriptions')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'prescriptions'" (click)="setTab('prescriptions')">Receitas</button>
+    }
+    @if (canShowTab('products')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
+    }
+    @if (canShowTab('batches')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
+    }
+    @if (canShowTab('orders')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'orders'" (click)="setTab('orders')">Pedidos</button>
+    }
+    @if (canShowTab('alerts')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'alerts'" (click)="setTab('alerts')">Alertas</button>
+    }
+    @if (canShowTab('financial')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'financial'" (click)="setTab('financial')">Financeiro</button>
+    }
+    @if (canShowTab('billing')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'billing'" (click)="setTab('billing')">Plano SaaS</button>
+    }
   </div>
 
   @if (activeTab === 'dashboard' && dashboard) {
@@ -29,11 +46,13 @@
         <p class="text-sm text-gray-500">Status operacional</p>
         <p class="font-medium capitalize">{{ dashboard.pharmacy.operational_status }}</p>
       </div>
-      <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)" aria-label="Status operacional">
-        <option value="open">Aberta</option>
-        <option value="closed">Fechada</option>
-        <option value="out_of_area">Fora da área</option>
-      </select>
+      @if (authService.canManageProducts()) {
+        <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)" aria-label="Status operacional">
+          <option value="open">Aberta</option>
+          <option value="closed">Fechada</option>
+          <option value="out_of_area">Fora da área</option>
+        </select>
+      }
     </div>
 
     <div class="grid sm:grid-cols-2 gap-4 mt-4">
@@ -66,6 +85,30 @@
         <app-metrics-bar-chart class="block mt-4" title="Conversão diária (%)" [points]="conversionChart" />
       }
     }
+  }
+
+  @if (activeTab === 'prescriptions') {
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Receitas pendentes</h2>
+      <p class="text-sm text-gray-500 mb-4">Avalie as receitas dos medicamentos controlados da sua farmácia antes da liberação do pedido.</p>
+      <div class="space-y-3">
+        @for (rx of pendingPrescriptions; track rx.id) {
+          <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
+            <div>
+              <p class="font-medium">{{ rx.Medicine?.name }}</p>
+              <p class="text-sm text-gray-500">{{ rx.User?.name || rx.User?.email }}</p>
+              <p class="text-xs text-gray-400 mt-1">{{ rx.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="reviewPrescription(rx.id, 'approved')">Aprovar</button>
+              <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 text-[#F74838]" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhuma receita pendente para esta farmácia.</p>
+        }
+      </div>
+    </section>
   }
 
   @if (activeTab === 'products') {

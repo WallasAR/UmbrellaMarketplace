@@ -49,6 +49,14 @@
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="CEP" [(ngModel)]="form.cep" name="cep" required>
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Telefone" [(ngModel)]="form.phone" name="phone" required>
       </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <button type="button" class="px-4 py-2 rounded-lg border border-gray-200 text-sm" (click)="useCurrentLocation()" [disabled]="locating">
+          {{ locating ? 'Obtendo localização...' : 'Usar minha localização' }}
+        </button>
+        @if (form.latitude && form.longitude) {
+          <span class="text-sm text-green-700">Localização registrada ({{ form.latitude | number:'1.4-4' }}, {{ form.longitude | number:'1.4-4' }})</span>
+        }
+      </div>
       <button type="submit" class="btn-brand px-6 py-3" [disabled]="submitting">
         {{ submitting ? 'Enviando...' : 'Enviar cadastro' }}
       </button>

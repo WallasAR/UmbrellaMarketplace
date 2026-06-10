@@ -23,6 +23,43 @@
           }
         </section>
 
+        @if (prescriptionItems.length) {
+          <section class="card-surface p-5" aria-labelledby="prescriptions-title">
+            <h2 id="prescriptions-title" class="font-semibold text-gray-800 mb-3">Receitas obrigatórias</h2>
+            <p class="text-sm text-gray-500 mb-4">Anexe a foto da prescrição médica para cada medicamento controlado antes de pagar.</p>
+            <div class="space-y-4">
+              @for (item of prescriptionItems; track item.medicine_id) {
+                <div class="rounded-lg border border-gray-200 p-4">
+                  <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                    <p class="font-medium text-gray-800">{{ item.Medicine.name }}</p>
+                    @switch (prescriptionStatus(item.medicine_id)) {
+                      @case ('approved') {
+                        <span class="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">Aprovada</span>
+                      }
+                      @case ('pending') {
+                        <span class="text-xs font-medium text-amber-700 bg-amber-50 px-2 py-1 rounded">Aguardando análise</span>
+                      }
+                      @case ('rejected') {
+                        <span class="text-xs font-medium text-red-700 bg-red-50 px-2 py-1 rounded">Recusada — envie novamente</span>
+                      }
+                      @default {
+                        <span class="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded">Não enviada</span>
+                      }
+                    }
+                  </div>
+                  @if (prescriptionStatus(item.medicine_id) !== 'approved') {
+                    <app-prescription-upload
+                      [medicineId]="item.medicine_id"
+                      [medicineName]="item.Medicine.name"
+                      (uploaded)="onPrescriptionUploaded()"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          </section>
+        }
+
         <section class="card-surface p-5" aria-labelledby="coupon-title">
           <h2 id="coupon-title" class="font-semibold text-gray-800 mb-3">Cupom de desconto</h2>
           <div class="flex gap-2">
@@ -33,14 +70,19 @@
 
         <section class="card-surface p-5" aria-labelledby="items-title">
           <h2 id="items-title" class="font-semibold text-gray-800 mb-3">Itens do pedido</h2>
-          <div class="space-y-3">
-            @for (item of cartService.data(); track item.medicine_id) {
-              <div class="flex justify-between text-sm">
-                <span>{{ item.Medicine.name }} x{{ item.quantity }}</span>
-                <span class="font-medium">R$ {{ (cartService.getItemPrice(item) * item.quantity) | number:'1.2-2' }}</span>
+          @for (group of cartService.groupedByPharmacy(); track group.pharmacyId) {
+            <div class="mb-4 last:mb-0">
+              <p class="text-sm font-medium text-gray-600 mb-2">{{ group.pharmacyName }}</p>
+              <div class="space-y-2">
+                @for (item of group.items; track item.medicine_id) {
+                  <div class="flex justify-between text-sm">
+                    <span>{{ item.Medicine.name }} x{{ item.quantity }}</span>
+                    <span class="font-medium">R$ {{ (cartService.getItemPrice(item) * item.quantity) | number:'1.2-2' }}</span>
+                  </div>
+                }
               </div>
-            }
-          </div>
+            </div>
+          }
         </section>
       </div>
 
@@ -58,7 +100,14 @@
           <span>Total</span>
           <span class="text-[#F74838]">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
         </div>
-        <button type="button" class="btn-brand w-full py-3" [disabled]="loading" (click)="finalize()">
+
+        @if (prescriptionItems.length && !canFinalize()) {
+          <p class="text-xs text-amber-700 bg-amber-50 rounded-lg p-2 mb-4">
+            Aguarde a aprovação das receitas ou envie os documentos pendentes.
+          </p>
+        }
+
+        <button type="button" class="btn-brand w-full py-3" [disabled]="loading || !canFinalize()" (click)="finalize()">
           {{ loading ? 'Processando...' : 'Pagar com segurança' }}
         </button>
         <button type="button" class="w-full mt-3 text-sm text-gray-500 hover:text-gray-700" (click)="goBack()">Voltar ao carrinho</button>

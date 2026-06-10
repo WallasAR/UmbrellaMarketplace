@@ -10,24 +10,41 @@
     </div>
   } @else {
     <div class="flex flex-col lg:flex-row gap-8">
-      <div class="flex-1 space-y-4">
-        @for (item of cartItems; track item.medicine_id) {
-          <div class="card-surface p-4 flex items-start gap-4">
-            <img [src]="getItemImage(item)" [alt]="item.Medicine.name" appImgFallback="/defaultmed.png" class="w-24 h-24 object-contain bg-gray-50 rounded-xl p-2" />
-            <div class="flex flex-col justify-between flex-1 min-w-0">
-              <div>
-                <h2 class="text-lg font-semibold text-gray-800 truncate">{{ item.Medicine.name }}</h2>
-                <p class="text-sm text-gray-500 mt-1">Ref: {{ item.medicine_id }}</p>
-              </div>
-              <div class="flex items-center gap-3 mt-3">
-                <button type="button" (click)="decreaseQuantity(item)" [disabled]="loading" class="w-8 h-8 rounded-lg bg-gray-100" aria-label="Diminuir quantidade">−</button>
-                <span class="w-10 text-center font-medium">{{ item.quantity }}</span>
-                <button type="button" (click)="increaseQuantity(item)" [disabled]="loading || item.quantity >= item.Medicine.stock" class="w-8 h-8 rounded-lg bg-gray-100" aria-label="Aumentar quantidade">+</button>
-                <button type="button" (click)="removeItem(item)" [disabled]="loading" class="ml-4 text-sm text-[#F74838]">Remover</button>
-              </div>
+      <div class="flex-1 space-y-6">
+        @for (group of pharmacyGroups; track group.pharmacyId) {
+          <section class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">{{ group.pharmacyName }}</h2>
+              <span class="text-sm text-gray-500">{{ group.items.length }} item(ns)</span>
             </div>
-            <p class="text-lg font-bold text-gray-800 whitespace-nowrap">R$ {{ (getItemPrice(item) * item.quantity) | number:'1.2-2' }}</p>
-          </div>
+
+            @for (item of group.items; track item.medicine_id) {
+              <div class="card-surface p-4 flex items-start gap-4">
+                <img [src]="getItemImage(item)" [alt]="item.Medicine.name" appImgFallback="/defaultmed.png" class="w-24 h-24 object-contain bg-gray-50 rounded-xl p-2" />
+                <div class="flex flex-col justify-between flex-1 min-w-0">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 truncate">{{ item.Medicine.name }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">Ref: {{ item.medicine_id }}</p>
+                    @if (item.Medicine.requires_prescription) {
+                      <span class="inline-block mt-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded">Exige receita</span>
+                    }
+                  </div>
+                  <div class="flex items-center gap-3 mt-3">
+                    <button type="button" (click)="decreaseQuantity(item)" [disabled]="loading" class="w-8 h-8 rounded-lg bg-gray-100" aria-label="Diminuir quantidade">−</button>
+                    <span class="w-10 text-center font-medium">{{ item.quantity }}</span>
+                    <button type="button" (click)="increaseQuantity(item)" [disabled]="loading || item.quantity >= item.Medicine.stock" class="w-8 h-8 rounded-lg bg-gray-100" aria-label="Aumentar quantidade">+</button>
+                    <button type="button" (click)="removeItem(item)" [disabled]="loading" class="ml-4 text-sm text-[#F74838]">Remover</button>
+                  </div>
+                </div>
+                <p class="text-lg font-bold text-gray-800 whitespace-nowrap">R$ {{ (getItemPrice(item) * item.quantity) | number:'1.2-2' }}</p>
+              </div>
+            }
+
+            <div class="flex justify-end text-sm text-gray-600">
+              Subtotal {{ group.pharmacyName }}:
+              <span class="font-semibold text-gray-800 ml-2">R$ {{ group.subtotal | number:'1.2-2' }}</span>
+            </div>
+          </section>
         }
       </div>
 
@@ -37,6 +54,11 @@
           <span class="text-gray-600">Subtotal ({{ cartService.itemCount() }} itens)</span>
           <span class="font-semibold">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
         </div>
+        @if (pharmacyGroups.length > 1) {
+          <p class="text-xs text-amber-700 bg-amber-50 rounded-lg p-2 mb-4">
+            Seu carrinho possui itens de {{ pharmacyGroups.length }} farmácias. O pagamento será feito separadamente para cada uma.
+          </p>
+        }
         <hr class="my-4 border-gray-200">
         <div class="flex justify-between text-xl font-bold text-gray-800 mb-6">
           <span>Total</span>
