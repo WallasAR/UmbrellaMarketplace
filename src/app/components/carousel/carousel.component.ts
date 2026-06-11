@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { InstitutionalBanner, BannerService } from '../../services/banner.service';
+import { LayoutItem } from '../../pages/pharmacy-panel/layout-config/layout-config.component';
 
 interface Slide {
   title: string;
@@ -16,6 +17,7 @@ interface Slide {
   styleUrl: './carousel.component.css'
 })
 export class CarouselComponent implements OnInit, OnDestroy {
+  @Input() items: LayoutItem[] = [];
   slides: Slide[] = [
     { title: 'Medicamentos com até 40% OFF', subtitle: 'Genéricos de qualidade com preços acessíveis', gradient: 'from-[#F74838] to-[#ff7a6f]' },
     { title: 'Entrega rápida e segura', subtitle: 'Receba seus medicamentos no conforto de casa', gradient: 'from-[#e03d2f] to-[#F74838]' }
@@ -27,15 +29,27 @@ export class CarouselComponent implements OnInit, OnDestroy {
   constructor(private bannerService: BannerService) {}
 
   ngOnInit() {
-    this.bannerService.listActive().subscribe({
-      next: (banners) => {
-        if (banners?.length) {
-          this.slides = banners.map((banner) => this.toSlide(banner));
-        }
-        this.startAutoSlide();
-      },
-      error: () => this.startAutoSlide()
-    });
+    if (this.items && this.items.length > 0) {
+      this.slides = this.items.map(item => ({
+        title: item.title || '',
+        subtitle: item.subtitle || '',
+        gradient: 'from-[#F74838] to-[#ff7a6f]',
+        linkUrl: item.link_url,
+        imageUrl: item.image_url
+      }));
+      this.startAutoSlide();
+    } else {
+      // Fallback to legacy banner service if no items passed
+      this.bannerService.listActive().subscribe({
+        next: (banners) => {
+          if (banners?.length) {
+            this.slides = banners.map((banner) => this.toSlide(banner));
+          }
+          this.startAutoSlide();
+        },
+        error: () => this.startAutoSlide()
+      });
+    }
   }
 
   ngOnDestroy() { this.pauseAutoSlide(); }

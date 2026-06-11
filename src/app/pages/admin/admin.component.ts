@@ -36,18 +36,6 @@ export class AdminComponent implements OnInit {
   revenueChart: ChartPoint[] = [];
   conversionChart: ChartPoint[] = [];
   auditLogs: AuditLogEntry[] = [];
-  banners: InstitutionalBanner[] = [];
-  bannerForm = {
-    title: '',
-    subtitle: '',
-    link_url: '',
-    category: '',
-    sponsor: '',
-    gradient: 'from-[#F74838] to-[#ff7a6f]',
-    priority: 0
-  };
-  bannerImageFile?: File;
-
   constructor(
     private adminService: AdminService,
     private prescriptionService: PrescriptionService,
@@ -79,66 +67,6 @@ export class AdminComponent implements OnInit {
     this.adminService.getAuditLogs(50).subscribe({
       next: (logs) => this.auditLogs = logs ?? [],
       error: () => this.auditLogs = []
-    });
-    this.adminService.getBanners().subscribe({
-      next: (items) => this.banners = items ?? [],
-      error: () => this.banners = []
-    });
-  }
-
-  createBanner() {
-    if (!this.bannerForm.title.trim()) return;
-
-    const publish = (payload: Partial<InstitutionalBanner>) => {
-      this.adminService.createBanner(payload).subscribe({
-        next: () => {
-          this.toast.show('Banner criado.', 'success');
-          this.bannerForm = {
-            title: '', subtitle: '', link_url: '', category: '', sponsor: '',
-            gradient: 'from-[#F74838] to-[#ff7a6f]', priority: 0
-          };
-          this.bannerImageFile = undefined;
-          this.reload();
-        }
-      });
-    };
-
-    if (this.bannerImageFile) {
-      this.adminService.createBannerWithFile(this.bannerForm, this.bannerImageFile).subscribe({
-        next: () => {
-          this.toast.show('Banner criado.', 'success');
-          this.bannerForm = {
-            title: '', subtitle: '', link_url: '', category: '', sponsor: '',
-            gradient: 'from-[#F74838] to-[#ff7a6f]', priority: 0
-          };
-          this.bannerImageFile = undefined;
-          this.reload();
-        }
-      });
-      return;
-    }
-
-    publish(this.bannerForm);
-  }
-
-  onBannerImageSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.bannerImageFile = input.files?.[0];
-  }
-
-  toggleBanner(banner: InstitutionalBanner) {
-    this.adminService.updateBanner(banner.id, { active: !banner.active }).subscribe({
-      next: () => this.reload()
-    });
-  }
-
-  deleteBanner(id: string) {
-    if (!confirm('Remover este banner?')) return;
-    this.adminService.deleteBanner(id).subscribe({
-      next: () => {
-        this.toast.show('Banner removido.', 'success');
-        this.reload();
-      }
     });
   }
 

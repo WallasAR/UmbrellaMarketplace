@@ -102,14 +102,6 @@
         @if (canShowTab('dashboard')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'banners'" [class.text-[#F74838]]="activeTab === 'banners'" [class.text-gray-600]="activeTab !== 'banners'" [class.hover:bg-gray-50]="activeTab !== 'banners'"
-              (click)="setTab('banners')">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-              Banners
-            </button>
-          </li>
-          <li>
-            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
               [class.bg-red-50]="activeTab === 'layout'" [class.text-[#F74838]]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
               (click)="setTab('layout')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
@@ -141,8 +133,7 @@
            activeTab === 'orders' ? 'Pedidos' : 
            activeTab === 'alerts' ? 'Alertas' : 
            activeTab === 'financial' ? 'Financeiro' : 
-           activeTab === 'team' ? 'Equipe' : 
-           activeTab === 'banners' ? 'Banners' : 'Layout' }}
+           activeTab === 'team' ? 'Equipe' : 'Layout' }}
       </h1>
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-full bg-red-100 text-[#F74838] flex items-center justify-center text-sm font-bold border border-red-200">
@@ -651,55 +642,6 @@
           } @empty {
             <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
               <p class="text-gray-500 font-medium">Você é o único membro desta farmácia.</p>
-            </div>
-          }
-        </div>
-      }
-
-      @if (activeTab === 'banners') {
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-          <h2 class="text-lg font-bold text-gray-800 mb-4">Banners da Loja Local</h2>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Título" [(ngModel)]="bannerForm.title" />
-            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Subtítulo" [(ngModel)]="bannerForm.subtitle" />
-            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="URL Destino" [(ngModel)]="bannerForm.link_url" />
-            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Categoria alvo" [(ngModel)]="bannerForm.category" />
-            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Patrocinador" [(ngModel)]="bannerForm.sponsor" />
-            
-            <div class="sm:col-span-2 lg:col-span-1">
-              <label class="block text-sm font-medium text-gray-600 mb-1">Imagem do Banner</label>
-              <input type="file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-red-50 file:text-[#F74838] hover:file:bg-red-100 cursor-pointer transition" (change)="onBannerFileSelected($event)" />
-            </div>
-          </div>
-          <div class="mt-6 flex justify-end">
-            <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="createBanner()">Upload Banner</button>
-          </div>
-        </div>
-
-        <div class="grid gap-3">
-          @for (banner of banners; track banner.id) {
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center">
-              <div class="flex items-center gap-5">
-                @if (banner.image_url) {
-                  <img [src]="banner.image_url" [alt]="banner.title" class="w-24 h-24 object-cover rounded-xl shadow-sm border border-gray-100" />
-                } @else {
-                  <div class="w-24 h-24 bg-gray-50 border border-dashed border-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-400">Sem imagem</div>
-                }
-                <div>
-                  <p class="font-bold text-gray-800 text-lg mb-1">{{ banner.title }}</p>
-                  <p class="text-sm font-medium text-gray-500">{{ banner.subtitle || banner.sponsor || 'Anúncio Local' }}</p>
-                </div>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-2">
-                <button type="button" class="px-5 py-2.5 text-sm font-bold border border-gray-200 rounded-xl hover:bg-gray-50 transition" (click)="toggleBanner(banner)">
-                  {{ banner.active ? 'Ocultar do site' : 'Exibir no site' }}
-                </button>
-                <button type="button" class="px-5 py-2.5 text-sm font-bold text-[#F74838] bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="deleteBanner(banner.id)">Excluir Permanentemente</button>
-              </div>
-            </div>
-          } @empty {
-            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
-              <p class="text-gray-500 font-medium">Nenhum banner da farmácia cadastrado.</p>
             </div>
           }
         </div>

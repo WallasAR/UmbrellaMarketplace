@@ -20,7 +20,7 @@ import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart
 
 import { InstitutionalBanner } from '../../services/banner.service';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout' | 'banners';
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -84,17 +84,6 @@ export class PharmacyPanelComponent implements OnInit {
   editingPermissionsUserId: string | null = null;
   editingPermissions: string[] = [];
 
-  banners: InstitutionalBanner[] = [];
-  bannerForm = {
-    title: '',
-    subtitle: '',
-    link_url: '',
-    category: '',
-    sponsor: '',
-    priority: 0
-  };
-  bannerImageFile?: File;
-
   constructor(
     private pharmacyService: PharmacyPanelService,
     public authService: AuthService,
@@ -111,7 +100,7 @@ export class PharmacyPanelComponent implements OnInit {
     if (role === 'admin') return true;
 
     if (role === 'operator') {
-      return ['dashboard', 'orders', 'banners', 'layout'].includes(tab);
+      return ['dashboard', 'orders', 'layout'].includes(tab);
     }
 
     if (role === 'pharmacist') {
@@ -205,9 +194,7 @@ export class PharmacyPanelComponent implements OnInit {
       });
     }
 
-    if (this.activeTab === 'banners') {
-      this.pharmacyService.getBanners().subscribe((items) => this.banners = items);
-    }
+
   }
 
   connectStripe() {
@@ -472,8 +459,7 @@ export class PharmacyPanelComponent implements OnInit {
       prescriptions: 'Receitas',
       status: 'Status operacional',
       team: 'Equipe',
-      banners: 'Banners',
-      layout: 'Layout'
+      layout: 'Aparência da Loja'
     };
     return labels[key] || key;
   }

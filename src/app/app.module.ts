@@ -21,6 +21,7 @@ import { authInterceptor } from './interceptors/auth.interceptor';
 import { errorInterceptor } from './interceptors/error.interceptor';
 import { AuthComponent } from './pages/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ImgFallbackDirective } from './directives/img-fallback.directive';
 import { AboutComponent } from './pages/about/about.component';
 import { FaqsComponent } from './pages/faqs/faqs.component';
@@ -103,6 +104,7 @@ export function initializeTenant(tenantService: TenantService) {
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    DragDropModule,
   ],
   providers: [
     {
