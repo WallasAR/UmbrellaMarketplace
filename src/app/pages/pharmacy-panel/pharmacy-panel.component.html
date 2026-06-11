@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-2 mb-8">
+  <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-200 pb-2">
     @if (canShowTab('dashboard')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
     }

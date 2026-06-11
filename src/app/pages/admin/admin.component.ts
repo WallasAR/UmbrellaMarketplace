@@ -15,6 +15,8 @@ import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart
   styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
+  activeTab: string = 'dashboard';
+
   stats: any = {};
   orders: Order[] = [];
   users: UserProfile[] = [];
@@ -48,6 +50,10 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     this.reload();
+  }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
   }
 
   reload() {
