@@ -44,6 +44,28 @@
               </div>
             </div>
           </div>
+
+          <div class="border-t border-gray-100 pt-4 mt-2">
+            <h3 class="text-sm font-bold text-gray-800 mb-4">Configurações da Plataforma</h3>
+            
+            <div class="space-y-4">
+              <label class="flex items-center gap-3 cursor-pointer p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+                <input type="checkbox" [(ngModel)]="form.is_online_only" name="is_online_only" class="w-5 h-5 text-[#F74838] rounded focus:ring-[#F74838]">
+                <div>
+                  <p class="text-sm font-bold text-gray-800">Farmácia 100% Online (Dark Store)</p>
+                  <p class="text-xs text-gray-500">Marque se você não possui atendimento presencial aberto ao público.</p>
+                </div>
+              </label>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Cor Principal da Sua Marca (Hexadecimal)</label>
+                <div class="flex gap-3">
+                  <input type="color" [(ngModel)]="form.primary_color" name="primary_color" class="h-12 w-12 rounded cursor-pointer border-0 p-0">
+                  <input type="text" [(ngModel)]="form.primary_color" name="primary_color_text" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white font-mono uppercase" placeholder="#F74838">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button type="submit" [disabled]="isLoading" class="w-full mt-8 bg-[#F74838] hover:bg-red-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition disabled:opacity-50">

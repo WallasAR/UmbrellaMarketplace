@@ -17,7 +17,9 @@ export class PharmacySetupComponent implements OnInit {
     confirmPassword: '',
     cnpj: '',
     phone: '',
-    address: ''
+    address: '',
+    primary_color: '#F74838',
+    is_online_only: false
   };
   isLoading = false;
 
@@ -48,7 +50,9 @@ export class PharmacySetupComponent implements OnInit {
       password: this.form.password,
       cnpj: this.form.cnpj,
       phone: this.form.phone,
-      address: this.form.address
+      address: this.form.address,
+      primary_color: this.form.primary_color,
+      is_online_only: this.form.is_online_only
     }).subscribe({
       next: (res: any) => {
         this.isLoading = false;
