@@ -22,6 +22,7 @@ export interface LayoutSection {
   subtitle?: string;
   display_order: number;
   items: LayoutItem[];
+  config?: any;
 }
 
 export interface PharmacyLayout {
@@ -68,9 +69,16 @@ export class LayoutConfigComponent implements OnInit {
     
     this.isLoading = true;
     this.http.get<PharmacyLayout>(`${environment.apiUrl}/layout/public`).subscribe({
-      next: (preset) => {
-        if (preset && preset.sections && this.layout) {
-          this.layout.sections = preset.sections;
+      next: (preset: any) => {
+        // preset returns an array sometimes from global
+        const presetLayout = Array.isArray(preset) ? preset[0] : preset;
+        if (presetLayout && presetLayout.sections && this.layout) {
+          this.layout.sections = presetLayout.sections.map((s: any) => ({
+            ...s,
+            id: crypto.randomUUID(),
+            items: (s.items || []).map((i: any) => ({ ...i, id: crypto.randomUUID() }))
+          }));
+          this.ensureThemeConfig();
         }
         this.isLoading = false;
       },
@@ -87,10 +95,35 @@ export class LayoutConfigComponent implements OnInit {
           is_active: true,
           sections: []
         };
+        this.ensureThemeConfig();
         this.isLoading = false;
       },
       error: () => this.isLoading = false
     });
+  }
+
+  ensureThemeConfig() {
+    if (!this.layout) return;
+    let themeSection = this.layout.sections.find(s => s.section_type === 'theme_config');
+    if (!themeSection) {
+      themeSection = {
+        id: crypto.randomUUID(),
+        section_type: 'theme_config',
+        title: 'Theme Settings',
+        display_order: -1,
+        items: [],
+        config: { primary_color: '#F74838' }
+      } as any;
+      this.layout.sections.push(themeSection as LayoutSection);
+    }
+  }
+
+  get themeConfig(): any {
+    if (!this.layout) return {};
+    const sec = this.layout.sections.find(s => s.section_type === 'theme_config');
+    if (!sec) return {};
+    if (!sec.config) sec.config = { primary_color: '#F74838' };
+    return sec.config;
   }
 
   drop(event: CdkDragDrop<LayoutSection[] | any[]>) {
