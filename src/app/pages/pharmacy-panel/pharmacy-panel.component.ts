@@ -18,7 +18,6 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-import { InstitutionalBanner } from '../../services/banner.service';
 
 type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout';
 
@@ -509,36 +508,4 @@ export class PharmacyPanelComponent implements OnInit {
     });
   }
 
-  onBannerFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.bannerImageFile = input.files?.[0];
-  }
-
-  createBanner() {
-    if (!this.bannerForm.title.trim()) return;
-    this.pharmacyService.createBanner(this.bannerForm, this.bannerImageFile).subscribe({
-      next: () => {
-        this.toast.show('Banner cadastrado.', 'success');
-        this.bannerForm = { title: '', subtitle: '', link_url: '', category: '', sponsor: '', priority: 0 };
-        this.bannerImageFile = undefined;
-        this.reload();
-      }
-    });
-  }
-
-  toggleBanner(banner: InstitutionalBanner) {
-    this.pharmacyService.updateBanner(banner.id, { active: !banner.active }).subscribe({
-      next: () => this.reload()
-    });
-  }
-
-  deleteBanner(id: string) {
-    if (!confirm('Remover este banner?')) return;
-    this.pharmacyService.deleteBanner(id).subscribe({
-      next: () => {
-        this.toast.show('Banner removido.', 'success');
-        this.reload();
-      }
-    });
-  }
 }

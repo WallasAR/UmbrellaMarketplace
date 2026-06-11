@@ -13,7 +13,7 @@
       <!-- Section: Hero Carousel -->
       @if (section.section_type === 'hero_carousel') {
         <section class="relative">
-          <app-carousel [items]="section.items"></app-carousel>
+          <app-carousel [items]="section.items || []"></app-carousel>
           <!-- Floating Search Pill -->
           <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl z-40 hidden md:block">
             <div class="bg-white rounded-full shadow-lg p-2 flex items-center justify-between border border-gray-100 cursor-pointer hover:shadow-xl transition-shadow" (click)="openSearchModal()">

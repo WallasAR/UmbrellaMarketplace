@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { environment } from '../../../../environments/environment';
-import { ToastService } from '../../../../services/toast.service';
+import { ToastService } from '../../../services/toast.service';
 
 export interface LayoutItem {
   id: string;
