@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { tap, catchError } from 'rxjs/operators';
 import { of, BehaviorSubject } from 'rxjs';
-import { Pharmacy } from '../models/pharmacy.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +10,14 @@ import { Pharmacy } from '../models/pharmacy.model';
 export class TenantService {
   private apiUrl = environment.apiUrl;
   
-  private tenantSubject = new BehaviorSubject<Pharmacy | null>(null);
+  private tenantSubject = new BehaviorSubject<any | null>(null);
   public tenant$ = this.tenantSubject.asObservable();
 
   constructor(private http: HttpClient) {}
+
+  public get pharmacyId(): string | null {
+    return this.getTenantId();
+  }
 
   public initTenant(): Promise<boolean> {
     return new Promise((resolve) => {
@@ -28,7 +31,7 @@ export class TenantService {
         currentDomain = 'umbrella-marketplace.vercel.app'; // Force tenant for local tests
       }
 
-      this.http.get<Pharmacy>(`${this.apiUrl}/pharmacies/resolve-domain?domain=${currentDomain}`)
+      this.http.get<any>(`${this.apiUrl}/pharmacies/resolve-domain?domain=${currentDomain}`)
         .pipe(
           tap((tenant) => {
             if (tenant) {
@@ -48,7 +51,7 @@ export class TenantService {
     });
   }
 
-  public getTenant(): Pharmacy | null {
+  public getTenant(): any | null {
     return this.tenantSubject.getValue();
   }
 

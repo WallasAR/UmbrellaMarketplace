@@ -114,8 +114,8 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadPopularCategories() {
     if (this.popularCategories.length > 0) return;
-    this.productService.listCategories().subscribe({
-      next: (res) => {
+    this.productService.getCategories().subscribe({
+      next: (res: string[]) => {
         this.popularCategories = res.slice(0, 6);
       }
     });
