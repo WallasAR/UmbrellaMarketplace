@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { TenantService } from './tenant.service';
 
 export interface InstitutionalBanner {
   id: string;
@@ -18,10 +19,17 @@ export interface InstitutionalBanner {
 
 @Injectable({ providedIn: 'root' })
 export class BannerService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private tenantService: TenantService
+  ) {}
 
   listActive(category?: string): Observable<InstitutionalBanner[]> {
-    const params = category ? { category } : undefined;
+    let params: any = {};
+    if (category) params.category = category;
+    if (this.tenantService.pharmacyId) {
+      params.pharmacyId = this.tenantService.pharmacyId;
+    }
     return this.http.get<InstitutionalBanner[]>(`${environment.apiUrl}/banners`, { params });
   }
 }

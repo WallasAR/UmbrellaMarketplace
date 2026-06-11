@@ -18,7 +18,9 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout';
+import { InstitutionalBanner } from '../../services/banner.service';
+
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout' | 'banners';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -82,6 +84,17 @@ export class PharmacyPanelComponent implements OnInit {
   editingPermissionsUserId: string | null = null;
   editingPermissions: string[] = [];
 
+  banners: InstitutionalBanner[] = [];
+  bannerForm = {
+    title: '',
+    subtitle: '',
+    link_url: '',
+    category: '',
+    sponsor: '',
+    priority: 0
+  };
+  bannerImageFile?: File;
+
   constructor(
     private pharmacyService: PharmacyPanelService,
     public authService: AuthService,
@@ -98,7 +111,7 @@ export class PharmacyPanelComponent implements OnInit {
     if (role === 'admin') return true;
 
     if (role === 'operator') {
-      return ['dashboard', 'orders'].includes(tab);
+      return ['dashboard', 'orders', 'banners', 'layout'].includes(tab);
     }
 
     if (role === 'pharmacist') {
@@ -190,6 +203,10 @@ export class PharmacyPanelComponent implements OnInit {
           this.teamPermissions = [];
         }
       });
+    }
+
+    if (this.activeTab === 'banners') {
+      this.pharmacyService.getBanners().subscribe((items) => this.banners = items);
     }
   }
 
@@ -454,7 +471,9 @@ export class PharmacyPanelComponent implements OnInit {
       financial: 'Financeiro',
       prescriptions: 'Receitas',
       status: 'Status operacional',
-      team: 'Equipe'
+      team: 'Equipe',
+      banners: 'Banners',
+      layout: 'Layout'
     };
     return labels[key] || key;
   }
@@ -499,6 +518,39 @@ export class PharmacyPanelComponent implements OnInit {
     this.pharmacyService.removeTeamMember(userId).subscribe({
       next: () => {
         this.toast.show('Membro removido.', 'success');
+        this.reload();
+      }
+    });
+  }
+
+  onBannerFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.bannerImageFile = input.files?.[0];
+  }
+
+  createBanner() {
+    if (!this.bannerForm.title.trim()) return;
+    this.pharmacyService.createBanner(this.bannerForm, this.bannerImageFile).subscribe({
+      next: () => {
+        this.toast.show('Banner cadastrado.', 'success');
+        this.bannerForm = { title: '', subtitle: '', link_url: '', category: '', sponsor: '', priority: 0 };
+        this.bannerImageFile = undefined;
+        this.reload();
+      }
+    });
+  }
+
+  toggleBanner(banner: InstitutionalBanner) {
+    this.pharmacyService.updateBanner(banner.id, { active: !banner.active }).subscribe({
+      next: () => this.reload()
+    });
+  }
+
+  deleteBanner(id: string) {
+    if (!confirm('Remover este banner?')) return;
+    this.pharmacyService.deleteBanner(id).subscribe({
+      next: () => {
+        this.toast.show('Banner removido.', 'success');
         this.reload();
       }
     });

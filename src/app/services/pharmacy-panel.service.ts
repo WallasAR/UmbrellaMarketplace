@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Order } from '../models/order.model';
 import { Prescription } from './prescription.service';
+import { InstitutionalBanner } from './banner.service';
 
 export interface PharmacyDashboard {
   pharmacy: { id: string; name: string; operational_status: string; plan_tier: string; owner_user_id?: string };
@@ -302,5 +303,36 @@ export class PharmacyPanelService {
 
   removeTeamMember(userId: string): Observable<{ removed: boolean }> {
     return this.http.delete<{ removed: boolean }>(`${this.base}/team/${userId}`);
+  }
+
+  getBanners(): Observable<InstitutionalBanner[]> {
+    return this.http.get<InstitutionalBanner[]>(`${this.base}/banners`);
+  }
+
+  createBanner(payload: Partial<InstitutionalBanner>, file?: File): Observable<InstitutionalBanner> {
+    if (file) {
+      return new Observable((observer) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          this.http.post<InstitutionalBanner>(`${this.base}/banners`, {
+            ...payload,
+            file_name: file.name,
+            file_data: base64
+          }).subscribe(observer);
+        };
+        reader.onerror = () => observer.error(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+    return this.http.post<InstitutionalBanner>(`${this.base}/banners`, payload);
+  }
+
+  updateBanner(id: string, payload: Partial<InstitutionalBanner>): Observable<InstitutionalBanner> {
+    return this.http.patch<InstitutionalBanner>(`${this.base}/banners/${id}`, payload);
+  }
+
+  deleteBanner(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/banners/${id}`);
   }
 }
