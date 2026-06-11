@@ -24,7 +24,7 @@
           class="w-full bg-gray-50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#F74838]/20 focus:bg-white border border-transparent focus:border-[#F74838] transition-all text-gray-800"
         />
         
-        <button *ngIf="searchQuery" (click)="searchQuery=''; searchInput.value=''; suggestions={terms:[],products:[]}" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+        <button *ngIf="searchQuery" (click)="reset(); searchInput.value=''" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
@@ -65,13 +65,23 @@
             </button>
           </div>
 
+          <!-- Popular Categories (Drogasil Style) -->
+          <div *ngIf="popularCategories.length > 0" class="mb-8">
+            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Principais Categorias</h4>
+            <div class="flex flex-wrap gap-2">
+              <button *ngFor="let cat of popularCategories" (click)="searchByCategory(cat)" class="px-5 py-2.5 bg-gray-50 hover:bg-gray-100 hover:text-[#F74838] rounded-full text-sm font-medium text-gray-700 transition-colors border border-gray-100">
+                {{ cat }}
+              </button>
+            </div>
+          </div>
+
           <!-- History -->
           <div *ngIf="history.length > 0" class="mb-8">
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Buscas Recentes</h4>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button *ngFor="let h of history" (click)="search(h)" class="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-full text-sm text-gray-700 transition-colors flex items-center border border-gray-100">
+              <button *ngFor="let h of history" (click)="search(h)" class="px-4 py-2 bg-white hover:bg-gray-50 rounded-full text-sm text-gray-600 transition-colors flex items-center border border-gray-200">
                 <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 {{ h }}
               </button>
@@ -83,44 +93,73 @@
         <div *ngIf="searchQuery.length >= 3">
           
           <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Suggested Terms -->
-            <div class="md:col-span-1">
-              <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Termos Sugeridos</h4>
-              <ul class="space-y-1">
-                <li *ngIf="suggestions.terms.length === 0" class="text-sm text-gray-500 py-2">
-                  Nenhum termo...
-                </li>
-                <li *ngFor="let term of suggestions.terms">
-                  <button (click)="search(term)" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-[#F74838] hover:bg-red-50 rounded-lg transition-colors font-medium">
-                    <span class="font-bold">{{ searchQuery }}</span>{{ term.substring(searchQuery.length) || term }}
-                  </button>
-                </li>
-              </ul>
+            <!-- Left Column: Suggestions (Terms, Categories, Brands) -->
+            <div class="md:col-span-1 space-y-6">
+              
+              <div *ngIf="suggestions.terms.length > 0">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Termos Sugeridos</h4>
+                <ul class="space-y-1">
+                  <li *ngFor="let term of suggestions.terms">
+                    <button (click)="search(term)" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-[#F74838] hover:bg-red-50 rounded-lg transition-colors flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                      <span><span class="font-bold text-gray-900">{{ searchQuery.toLowerCase() }}</span>{{ term.toLowerCase().substring(searchQuery.length) || term.toLowerCase() }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="suggestions.categories && suggestions.categories.length > 0">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Categorias</h4>
+                <ul class="space-y-1">
+                  <li *ngFor="let cat of suggestions.categories">
+                    <button (click)="searchByCategory(cat)" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium">
+                      {{ cat }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="suggestions.brands && suggestions.brands.length > 0">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Marcas Sugeridas</h4>
+                <ul class="space-y-1">
+                  <li *ngFor="let brand of suggestions.brands">
+                    <button (click)="searchByBrand(brand)" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors font-medium">
+                      {{ brand }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              
+              <div *ngIf="suggestions.terms.length === 0 && (!suggestions.categories || suggestions.categories.length === 0) && (!suggestions.brands || suggestions.brands.length === 0)">
+                 <p class="text-sm text-gray-500 italic">Sem termos sugeridos...</p>
+              </div>
+
             </div>
 
-            <!-- Suggested Products -->
+            <!-- Right Column: Suggested Products -->
             <div class="md:col-span-3">
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Produtos Sugeridos</h4>
-                <button (click)="search(searchQuery)" class="text-sm text-[#F74838] font-bold hover:underline">
-                  Ver todos resultados
+              <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                <h4 class="text-sm font-bold text-gray-800">Produtos Sugeridos</h4>
+                <button (click)="search(searchQuery)" class="text-sm text-[#F74838] font-bold hover:underline flex items-center">
+                  Ver todos <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
               </div>
 
-              <div *ngIf="suggestions.products.length === 0" class="text-gray-500 text-sm py-4">
+              <div *ngIf="suggestions.products.length === 0" class="text-gray-500 text-sm py-4 flex flex-col items-center justify-center bg-gray-50 rounded-xl h-32 border border-dashed border-gray-200">
+                <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Nenhum produto encontrado.
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <div *ngFor="let prod of suggestions.products">
                   <!-- Miniature product card -->
-                  <a [routerLink]="['/product', prod.id]" (click)="closeModal()" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-[#F74838]/30 hover:shadow-md transition-all group bg-white">
-                    <div class="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
+                  <a [routerLink]="['/product', prod.id]" (click)="closeModal()" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-[#F74838] hover:shadow-[0_4px_12px_rgba(247,72,56,0.1)] transition-all group bg-white">
+                    <div class="w-16 h-16 bg-white border border-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
                       <img *ngIf="prod.Images?.[0]?.thumb_img" [src]="prod.Images[0].thumb_img" class="max-w-full max-h-full object-contain" />
-                      <div *ngIf="!prod.Images?.[0]?.thumb_img" class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                      <div *ngIf="!prod.Images?.[0]?.thumb_img" class="w-8 h-8 bg-gray-100 rounded-full"></div>
                     </div>
                     <div class="ml-3 flex-1 min-w-0">
-                      <h5 class="text-sm font-bold text-gray-800 truncate group-hover:text-[#F74838] transition-colors">{{ prod.name }}</h5>
+                      <h5 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight group-hover:text-[#F74838] transition-colors">{{ prod.name }}</h5>
                       <div class="flex items-center mt-1">
                         <span class="font-extrabold text-[#F74838]">R$ {{ prod.price | number:'1.2-2' }}</span>
                       </div>

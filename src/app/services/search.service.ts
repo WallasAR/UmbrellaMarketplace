@@ -3,10 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product } from '../models/product.model';
+import { TenantService } from './tenant.service';
 
 export interface SearchSuggestions {
   terms: string[];
   products: Product[];
+  categories?: string[];
+  brands?: string[];
 }
 
 @Injectable({
@@ -19,7 +22,10 @@ export class SearchService {
   private modalStateSource = new Subject<boolean>();
   modalState$ = this.modalStateSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private tenantService: TenantService
+  ) {}
 
   openModal() {
     this.modalStateSource.next(true);
@@ -30,7 +36,11 @@ export class SearchService {
   }
 
   getSuggestions(query: string): Observable<SearchSuggestions> {
-    return this.http.get<SearchSuggestions>(`${this.apiUrl}/suggestions?q=${query}`);
+    let url = `${this.apiUrl}/suggestions?q=${encodeURIComponent(query)}`;
+    if (this.tenantService.pharmacyId) {
+      url += `&pharmacyId=${this.tenantService.pharmacyId}`;
+    }
+    return this.http.get<SearchSuggestions>(url);
   }
 
   getHistory(): Observable<string[]> {

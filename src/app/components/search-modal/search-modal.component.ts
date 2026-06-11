@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SearchService, SearchSuggestions } from '../../services/search.service';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-search-modal',
@@ -14,8 +15,9 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   isOpen = false;
   searchQuery = '';
   history: string[] = [];
-  suggestions: SearchSuggestions = { terms: [], products: [] };
+  suggestions: SearchSuggestions = { terms: [], products: [], categories: [], brands: [] };
   isLoading = false;
+  popularCategories: string[] = [];
 
   private modalSub!: Subscription;
   private searchSubject = new Subject<string>();
@@ -24,6 +26,7 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private searchService: SearchService,
+    private productService: ProductService,
     private router: Router
   ) {}
 
@@ -32,6 +35,7 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isOpen = state;
       if (state) {
         this.loadHistory();
+        this.loadPopularCategories();
         setTimeout(() => this.searchInput?.nativeElement?.focus(), 100);
       } else {
         this.reset();
@@ -76,13 +80,13 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
     if (val.length >= 3) {
       this.searchSubject.next(val);
     } else {
-      this.suggestions = { terms: [], products: [] };
+      this.suggestions = { terms: [], products: [], categories: [], brands: [] };
     }
   }
 
   reset() {
     this.searchQuery = '';
-    this.suggestions = { terms: [], products: [] };
+    this.suggestions = { terms: [], products: [], categories: [], brands: [] };
   }
 
   loadHistory() {
@@ -96,6 +100,25 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
     this.searchService.saveHistory(term).subscribe();
     this.router.navigate(['/home'], { queryParams: { q: term } });
     this.closeModal();
+  }
+
+  searchByCategory(category: string) {
+    this.router.navigate(['/home'], { queryParams: { category } });
+    this.closeModal();
+  }
+
+  searchByBrand(brand: string) {
+    this.router.navigate(['/home'], { queryParams: { laboratory: brand } });
+    this.closeModal();
+  }
+
+  loadPopularCategories() {
+    if (this.popularCategories.length > 0) return;
+    this.productService.listCategories().subscribe({
+      next: (res) => {
+        this.popularCategories = res.slice(0, 6);
+      }
+    });
   }
 
   goToPrescription() {
