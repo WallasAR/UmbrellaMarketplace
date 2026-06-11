@@ -61,6 +61,14 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+            [class.bg-red-50]="activeTab === 'layout'" [class.text-[#F74838]]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
+            (click)="setTab('layout')">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+            Layout Global
+          </button>
+        </li>
+        <li>
+          <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
             [class.bg-red-50]="activeTab === 'users'" [class.text-[#F74838]]="activeTab === 'users'" [class.text-gray-600]="activeTab !== 'users'" [class.hover:bg-gray-50]="activeTab !== 'users'"
             (click)="setTab('users')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -90,7 +98,7 @@
   <main class="flex-1 overflow-y-auto bg-gray-50/50 flex flex-col">
     <!-- Header -->
     <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-10">
-      <h1 class="text-xl font-semibold text-gray-800 capitalize">{{ activeTab === 'dashboard' ? 'Resumo da Plataforma' : activeTab === 'financial' ? 'Financeiro Global' : activeTab === 'pharmacies' ? 'Gestão de Farmácias' : activeTab === 'orders' ? 'Pedidos Globais' : activeTab === 'prescriptions' ? 'Receitas Pendentes' : activeTab === 'banners' ? 'Banners Institucionais' : activeTab === 'users' ? 'Usuários do Sistema' : 'Auditoria do Sistema' }}</h1>
+      <h1 class="text-xl font-semibold text-gray-800 capitalize">{{ activeTab === 'dashboard' ? 'Resumo da Plataforma' : activeTab === 'financial' ? 'Financeiro Global' : activeTab === 'pharmacies' ? 'Gestão de Farmácias' : activeTab === 'orders' ? 'Pedidos Globais' : activeTab === 'prescriptions' ? 'Receitas Pendentes' : activeTab === 'banners' ? 'Banners Institucionais' : activeTab === 'layout' ? 'Layout Global' : activeTab === 'users' ? 'Usuários do Sistema' : 'Auditoria do Sistema' }}</h1>
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-full bg-red-100 text-[#F74838] flex items-center justify-center text-sm font-bold border border-red-200">
           AD
@@ -395,6 +403,10 @@
             </div>
           }
         </div>
+      }
+
+      @if (activeTab === 'layout') {
+        <app-layout-config [isAdmin]="true"></app-layout-config>
       }
 
       @if (activeTab === 'users') {

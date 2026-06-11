@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -37,6 +37,7 @@ export interface PharmacyLayout {
   styleUrl: './layout-config.component.css'
 })
 export class LayoutConfigComponent implements OnInit {
+  @Input() isAdmin: boolean = false;
   apiUrl = `${environment.apiUrl}/pharmacy/layout`;
   layout: PharmacyLayout | null = null;
   isLoading = true;
@@ -45,6 +46,9 @@ export class LayoutConfigComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
+    if (this.isAdmin) {
+      this.apiUrl = `${environment.apiUrl}/admin/layout`;
+    }
     this.fetchLayout();
   }
 
