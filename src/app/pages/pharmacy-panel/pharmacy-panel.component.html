@@ -1,557 +1,710 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-wrap justify-between items-start gap-4 mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">Painel da farmácia</h1>
-      <p class="text-gray-500">{{ dashboard?.pharmacy?.name || 'Carregando...' }}</p>
-    </div>
-  </div>
-
-  <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-200 pb-2">
-    @if (canShowTab('dashboard')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Resumo</button>
-    }
-    @if (canShowTab('prescriptions')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'prescriptions'" (click)="setTab('prescriptions')">Receitas</button>
-    }
-    @if (canShowTab('products')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'products'" (click)="setTab('products')">Estoque</button>
-    }
-    @if (canShowTab('products')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'boosts'" (click)="setTab('boosts')">Anúncios</button>
-    }
-    @if (canShowTab('batches')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'batches'" (click)="setTab('batches')">Lotes</button>
-    }
-    @if (canShowTab('orders')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'orders'" (click)="setTab('orders')">Pedidos</button>
-    }
-    @if (canShowTab('alerts')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'alerts'" (click)="setTab('alerts')">Alertas</button>
-    }
-    @if (canShowTab('financial')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'financial'" (click)="setTab('financial')">Financeiro</button>
-    }
-    @if (canShowTab('team')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'team'" (click)="setTab('team')">Equipe</button>
-    }
-    @if (canShowTab('dashboard')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'banners'" (click)="setTab('banners')">Banners</button>
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'layout'" (click)="setTab('layout')">Layout</button>
-    }
-  </div>
-
-  @if (activeTab === 'dashboard' && dashboard) {
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Produtos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.productCount }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Lotes</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.batchCount }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos</p><p class="text-2xl font-bold text-[#F74838]">{{ dashboard.orderCount }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
-    </div>
-
-    <div class="card-surface p-5 flex flex-wrap justify-between items-center gap-4">
-      <div>
-        <p class="text-sm text-gray-500">Status operacional</p>
-        <p class="font-medium capitalize">{{ dashboard.pharmacy.operational_status }}</p>
+<div class="flex h-screen bg-gray-50 overflow-hidden font-sans">
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-10 shadow-sm">
+    <div class="h-16 flex items-center px-6 border-b border-gray-100">
+      <div class="w-8 h-8 bg-red-50 text-[#F74838] rounded-lg flex items-center justify-center mr-3 font-bold text-lg">
+        {{ dashboard?.pharmacy?.name?.charAt(0) || 'F' }}
       </div>
-      @if (authService.canManageProducts()) {
-        <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)" aria-label="Status operacional">
-          <option value="open">Aberta</option>
-          <option value="closed">Fechada</option>
-          <option value="out_of_area">Fora da área</option>
-        </select>
-      }
+      <span class="text-lg font-bold text-gray-800 tracking-tight truncate">{{ dashboard?.pharmacy?.name || 'Carregando...' }}</span>
     </div>
-
-    <div class="grid sm:grid-cols-2 gap-4 mt-4">
-      <div class="card-surface p-5">
-        <p class="text-sm text-gray-500">Estoque baixo</p>
-        <p class="text-xl font-bold text-amber-600">{{ dashboard.lowStockCount }}</p>
-      </div>
-      <div class="card-surface p-5">
-        <p class="text-sm text-gray-500">Lotes vencendo</p>
-        <p class="text-xl font-bold text-amber-600">{{ dashboard.expiringSoonCount }}</p>
-      </div>
+    
+    <nav class="flex-1 overflow-y-auto py-6 px-3">
+      <ul class="space-y-1.5">
+        @if (canShowTab('dashboard')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'dashboard'" [class.text-[#F74838]]="activeTab === 'dashboard'" [class.text-gray-600]="activeTab !== 'dashboard'" [class.hover:bg-gray-50]="activeTab !== 'dashboard'"
+              (click)="setTab('dashboard')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+              Resumo
+            </button>
+          </li>
+        }
+        @if (canShowTab('prescriptions')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'prescriptions'" [class.text-[#F74838]]="activeTab === 'prescriptions'" [class.text-gray-600]="activeTab !== 'prescriptions'" [class.hover:bg-gray-50]="activeTab !== 'prescriptions'"
+              (click)="setTab('prescriptions')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Receitas
+            </button>
+          </li>
+        }
+        @if (canShowTab('products')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'products'" [class.text-[#F74838]]="activeTab === 'products'" [class.text-gray-600]="activeTab !== 'products'" [class.hover:bg-gray-50]="activeTab !== 'products'"
+              (click)="setTab('products')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+              Estoque
+            </button>
+          </li>
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'boosts'" [class.text-[#F74838]]="activeTab === 'boosts'" [class.text-gray-600]="activeTab !== 'boosts'" [class.hover:bg-gray-50]="activeTab !== 'boosts'"
+              (click)="setTab('boosts')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              Anúncios
+            </button>
+          </li>
+        }
+        @if (canShowTab('batches')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'batches'" [class.text-[#F74838]]="activeTab === 'batches'" [class.text-gray-600]="activeTab !== 'batches'" [class.hover:bg-gray-50]="activeTab !== 'batches'"
+              (click)="setTab('batches')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              Lotes
+            </button>
+          </li>
+        }
+        @if (canShowTab('orders')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'orders'" [class.text-[#F74838]]="activeTab === 'orders'" [class.text-gray-600]="activeTab !== 'orders'" [class.hover:bg-gray-50]="activeTab !== 'orders'"
+              (click)="setTab('orders')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+              Pedidos
+            </button>
+          </li>
+        }
+        @if (canShowTab('alerts')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'alerts'" [class.text-[#F74838]]="activeTab === 'alerts'" [class.text-gray-600]="activeTab !== 'alerts'" [class.hover:bg-gray-50]="activeTab !== 'alerts'"
+              (click)="setTab('alerts')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              Alertas
+            </button>
+          </li>
+        }
+        @if (canShowTab('financial')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'financial'" [class.text-[#F74838]]="activeTab === 'financial'" [class.text-gray-600]="activeTab !== 'financial'" [class.hover:bg-gray-50]="activeTab !== 'financial'"
+              (click)="setTab('financial')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Financeiro
+            </button>
+          </li>
+        }
+        @if (canShowTab('team')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'team'" [class.text-[#F74838]]="activeTab === 'team'" [class.text-gray-600]="activeTab !== 'team'" [class.hover:bg-gray-50]="activeTab !== 'team'"
+              (click)="setTab('team')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+              Equipe
+            </button>
+          </li>
+        }
+        @if (canShowTab('dashboard')) {
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'banners'" [class.text-[#F74838]]="activeTab === 'banners'" [class.text-gray-600]="activeTab !== 'banners'" [class.hover:bg-gray-50]="activeTab !== 'banners'"
+              (click)="setTab('banners')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              Banners
+            </button>
+          </li>
+          <li>
+            <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
+              [class.bg-red-50]="activeTab === 'layout'" [class.text-[#F74838]]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
+              (click)="setTab('layout')">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+              Layout
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+    
+    <div class="p-4 border-t border-gray-100">
+      <button routerLink="/" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Voltar à loja
+      </button>
     </div>
+  </aside>
 
-    @if (metrics) {
-      <div class="grid sm:grid-cols-3 gap-4 mt-4">
-        <div class="card-surface p-5">
-          <p class="text-sm text-gray-500">Taxa de conversão (30d)</p>
-          <p class="text-xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p>
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto bg-gray-50/50 flex flex-col">
+    <!-- Header -->
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-10">
+      <h1 class="text-xl font-semibold text-gray-800 capitalize">
+        {{ activeTab === 'dashboard' ? 'Resumo da Farmácia' : 
+           activeTab === 'prescriptions' ? 'Receitas' : 
+           activeTab === 'products' ? 'Estoque' : 
+           activeTab === 'boosts' ? 'Anúncios' : 
+           activeTab === 'batches' ? 'Lotes' : 
+           activeTab === 'orders' ? 'Pedidos' : 
+           activeTab === 'alerts' ? 'Alertas' : 
+           activeTab === 'financial' ? 'Financeiro' : 
+           activeTab === 'team' ? 'Equipe' : 
+           activeTab === 'banners' ? 'Banners' : 'Layout' }}
+      </h1>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-red-100 text-[#F74838] flex items-center justify-center text-sm font-bold border border-red-200">
+          {{ dashboard?.pharmacy?.name?.charAt(0) || 'F' }}
         </div>
-        <div class="card-surface p-5">
-          <p class="text-sm text-gray-500">Checkouts / Pagos</p>
-          <p class="text-xl font-bold text-gray-800">{{ metrics.checkoutSessions }} / {{ metrics.paidSessions }}</p>
-        </div>
-        <div class="card-surface p-5">
-          <p class="text-sm text-gray-500">Receita paga (30d)</p>
-          <p class="text-xl font-bold text-[#F74838]">R$ {{ metrics.paidRevenue | number:'1.2-2' }}</p>
-        </div>
       </div>
-      @if (conversionChart.length) {
-        <app-metrics-bar-chart class="block mt-4" title="Conversão diária (%)" [points]="conversionChart" />
-      }
-    }
-  }
+    </header>
 
-  @if (activeTab === 'prescriptions') {
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Receitas pendentes</h2>
-      <p class="text-sm text-gray-500 mb-4">Avalie as receitas dos medicamentos controlados da sua farmácia antes da liberação do pedido.</p>
-      <div class="space-y-3">
-        @for (rx of pendingPrescriptions; track rx.id) {
-          <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
-            <div>
-              <p class="font-medium">{{ rx.Medicine?.name }}</p>
-              <p class="text-sm text-gray-500">{{ rx.User?.name || rx.User?.email }}</p>
-              <p class="text-xs text-gray-400 mt-1">{{ rx.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+    <!-- Page Content -->
+    <div class="p-8 max-w-6xl mx-auto w-full">
+      
+      @if (activeTab === 'dashboard' && dashboard) {
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Produtos</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.productCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Lotes</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.batchCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Pedidos</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.orderCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Receita</p><p class="text-3xl font-bold text-[#F74838]">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-wrap justify-between items-center gap-4 mb-4">
+          <div>
+            <p class="text-sm font-medium text-gray-500 mb-1">Status operacional</p>
+            <p class="font-bold text-gray-800 text-lg capitalize">{{ dashboard.pharmacy.operational_status }}</p>
+          </div>
+          @if (authService.canManageProducts()) {
+            <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm font-medium outline-none" [value]="dashboard.pharmacy.operational_status" (change)="updateOperationalStatus($event)">
+              <option value="open">Aberta</option>
+              <option value="closed">Fechada</option>
+              <option value="out_of_area">Fora da área</option>
+            </select>
+          }
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4 mt-4 mb-8">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <p class="text-sm font-medium text-gray-500 mb-1">Estoque baixo</p>
+            <p class="text-3xl font-bold text-amber-600">{{ dashboard.lowStockCount }}</p>
+          </div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <p class="text-sm font-medium text-gray-500 mb-1">Lotes vencendo</p>
+            <p class="text-3xl font-bold text-amber-600">{{ dashboard.expiringSoonCount }}</p>
+          </div>
+        </div>
+
+        @if (metrics) {
+          <div class="grid sm:grid-cols-3 gap-4 mt-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <p class="text-sm font-medium text-gray-500 mb-1">Taxa de conversão (30d)</p>
+              <p class="text-3xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p>
             </div>
-            <div class="flex gap-2">
-              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="reviewPrescription(rx.id, 'approved')">Aprovar</button>
-              <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 text-[#F74838]" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <p class="text-sm font-medium text-gray-500 mb-1">Checkouts / Pagos</p>
+              <p class="text-3xl font-bold text-gray-800">{{ metrics.checkoutSessions }} / {{ metrics.paidSessions }}</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <p class="text-sm font-medium text-gray-500 mb-1">Receita paga (30d)</p>
+              <p class="text-3xl font-bold text-[#F74838]">R$ {{ metrics.paidRevenue | number:'1.2-2' }}</p>
             </div>
           </div>
-        } @empty {
-          <p class="text-gray-500">Nenhuma receita pendente para esta farmácia.</p>
-        }
-      </div>
-    </section>
-  }
-
-  @if (activeTab === 'boosts') {
-    <div class="card-surface p-5 mb-6">
-      <h2 class="text-lg font-semibold mb-4">Impulsionar produto</h2>
-      <p class="text-sm text-gray-500 mb-4">Destaque um medicamento na home e nas listagens por um período.</p>
-      <div class="grid sm:grid-cols-3 gap-3">
-        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.medicine_id" aria-label="Produto">
-          @for (product of products; track product.id) {
-            <option [value]="product.id">{{ product.name }}</option>
+          @if (conversionChart.length) {
+            <app-metrics-bar-chart class="block mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-2" title="Conversão diária (%)" [points]="conversionChart" />
           }
-        </select>
-        <input type="number" min="1" max="90" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.days" placeholder="Dias" aria-label="Dias" />
-        <input type="number" min="1" max="10" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="boostForm.priority" placeholder="Prioridade" aria-label="Prioridade" />
-      </div>
-      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createBoost()">Ativar patrocínio</button>
-    </div>
+        }
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-2">Stripe Connect (recebimentos)</h3>
+          @if (connectStatus?.connected) {
+            <p class="text-sm font-medium text-green-700 bg-green-50 px-3 py-2 rounded-lg inline-block">Conta conectada e pronta para receber pagamentos com split automático.</p>
+          } @else {
+            <p class="text-sm text-gray-600 mb-4">Conecte sua conta Stripe para receber os pagamentos dos pedidos com repasse automático da comissão da plataforma.</p>
+            <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="connectStripe()">Conectar conta Stripe</button>
+          }
+        </div>
 
-    @if (boostMetrics) {
-      <div class="card-surface p-5 mb-6">
-        <h3 class="font-semibold text-gray-800 mb-2">Métricas de cliques (30d)</h3>
-        <p class="text-2xl font-bold text-[#F74838]">{{ boostMetrics.total_clicks }} cliques</p>
-        @if (boostMetrics.by_medicine.length) {
-          <div class="mt-3 space-y-1 text-sm">
-            @for (row of boostMetrics.by_medicine.slice(0, 5); track row.medicine_id) {
-              <div class="flex justify-between">
-                <span>{{ row.medicine_name || 'Produto' }}</span>
-                <span class="font-medium">{{ row.clicks }}</span>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6 mb-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-2">Documentos KYC</h3>
+          <p class="text-sm text-gray-600 mb-6">Envie CNPJ, alvará sanitário e CRF para validação da farmácia.</p>
+          <div class="grid sm:grid-cols-3 gap-4 mb-6">
+            <label class="block">
+              <span class="font-medium text-sm text-gray-800 mb-1 block">CNPJ</span>
+              <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer transition" (change)="onKycFileSelected($event, 'cnpj')" accept=".pdf,.jpg,.jpeg,.png">
+            </label>
+            <label class="block">
+              <span class="font-medium text-sm text-gray-800 mb-1 block">Alvará</span>
+              <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer transition" (change)="onKycFileSelected($event, 'alvara')" accept=".pdf,.jpg,.jpeg,.png">
+            </label>
+            <label class="block">
+              <span class="font-medium text-sm text-gray-800 mb-1 block">CRF</span>
+              <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer transition" (change)="onKycFileSelected($event, 'crf')" accept=".pdf,.jpg,.jpeg,.png">
+            </label>
+          </div>
+          <div class="grid gap-2">
+            @for (doc of kycDocuments; track doc.id) {
+              <div class="flex justify-between items-center text-sm border border-gray-100 rounded-xl px-4 py-3 bg-gray-50">
+                <span class="font-bold text-gray-800 capitalize">{{ doc.document_type }}</span>
+                <span class="font-bold text-xs uppercase px-2 py-1 rounded-lg" [class.bg-green-100]="doc.status === 'approved'" [class.text-green-700]="doc.status === 'approved'" [class.bg-amber-100]="doc.status === 'pending'" [class.text-amber-700]="doc.status === 'pending'" [class.bg-red-100]="doc.status === 'rejected'" [class.text-red-700]="doc.status === 'rejected'">{{ doc.status }}</span>
               </div>
             }
           </div>
-        }
-      </div>
-    }
-
-    <div class="space-y-3">
-      @for (boost of boosts; track boost.id) {
-        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
-          <div>
-            <p class="font-medium">{{ boost.Medicine?.name }}</p>
-            <p class="text-sm text-gray-500">Até {{ boost.ends_at | date:'dd/MM/yyyy' }} · Prioridade {{ boost.priority }}</p>
-          </div>
-          @if (boost.active) {
-            <button type="button" class="text-sm text-[#F74838]" (click)="removeBoost(boost.id)">Desativar</button>
-          } @else {
-            <span class="text-sm text-gray-400">Inativo</span>
-          }
         </div>
-      } @empty {
-        <p class="text-gray-500">Nenhum anúncio patrocinado ativo.</p>
       }
-    </div>
-  }
 
-  @if (activeTab === 'products') {
-    <div class="card-surface p-5 mb-6">
-      <h2 class="text-lg font-semibold mb-4">Novo produto</h2>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Nome" [(ngModel)]="productForm.name" aria-label="Nome do produto">
-        <input type="number" min="0" step="0.01" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Preço" [(ngModel)]="productForm.price" aria-label="Preço">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="productForm.category" aria-label="Categoria">
-        <input type="number" min="0" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Estoque inicial" [(ngModel)]="productForm.stock" aria-label="Estoque">
-        <input type="number" min="0" max="100" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Desconto %" [(ngModel)]="productForm.discount" aria-label="Desconto">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Princípio ativo" [(ngModel)]="productForm.active_ingredient" aria-label="Princípio ativo">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Laboratório" [(ngModel)]="productForm.laboratory" aria-label="Laboratório">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Dosagem" [(ngModel)]="productForm.dosage" aria-label="Dosagem">
-        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="productForm.medicine_type" aria-label="Tipo">
-          <option value="reference">Referência</option>
-          <option value="generic">Genérico</option>
-        </select>
-        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description" aria-label="Descrição">
-        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2 lg:col-span-3" placeholder="Sintomas (separados por vírgula, ex: febre, dor de cabeça)" [(ngModel)]="productForm.symptomsInput" aria-label="Sintomas">
-      </div>
-      <div class="flex flex-wrap gap-4 mt-3 text-sm">
-        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
-        <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="productForm.allows_subscription"> Permite assinatura</label>
-      </div>
-      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createProduct()">Cadastrar produto</button>
-    </div>
-
-    @if (priceBenchmark && benchmarkProductId) {
-      <div class="card-surface p-5 mb-6 border border-[#F74838]/20">
-        <div class="flex justify-between items-start mb-3">
-          <h3 class="font-semibold text-gray-800">Termômetro de preços — {{ priceBenchmark.product.name }}</h3>
-          <button type="button" class="text-sm text-gray-500" (click)="priceBenchmark = null; benchmarkProductId = null">Fechar</button>
-        </div>
-        <p class="text-sm text-gray-600 mb-2">
-          Seu preço: <strong>R$ {{ priceBenchmark.product.my_price | number:'1.2-2' }}</strong> ·
-          Média do mercado: R$ {{ priceBenchmark.market_average | number:'1.2-2' }} ·
-          Menor preço: R$ {{ priceBenchmark.market_cheapest | number:'1.2-2' }}
-        </p>
-        <p class="text-sm font-medium mb-3" [class.text-green-700]="priceBenchmark.position === 'cheapest'" [class.text-amber-700]="priceBenchmark.position === 'competitive'" [class.text-red-700]="priceBenchmark.position === 'above_market'">
-          {{ benchmarkPositionLabel(priceBenchmark.position) }}
-        </p>
-        <div class="space-y-1 text-sm">
-          @for (comp of priceBenchmark.competitors.slice(0, 5); track comp.medicine_id) {
-            <div class="flex justify-between" [class.font-semibold]="comp.is_mine">
-              <span>{{ comp.is_mine ? 'Você' : (comp.pharmacy_name || 'Farmácia') }}</span>
-              <span>R$ {{ comp.final_price | number:'1.2-2' }}</span>
-            </div>
-          }
-        </div>
-        @if (priceHistoryChart.length) {
-          <app-metrics-bar-chart class="block mt-4" title="Histórico de preço (90d)" [points]="priceHistoryChart" />
-        }
-      </div>
-    }
-
-    <div class="space-y-3">
-      @for (product of products; track product.id) {
-        <div class="card-surface p-4">
-          @if (editingProductId === product.id) {
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <input class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.name" aria-label="Editar nome">
-              <input type="number" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.price" aria-label="Editar preço">
-              <input type="number" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.stock" aria-label="Editar estoque">
-              <input class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="editForm.category" aria-label="Editar categoria">
-            </div>
-            <div class="flex gap-2 mt-3">
-              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="saveEdit()">Salvar</button>
-              <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="cancelEdit()">Cancelar</button>
-            </div>
-          } @else {
-            <div class="flex flex-wrap justify-between gap-3 items-center">
+      @if (activeTab === 'prescriptions') {
+        <p class="text-sm text-gray-500 mb-6">Avalie as receitas dos medicamentos controlados da sua farmácia antes da liberação do pedido.</p>
+        <div class="grid gap-4">
+          @for (rx of pendingPrescriptions; track rx.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center">
               <div>
-                <p class="font-medium">{{ product.name }}</p>
-                <p class="text-sm text-gray-500">{{ product.category || 'Sem categoria' }}</p>
-              </div>
-              <div class="flex items-center gap-3">
-                <div class="text-right">
-                  <p class="font-medium">R$ {{ product.price | number:'1.2-2' }}</p>
-                  <p class="text-sm" [class.text-amber-600]="product.stock <= 10" [class.text-gray-500]="product.stock > 10">
-                    Estoque: {{ product.stock }}
-                  </p>
-                </div>
-                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="loadPriceBenchmark(product.id)">Termômetro</button>
-                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="startEdit(product)">Editar</button>
-                <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 text-[#F74838]" (click)="deleteProduct(product.id)">Remover</button>
-              </div>
-            </div>
-          }
-        </div>
-      } @empty {
-        <p class="text-gray-500">Nenhum produto cadastrado nesta farmácia.</p>
-      }
-    </div>
-  }
-
-  @if (activeTab === 'batches') {
-    <div class="card-surface p-5 mb-6">
-      <h2 class="text-lg font-semibold mb-4">Novo lote</h2>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.medicine_id" aria-label="Medicamento">
-          @for (product of products; track product.id) {
-            <option [value]="product.id">{{ product.name }}</option>
-          }
-        </select>
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Número do lote" [(ngModel)]="batchForm.batch_number" aria-label="Número do lote">
-        <input type="number" min="1" class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Quantidade" [(ngModel)]="batchForm.quantity" aria-label="Quantidade">
-        <input type="date" class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="batchForm.expiry_date" aria-label="Validade">
-      </div>
-      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="createBatch()">Cadastrar lote</button>
-    </div>
-
-    <div class="space-y-3">
-      @for (batch of batches; track batch.id) {
-        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
-          <div>
-            <p class="font-medium">{{ batch.Medicine?.name }}</p>
-            <p class="text-sm text-gray-500">Lote {{ batch.batch_number }} · Qtd: {{ batch.quantity }}</p>
-            <p class="text-sm text-gray-500">Validade: {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
-          </div>
-          <button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200" (click)="deleteBatch(batch.id)">Remover</button>
-        </div>
-      } @empty {
-        <p class="text-gray-500">Nenhum lote cadastrado.</p>
-      }
-    </div>
-  }
-
-  @if (activeTab === 'orders') {
-    <div class="card-surface p-5 mb-6">
-      <h2 class="font-semibold text-gray-800 mb-3">Confirmar retirada (Click & Collect)</h2>
-      <div class="flex gap-2">
-        <input class="flex-1 rounded-lg border border-gray-200 px-3 py-2 font-mono uppercase" [(ngModel)]="pickupCodeInput" placeholder="Código de retirada" aria-label="Código de retirada" />
-        <button type="button" class="btn-brand px-4 py-2" (click)="confirmPickup()">Confirmar</button>
-      </div>
-    </div>
-
-    @if (deliveries.length) {
-      <div class="mb-6 space-y-3">
-        <h2 class="font-semibold text-gray-800">Entregas em andamento</h2>
-        @for (delivery of deliveries; track delivery.id) {
-          <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
-            <div>
-              <p class="font-medium">Pedido #{{ delivery.purchase_id.slice(-8) }}</p>
-              <p class="text-sm text-gray-500">{{ delivery.User?.name || delivery.User?.email }}</p>
-              <p class="text-sm text-gray-500">{{ deliveryStatusLabel(delivery.status) }} · R$ {{ delivery.quoted_price | number:'1.2-2' }}</p>
-              @if (delivery.tracking_url) {
-                <a [href]="delivery.tracking_url" target="_blank" rel="noopener" class="text-xs text-[#F74838] hover:underline">Link de rastreio</a>
-              }
-            </div>
-            @if (delivery.status !== 'delivered') {
-              <button type="button" class="btn-brand px-3 py-2 text-sm" (click)="advanceDelivery(delivery.id)">Avançar status</button>
-            }
-          </div>
-        }
-      </div>
-    }
-
-    <div class="space-y-3">
-      @for (order of orders; track order.sessionId) {
-        <div class="card-surface p-4 flex flex-wrap justify-between gap-3 items-center">
-          <div>
-            <p class="font-medium">#{{ order.sessionId.slice(-8) }}</p>
-            <p class="text-sm text-gray-500">R$ {{ order.total_price | number:'1.2-2' }}</p>
-          </div>
-          <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="order.order_status" (change)="updateOrderStatus(order.sessionId, $event)" aria-label="Status do pedido">
-            <option value="pending_payment">Aguardando pagamento</option>
-            <option value="processing">Em processamento</option>
-            <option value="shipped">Enviado</option>
-            <option value="delivered">Entregue</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        </div>
-      } @empty {
-        <p class="text-gray-500">Nenhum pedido para esta farmácia.</p>
-      }
-    </div>
-  }
-
-  @if (activeTab === 'dashboard') {
-    <div class="card-surface p-6 mt-6">
-      <h3 class="text-lg font-semibold mb-2">Stripe Connect (recebimentos)</h3>
-      @if (connectStatus?.connected) {
-        <p class="text-sm text-green-700">Conta conectada e pronta para receber pagamentos com split automático.</p>
-      } @else {
-        <p class="text-sm text-gray-600 mb-3">Conecte sua conta Stripe para receber os pagamentos dos pedidos com repasse automático da comissão da plataforma.</p>
-        <button type="button" class="btn-brand px-4 py-2" (click)="connectStripe()">Conectar conta Stripe</button>
-      }
-    </div>
-
-    <div class="card-surface p-6 mt-6">
-      <h3 class="text-lg font-semibold mb-2">Documentos KYC</h3>
-      <p class="text-sm text-gray-600 mb-4">Envie CNPJ, alvará sanitário e CRF para validação da farmácia.</p>
-      <div class="grid sm:grid-cols-3 gap-3 mb-4">
-        <label class="block text-sm">
-          <span class="font-medium">CNPJ</span>
-          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'cnpj')" accept=".pdf,.jpg,.jpeg,.png">
-        </label>
-        <label class="block text-sm">
-          <span class="font-medium">Alvará</span>
-          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'alvara')" accept=".pdf,.jpg,.jpeg,.png">
-        </label>
-        <label class="block text-sm">
-          <span class="font-medium">CRF</span>
-          <input type="file" class="mt-1 block w-full text-sm" (change)="onKycFileSelected($event, 'crf')" accept=".pdf,.jpg,.jpeg,.png">
-        </label>
-      </div>
-      <div class="space-y-2">
-        @for (doc of kycDocuments; track doc.id) {
-          <div class="flex justify-between text-sm border border-gray-100 rounded-lg px-3 py-2">
-            <span class="capitalize">{{ doc.document_type }}</span>
-            <span class="capitalize" [class.text-green-700]="doc.status === 'approved'" [class.text-amber-700]="doc.status === 'pending'" [class.text-red-700]="doc.status === 'rejected'">{{ doc.status }}</span>
-          </div>
-        }
-      </div>
-    </div>
-  }
-
-  @if (activeTab === 'team') {
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Equipe da farmácia</h2>
-      <p class="text-sm text-gray-500 mb-4">Convide operadores e farmacêuticos e defina permissões granulares por módulo.</p>
-
-      <div class="card-surface p-4 mb-6 grid sm:grid-cols-3 gap-3">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="E-mail do usuário" [(ngModel)]="teamForm.email" />
-        <select class="rounded-lg border border-gray-200 px-3 py-2" [(ngModel)]="teamForm.role" aria-label="Função do membro">
-          <option value="operator">Operador</option>
-          <option value="pharmacist">Farmacêutico</option>
-        </select>
-        <button type="button" class="btn-brand px-4 py-2" (click)="addTeamMember()">Adicionar membro</button>
-      </div>
-
-      <div class="space-y-3">
-        @for (member of teamStaff; track member.id) {
-          <div class="card-surface p-4">
-            <div class="flex flex-wrap justify-between gap-3 items-start mb-3">
-              <div>
-                <p class="font-medium">{{ member.name || member.email }}</p>
-                <p class="text-sm text-gray-500">{{ member.email }} · {{ member.role === 'operator' ? 'Operador' : 'Farmacêutico' }}</p>
+                <p class="font-bold text-gray-800 text-lg mb-1">{{ rx.Medicine?.name }}</p>
+                <p class="text-sm text-gray-600">{{ rx.User?.name || rx.User?.email }}</p>
+                <p class="text-xs text-gray-400 mt-1 font-mono">{{ rx.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
               </div>
               <div class="flex gap-2">
-                <button type="button" class="px-3 py-1 text-sm border rounded-lg" (click)="startEditPermissions(member)">Permissões</button>
-                <button type="button" class="px-3 py-1 text-sm text-[#F74838] border rounded-lg" (click)="removeTeamMember(member.id)">Remover</button>
+                <button type="button" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2.5 rounded-xl font-bold transition text-sm" (click)="reviewPrescription(rx.id, 'approved')">Aprovar Receita</button>
+                <button type="button" class="px-5 py-2.5 text-sm rounded-xl border border-gray-200 text-[#F74838] hover:bg-red-50 font-bold transition" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
               </div>
             </div>
-            <div class="flex flex-wrap gap-1">
-              @for (perm of member.permissions; track perm) {
-                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ permissionLabel(perm) }}</span>
-              }
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhuma receita pendente para esta farmácia.</p>
             </div>
-            @if (editingPermissionsUserId === member.id) {
-              <div class="mt-4 pt-4 border-t border-gray-100">
-                <p class="text-sm font-medium mb-2">Editar permissões</p>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
-                  @for (perm of teamPermissions; track perm) {
-                    <label class="flex items-center gap-2 text-sm">
-                      <input type="checkbox" [checked]="editingPermissions.includes(perm)" (change)="toggleEditingPermission(perm)" />
-                      {{ permissionLabel(perm) }}
-                    </label>
-                  }
-                </div>
-                <div class="flex gap-2">
-                  <button type="button" class="btn-brand px-3 py-1.5 text-sm" (click)="saveTeamPermissions()">Salvar</button>
-                  <button type="button" class="px-3 py-1.5 text-sm border rounded-lg" (click)="editingPermissionsUserId = null">Cancelar</button>
-                </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'boosts') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-2">Impulsionar produto</h2>
+          <p class="text-sm text-gray-500 mb-6">Destaque um medicamento na home e nas listagens por um período.</p>
+          <div class="grid sm:grid-cols-3 gap-4">
+            <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition outline-none font-medium text-sm" [(ngModel)]="boostForm.medicine_id">
+              @for (product of products; track product.id) {
+                <option [value]="product.id">{{ product.name }}</option>
+              }
+            </select>
+            <input type="number" min="1" max="90" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" [(ngModel)]="boostForm.days" placeholder="Dias (Ex: 7)" />
+            <input type="number" min="1" max="10" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" [(ngModel)]="boostForm.priority" placeholder="Prioridade (1-10)" />
+          </div>
+          <div class="mt-4 flex justify-end">
+            <button type="button" class="bg-[#F74838] hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="createBoost()">Ativar patrocínio</button>
+          </div>
+        </div>
+
+        @if (boostMetrics) {
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+            <h3 class="font-bold text-gray-800 mb-2">Métricas de cliques (30d)</h3>
+            <p class="text-4xl font-bold text-[#F74838]">{{ boostMetrics.total_clicks }}<span class="text-lg text-gray-400 font-normal ml-2">cliques totais</span></p>
+            @if (boostMetrics.by_medicine.length) {
+              <div class="mt-6 space-y-2">
+                @for (row of boostMetrics.by_medicine.slice(0, 5); track row.medicine_id) {
+                  <div class="flex justify-between items-center text-sm p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium text-gray-800">{{ row.medicine_name || 'Produto' }}</span>
+                    <span class="font-bold text-[#F74838]">{{ row.clicks }} clicks</span>
+                  </div>
+                }
               </div>
             }
           </div>
-        } @empty {
-          <p class="text-gray-500">Nenhum membro na equipe além do proprietário.</p>
         }
-      </div>
-    </section>
-  }
 
-  @if (activeTab === 'financial' && financial) {
-    <div class="flex flex-wrap justify-end gap-3 mb-4">
-      <button type="button" class="px-4 py-2 rounded-lg border border-gray-200" (click)="exportFinancial()">Exportar CSV</button>
-      <select class="rounded-lg border border-gray-200 px-3 py-2" [value]="financialPeriod" (change)="changeFinancialPeriod($event)" aria-label="Período financeiro">
-        <option value="7d">Últimos 7 dias</option>
-        <option value="30d">Últimos 30 dias</option>
-        <option value="90d">Últimos 90 dias</option>
-        <option value="all">Todo o período</option>
-      </select>
-    </div>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita bruta</p><p class="text-2xl font-bold text-[#F74838]">R$ {{ financial.summary.grossRevenue | number:'1.2-2' }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Comissão plataforma</p><p class="text-2xl font-bold text-gray-700">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Receita líquida</p><p class="text-2xl font-bold text-gray-800">R$ {{ financial.summary.netRevenue | number:'1.2-2' }}</p></div>
-      <div class="card-surface p-5"><p class="text-sm text-gray-500">Pedidos pagos</p><p class="text-2xl font-bold text-[#F74838]">{{ financial.summary.orderCount }}</p></div>
-    </div>
-
-    <app-metrics-bar-chart class="block mb-8" title="Receita diária" [points]="revenueChart" />
-
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Receita por dia</h2>
-      <div class="space-y-2">
-        @for (day of financial.daily; track day.date) {
-          <div class="card-surface p-3 flex justify-between">
-            <span>{{ day.date | date:'dd/MM/yyyy' }}</span>
-            <span class="font-medium">R$ {{ day.revenue | number:'1.2-2' }} · {{ day.orders }} pedido(s)</span>
-          </div>
-        } @empty {
-          <p class="text-gray-500">Sem vendas no período selecionado.</p>
-        }
-      </div>
-    </section>
-  }
-
-  @if (activeTab === 'alerts' && alerts) {
-    <div class="flex justify-end mb-4">
-      <button type="button" class="btn-brand px-4 py-2" (click)="scanAlerts()">Executar varredura e notificar</button>
-    </div>
-
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Estoque baixo</h2>
-      <div class="space-y-3">
-        @for (item of alerts.lowStock; track item.id) {
-          <div class="card-surface p-4">
-            <p class="font-medium">{{ item.name }}</p>
-            <p class="text-sm text-amber-600">Restam {{ item.stock }} unidades</p>
-          </div>
-        } @empty {
-          <p class="text-gray-500">Nenhum alerta de estoque.</p>
-        }
-      </div>
-    </section>
-
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Lotes próximos do vencimento</h2>
-      <div class="space-y-3">
-        @for (batch of alerts.expiringBatches; track batch.id) {
-          <div class="card-surface p-4">
-            <p class="font-medium">{{ batch.Medicine?.name }}</p>
-            <p class="text-sm text-amber-600">Lote {{ batch.batch_number }} · vence em {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
-          </div>
-        } @empty {
-          <p class="text-gray-500">Nenhum lote próximo do vencimento.</p>
-        }
-      </div>
-    </section>
-  }
-
-  @if (activeTab === 'layout') {
-    <app-layout-config></app-layout-config>
-  }
-
-  @if (activeTab === 'banners') {
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Meus Banners (Carrossel da Loja)</h2>
-      <div class="card-surface p-4 mb-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Título" [(ngModel)]="bannerForm.title" />
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Subtítulo" [(ngModel)]="bannerForm.subtitle" />
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Link (URL)" [(ngModel)]="bannerForm.link_url" />
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Categoria" [(ngModel)]="bannerForm.category" />
-        <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Patrocinador" [(ngModel)]="bannerForm.sponsor" />
-        <label class="block text-sm">
-          <span class="text-gray-600">Imagem do banner</span>
-          <input type="file" accept="image/*" class="mt-1 block w-full text-sm" (change)="onBannerFileSelected($event)" />
-        </label>
-        <button type="button" class="btn-brand px-4 py-2" (click)="createBanner()">Publicar banner</button>
-      </div>
-      <div class="space-y-2">
-        @for (banner of banners; track banner.id) {
-          <div class="card-surface p-3 flex flex-wrap justify-between gap-3 items-center">
-            <div>
-              <p class="font-medium">{{ banner.title }}</p>
-              <p class="text-sm text-gray-500">{{ banner.subtitle || banner.sponsor || 'Sem subtítulo' }}</p>
-              @if (banner.image_url) {
-                <img [src]="banner.image_url" [alt]="banner.title" class="mt-2 h-12 object-cover rounded" />
+        <div class="grid gap-4">
+          @for (boost of boosts; track boost.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center">
+              <div>
+                <p class="font-bold text-gray-800 text-lg">{{ boost.Medicine?.name }}</p>
+                <p class="text-sm text-gray-500 font-medium mt-1">Válido até {{ boost.ends_at | date:'dd/MM/yyyy' }} · Prioridade <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{{ boost.priority }}</span></p>
+              </div>
+              @if (boost.active) {
+                <button type="button" class="px-5 py-2.5 text-sm font-bold text-[#F74838] bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeBoost(boost.id)">Desativar impulsionamento</button>
+              } @else {
+                <span class="text-sm font-bold text-gray-400 uppercase tracking-wide">Inativo</span>
               }
             </div>
-            <div class="flex gap-2">
-              <button type="button" class="px-3 py-1 text-sm border rounded-lg" (click)="toggleBanner(banner)">
-                {{ banner.active ? 'Desativar' : 'Ativar' }}
-              </button>
-              <button type="button" class="px-3 py-1 text-sm text-[#F74838] border rounded-lg" (click)="deleteBanner(banner.id)">Remover</button>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhum anúncio patrocinado ativo.</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'products') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-4">Novo produto</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Nome" [(ngModel)]="productForm.name">
+            <input type="number" min="0" step="0.01" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Preço (R$)" [(ngModel)]="productForm.price">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Categoria" [(ngModel)]="productForm.category">
+            <input type="number" min="0" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Estoque inicial" [(ngModel)]="productForm.stock">
+            <input type="number" min="0" max="100" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Desconto %" [(ngModel)]="productForm.discount">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Princípio ativo" [(ngModel)]="productForm.active_ingredient">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Laboratório" [(ngModel)]="productForm.laboratory">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Dosagem" [(ngModel)]="productForm.dosage">
+            <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" [(ngModel)]="productForm.medicine_type">
+              <option value="reference">Referência</option>
+              <option value="generic">Genérico</option>
+            </select>
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm sm:col-span-2 lg:col-span-3" placeholder="Descrição" [(ngModel)]="productForm.description">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm sm:col-span-2 lg:col-span-3" placeholder="Sintomas (separados por vírgula, ex: febre, dor de cabeça)" [(ngModel)]="productForm.symptomsInput">
+          </div>
+          <div class="flex flex-wrap gap-6 mt-4 text-sm font-medium text-gray-700">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838]" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838]" [(ngModel)]="productForm.allows_subscription"> Permite assinatura mensal</label>
+          </div>
+          <div class="flex justify-end mt-4">
+            <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="createProduct()">Cadastrar produto no estoque</button>
+          </div>
+        </div>
+
+        @if (priceBenchmark && benchmarkProductId) {
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8 relative">
+            <div class="absolute top-0 left-0 w-1 h-full" [class.bg-green-500]="priceBenchmark.position === 'cheapest'" [class.bg-amber-500]="priceBenchmark.position === 'competitive'" [class.bg-red-500]="priceBenchmark.position === 'above_market'"></div>
+            <div class="p-6">
+              <div class="flex justify-between items-start mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Termômetro de Preços — {{ priceBenchmark.product.name }}</h3>
+                <button type="button" class="text-sm font-medium text-gray-500 hover:text-gray-800" (click)="priceBenchmark = null; benchmarkProductId = null">✕ Fechar termômetro</button>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl p-4"><p class="text-sm font-medium text-gray-500">Seu preço</p><p class="text-2xl font-bold text-gray-800">R$ {{ priceBenchmark.product.my_price | number:'1.2-2' }}</p></div>
+                <div class="bg-gray-50 rounded-xl p-4"><p class="text-sm font-medium text-gray-500">Média de mercado</p><p class="text-2xl font-bold text-gray-800">R$ {{ priceBenchmark.market_average | number:'1.2-2' }}</p></div>
+                <div class="bg-gray-50 rounded-xl p-4"><p class="text-sm font-medium text-gray-500">Menor preço</p><p class="text-2xl font-bold text-gray-800">R$ {{ priceBenchmark.market_cheapest | number:'1.2-2' }}</p></div>
+              </div>
+              <p class="text-base font-bold mb-4 uppercase tracking-wide" [class.text-green-600]="priceBenchmark.position === 'cheapest'" [class.text-amber-600]="priceBenchmark.position === 'competitive'" [class.text-red-600]="priceBenchmark.position === 'above_market'">
+                Diagnóstico: {{ benchmarkPositionLabel(priceBenchmark.position) }}
+              </p>
+              
+              <h4 class="font-bold text-gray-700 mb-3">Concorrentes Diretos</h4>
+              <div class="space-y-2 text-sm mb-6">
+                @for (comp of priceBenchmark.competitors.slice(0, 5); track comp.medicine_id) {
+                  <div class="flex justify-between p-3 rounded-lg border border-gray-100" [class.bg-blue-50]="comp.is_mine" [class.border-blue-200]="comp.is_mine" [class.bg-white]="!comp.is_mine">
+                    <span [class.font-bold]="comp.is_mine" [class.text-blue-700]="comp.is_mine">{{ comp.is_mine ? 'Sua Farmácia' : (comp.pharmacy_name || 'Concorrente Anônimo') }}</span>
+                    <span [class.font-bold]="comp.is_mine">R$ {{ comp.final_price | number:'1.2-2' }}</span>
+                  </div>
+                }
+              </div>
+
+              @if (priceHistoryChart.length) {
+                <app-metrics-bar-chart class="block bg-white rounded-xl shadow-sm border border-gray-100 p-2" title="Histórico de preço (90d)" [points]="priceHistoryChart" />
+              }
             </div>
           </div>
-        } @empty {
-          <p class="text-gray-500">Nenhum banner cadastrado.</p>
         }
-      </div>
-    </section>
-  }
+
+        <div class="grid gap-3">
+          @for (product of products; track product.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 transition hover:shadow-md">
+              @if (editingProductId === product.id) {
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <label class="text-xs font-medium text-gray-500 mb-1 block">Nome</label>
+                    <input class="rounded-xl border border-gray-200 w-full px-3 py-2 text-sm" [(ngModel)]="editForm.name">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-gray-500 mb-1 block">Preço (R$)</label>
+                    <input type="number" class="rounded-xl border border-gray-200 w-full px-3 py-2 text-sm" [(ngModel)]="editForm.price">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-gray-500 mb-1 block">Estoque Un.</label>
+                    <input type="number" class="rounded-xl border border-gray-200 w-full px-3 py-2 text-sm" [(ngModel)]="editForm.stock">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-gray-500 mb-1 block">Categoria</label>
+                    <input class="rounded-xl border border-gray-200 w-full px-3 py-2 text-sm" [(ngModel)]="editForm.category">
+                  </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                  <button type="button" class="bg-gray-800 text-white px-5 py-2 text-sm font-medium rounded-xl hover:bg-gray-700" (click)="saveEdit()">Salvar alterações</button>
+                  <button type="button" class="px-5 py-2 text-sm font-medium rounded-xl border border-gray-200 hover:bg-gray-50" (click)="cancelEdit()">Cancelar</button>
+                </div>
+              } @else {
+                <div class="flex flex-wrap justify-between gap-4 items-center">
+                  <div>
+                    <p class="font-bold text-gray-800 text-lg">{{ product.name }}</p>
+                    <p class="text-sm font-medium text-gray-500">{{ product.category || 'Sem categoria' }}</p>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <div class="text-right border-r border-gray-200 pr-4 mr-1">
+                      <p class="font-bold text-lg text-gray-800">R$ {{ product.price | number:'1.2-2' }}</p>
+                      <p class="text-xs font-bold uppercase mt-1" [class.text-amber-600]="product.stock <= 10" [class.text-gray-400]="product.stock > 10">
+                        {{ product.stock <= 10 ? 'ESTOQUE BAIXO: ' : 'ESTOQUE: ' }}{{ product.stock }} un
+                      </p>
+                    </div>
+                    <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-gray-200 text-blue-600 bg-blue-50 hover:bg-blue-100 transition" (click)="loadPriceBenchmark(product.id)">Termômetro</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition" (click)="startEdit(product)">Editar</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-red-100 text-[#F74838] bg-red-50 hover:bg-red-100 transition" (click)="deleteProduct(product.id)">Remover</button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhum produto cadastrado no estoque.</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'batches') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastrar Novo Lote</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition outline-none font-medium text-sm" [(ngModel)]="batchForm.medicine_id">
+              <option value="" disabled selected>Selecione o Medicamento</option>
+              @for (product of products; track product.id) {
+                <option [value]="product.id">{{ product.name }}</option>
+              }
+            </select>
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm font-mono uppercase" placeholder="Número do lote" [(ngModel)]="batchForm.batch_number">
+            <input type="number" min="1" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Quantidade" [(ngModel)]="batchForm.quantity">
+            <input type="date" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" [(ngModel)]="batchForm.expiry_date">
+          </div>
+          <div class="mt-4 flex justify-end">
+            <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="createBatch()">Adicionar Lote</button>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          @for (batch of batches; track batch.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center">
+              <div>
+                <p class="font-bold text-gray-800 text-lg">{{ batch.Medicine?.name }}</p>
+                <div class="flex gap-3 mt-1">
+                  <p class="text-sm font-medium text-gray-500 bg-gray-50 px-2 py-0.5 rounded">Lote <span class="font-mono">{{ batch.batch_number }}</span></p>
+                  <p class="text-sm font-medium text-gray-500 bg-gray-50 px-2 py-0.5 rounded">Qtd: {{ batch.quantity }}</p>
+                </div>
+                <p class="text-sm text-gray-500 font-medium mt-2">Vence em: <span class="text-gray-800">{{ batch.expiry_date | date:'dd/MM/yyyy' }}</span></p>
+              </div>
+              <button type="button" class="px-5 py-2 text-sm font-medium rounded-xl border border-red-100 text-[#F74838] hover:bg-red-50 transition" (click)="deleteBatch(batch.id)">Excluir Lote</button>
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhum lote cadastrado.</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'orders') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 border-l-4 border-l-[#F74838]">
+          <h2 class="font-bold text-gray-800 text-lg mb-2">Retirada na Loja (Click & Collect)</h2>
+          <p class="text-sm text-gray-500 mb-4">Insira o código fornecido pelo cliente para concluir um pedido de retirada.</p>
+          <div class="flex gap-3">
+            <input class="flex-1 max-w-sm rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition font-mono uppercase text-lg tracking-widest text-center placeholder-gray-400" [(ngModel)]="pickupCodeInput" placeholder="EX: ABC-1234" />
+            <button type="button" class="bg-[#F74838] hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="confirmPickup()">Confirmar Retirada</button>
+          </div>
+        </div>
+
+        @if (deliveries.length) {
+          <div class="mb-8">
+            <h2 class="font-bold text-gray-800 text-lg mb-4">Entregas via Motoboy (Em andamento)</h2>
+            <div class="grid gap-3">
+              @for (delivery of deliveries; track delivery.id) {
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center border-l-4 border-l-blue-500">
+                  <div>
+                    <p class="font-bold text-gray-800 text-lg mb-1">Pedido #{{ delivery.purchase_id.slice(-8).toUpperCase() }}</p>
+                    <p class="text-sm font-medium text-gray-600 mb-1">{{ delivery.User?.name || delivery.User?.email }}</p>
+                    <div class="flex items-center gap-3">
+                      <span class="text-xs font-bold px-2 py-1 bg-blue-50 text-blue-700 rounded-lg uppercase tracking-wider">{{ deliveryStatusLabel(delivery.status) }}</span>
+                      <span class="text-sm font-bold text-gray-700">R$ {{ delivery.quoted_price | number:'1.2-2' }}</span>
+                    </div>
+                    @if (delivery.tracking_url) {
+                      <a [href]="delivery.tracking_url" target="_blank" rel="noopener" class="text-xs font-medium text-blue-600 hover:underline mt-2 inline-block">🔗 Acompanhar rastreio</a>
+                    }
+                  </div>
+                  @if (delivery.status !== 'delivered') {
+                    <button type="button" class="bg-gray-800 text-white hover:bg-gray-700 px-5 py-2.5 rounded-xl text-sm font-bold transition" (click)="advanceDelivery(delivery.id)">Avançar Etapa de Entrega</button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <h2 class="font-bold text-gray-800 text-lg mb-4">Fila Geral de Pedidos</h2>
+        <div class="grid gap-3">
+          @for (order of orders; track order.sessionId) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center hover:shadow-md transition">
+              <div>
+                <p class="font-bold text-gray-800 text-lg mb-1">#{{ order.sessionId.slice(-8).toUpperCase() }}</p>
+                <p class="text-sm font-bold text-gray-600">R$ {{ order.total_price | number:'1.2-2' }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-gray-500">Alterar status:</span>
+                <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition outline-none font-medium text-sm" [value]="order.order_status" (change)="updateOrderStatus(order.sessionId, $event)">
+                  <option value="pending_payment">Aguardando pagamento</option>
+                  <option value="processing">Em preparação</option>
+                  <option value="shipped">A caminho (Enviado)</option>
+                  <option value="delivered">Concluído (Entregue)</option>
+                  <option value="cancelled">Cancelado</option>
+                </select>
+              </div>
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhum pedido recebido ainda.</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'alerts' && alerts) {
+        <div class="flex justify-end mb-6">
+          <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="scanAlerts()">Escanear e Notificar Equipe</button>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-amber-500"></div> Produtos com Estoque Baixo</h2>
+            <div class="grid gap-3">
+              @for (item of alerts.lowStock; track item.id) {
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex justify-between items-center">
+                  <p class="font-bold text-gray-800">{{ item.name }}</p>
+                  <p class="text-sm font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-lg">{{ item.stock }} UN</p>
+                </div>
+              } @empty {
+                <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-6 text-center">
+                  <p class="text-gray-500 text-sm font-medium">Estoque normalizado.</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#F74838]"></div> Lotes Perto do Vencimento</h2>
+            <div class="grid gap-3">
+              @for (batch of alerts.expiringBatches; track batch.id) {
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                  <p class="font-bold text-gray-800 mb-1">{{ batch.Medicine?.name }}</p>
+                  <p class="text-sm font-medium text-[#F74838]">Lote <span class="font-mono">{{ batch.batch_number }}</span> · Vence dia {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+                </div>
+              } @empty {
+                <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-6 text-center">
+                  <p class="text-gray-500 text-sm font-medium">Nenhum lote em risco.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (activeTab === 'layout') {
+        <app-layout-config></app-layout-config>
+      }
+
+      @if (activeTab === 'team') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-2">Convidar para a Equipe</h2>
+          <p class="text-sm text-gray-500 mb-6">Adicione operadores e farmacêuticos associando o e-mail cadastrado na plataforma.</p>
+
+          <div class="grid sm:grid-cols-3 gap-4">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="E-mail do usuário" [(ngModel)]="teamForm.email" />
+            <select class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition outline-none font-medium text-sm" [(ngModel)]="teamForm.role">
+              <option value="operator">Operador Padrão</option>
+              <option value="pharmacist">Farmacêutico Licenciado</option>
+            </select>
+            <div class="flex">
+              <button type="button" class="w-full bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="addTeamMember()">Adicionar Membro</button>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Membros Atuais</h3>
+        <div class="grid gap-4">
+          @for (member of teamStaff; track member.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+              <div class="flex flex-wrap justify-between gap-4 items-start mb-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 bg-gray-100 text-gray-600 font-bold rounded-xl flex items-center justify-center uppercase text-lg">
+                    {{ member.name ? member.name.charAt(0) : member.email.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="font-bold text-gray-800 text-lg">{{ member.name || 'Sem nome' }}</p>
+                    <p class="text-sm font-medium text-gray-500">{{ member.email }} · <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700 uppercase tracking-wide text-xs">{{ member.role === 'operator' ? 'Operador' : 'Farmacêutico' }}</span></p>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" class="px-4 py-2 text-sm font-bold border border-gray-200 rounded-xl hover:bg-gray-50 transition" (click)="startEditPermissions(member)">Gerir Permissões</button>
+                  <button type="button" class="px-4 py-2 text-sm font-bold text-[#F74838] border border-red-100 bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeTeamMember(member.id)">Remover</button>
+                </div>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                @for (perm of member.permissions; track perm) {
+                  <span class="text-xs font-bold bg-gray-100 text-gray-600 px-3 py-1 rounded-lg">{{ permissionLabel(perm) }}</span>
+                }
+              </div>
+
+              @if (editingPermissionsUserId === member.id) {
+                <div class="mt-5 pt-5 border-t border-gray-100 bg-gray-50/50 -mx-5 px-5 -mb-5 pb-5 rounded-b-2xl">
+                  <p class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide">Controle de Permissões</p>
+                  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+                    @for (perm of teamPermissions; track perm) {
+                      <label class="flex items-center gap-3 text-sm font-medium text-gray-700 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-red-200 transition">
+                        <input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838] w-4 h-4" [checked]="editingPermissions.includes(perm)" (change)="toggleEditingPermission(perm)" />
+                        {{ permissionLabel(perm) }}
+                      </label>
+                    }
+                  </div>
+                  <div class="flex gap-2 justify-end">
+                    <button type="button" class="px-5 py-2.5 text-sm font-medium rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition" (click)="editingPermissionsUserId = null">Cancelar</button>
+                    <button type="button" class="bg-emerald-50 text-emerald-700 px-6 py-2.5 text-sm font-bold rounded-xl hover:bg-emerald-100 transition" (click)="saveTeamPermissions()">Salvar Alterações</button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Você é o único membro desta farmácia.</p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab === 'banners') {
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-4">Banners da Loja Local</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Título" [(ngModel)]="bannerForm.title" />
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Subtítulo" [(ngModel)]="bannerForm.subtitle" />
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="URL Destino" [(ngModel)]="bannerForm.link_url" />
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Categoria alvo" [(ngModel)]="bannerForm.category" />
+            <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" placeholder="Patrocinador" [(ngModel)]="bannerForm.sponsor" />
+            
+            <div class="sm:col-span-2 lg:col-span-1">
+              <label class="block text-sm font-medium text-gray-600 mb-1">Imagem do Banner</label>
+              <input type="file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-red-50 file:text-[#F74838] hover:file:bg-red-100 cursor-pointer transition" (change)="onBannerFileSelected($event)" />
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end">
+            <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="createBanner()">Upload Banner</button>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          @for (banner of banners; track banner.id) {
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap justify-between gap-4 items-center">
+              <div class="flex items-center gap-5">
+                @if (banner.image_url) {
+                  <img [src]="banner.image_url" [alt]="banner.title" class="w-24 h-24 object-cover rounded-xl shadow-sm border border-gray-100" />
+                } @else {
+                  <div class="w-24 h-24 bg-gray-50 border border-dashed border-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-400">Sem imagem</div>
+                }
+                <div>
+                  <p class="font-bold text-gray-800 text-lg mb-1">{{ banner.title }}</p>
+                  <p class="text-sm font-medium text-gray-500">{{ banner.subtitle || banner.sponsor || 'Anúncio Local' }}</p>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <button type="button" class="px-5 py-2.5 text-sm font-bold border border-gray-200 rounded-xl hover:bg-gray-50 transition" (click)="toggleBanner(banner)">
+                  {{ banner.active ? 'Ocultar do site' : 'Exibir no site' }}
+                </button>
+                <button type="button" class="px-5 py-2.5 text-sm font-bold text-[#F74838] bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="deleteBanner(banner.id)">Excluir Permanentemente</button>
+              </div>
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+              <p class="text-gray-500 font-medium">Nenhum banner da farmácia cadastrado.</p>
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  </main>
 </div>

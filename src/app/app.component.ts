@@ -12,7 +12,8 @@ export class AppComponent {
 
   constructor ( private router: Router) {
     this.router.events.subscribe(event => {
-      this.showLayout = this.router.url !== '/auth';
+      const url = this.router.url.split('?')[0];
+      this.showLayout = !['/auth', '/admin', '/pharmacy-panel'].includes(url);
     })
   }
 }
