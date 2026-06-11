@@ -25,6 +25,7 @@ export class PharmacyRegisterComponent implements OnInit {
     cep: '',
     phone: '',
     plan_tier: 'free',
+    tenant_domain: '',
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined
   };

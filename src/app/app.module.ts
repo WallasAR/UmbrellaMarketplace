@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -48,6 +48,11 @@ import { SearchModalComponent } from './components/search-modal/search-modal.com
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
+import { TenantService } from './services/tenant.service';
+
+export function initializeTenant(tenantService: TenantService) {
+  return () => tenantService.initTenant();
+}
 
 @NgModule({
   declarations: [
@@ -100,6 +105,12 @@ import { FavoritesComponent } from './pages/favorites/favorites.component';
     BrowserAnimationsModule,
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeTenant,
+      deps: [TenantService],
+      multi: true
+    },
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor]))
   ],
   bootstrap: [AppComponent]

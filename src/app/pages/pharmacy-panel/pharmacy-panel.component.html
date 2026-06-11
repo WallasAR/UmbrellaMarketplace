@@ -31,9 +31,6 @@
     @if (canShowTab('financial')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'financial'" (click)="setTab('financial')">Financeiro</button>
     }
-    @if (canShowTab('billing')) {
-      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'billing'" (click)="setTab('billing')">Plano SaaS</button>
-    }
     @if (canShowTab('team')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'team'" (click)="setTab('team')">Equipe</button>
     }
@@ -348,53 +345,6 @@
       }
     </div>
   }
-
-  @if (activeTab === 'billing' && billing) {
-    <div class="card-surface p-6 mb-6">
-      <p class="text-sm text-gray-500">Plano atual</p>
-      <p class="text-2xl font-bold text-[#F74838]">{{ billing.plan.name }}</p>
-      <p class="text-sm text-gray-600 mt-2">
-        R$ {{ billing.plan.monthly_price | number:'1.2-2' }}/mês ·
-        Comissão {{ (billing.plan.commission_rate * 100) | number:'1.0-0' }}% ·
-        Status: <span class="font-medium capitalize">{{ billing.pharmacy.billing_status }}</span>
-      </p>
-      @if (billing.pharmacy.billing_status === 'pending_payment') {
-        <p class="text-amber-600 text-sm mt-3">Ative o plano pago para liberar a operação da farmácia.</p>
-      }
-      @if (billing.planUsage) {
-        <p class="text-sm text-gray-600 mt-3">
-          Produtos cadastrados:
-          <span class="font-medium">{{ billing.planUsage.productCount }}</span>
-          @if (billing.planUsage.maxProducts) {
-            / {{ billing.planUsage.maxProducts }}
-          } @else {
-            (ilimitado)
-          }
-        </p>
-        @if (!billing.planUsage.canAddMore) {
-          <p class="text-amber-600 text-sm mt-1">Limite do plano atingido. Faça upgrade para cadastrar mais produtos.</p>
-        }
-      }
-    </div>
-
-    <div class="grid sm:grid-cols-3 gap-4 mb-6">
-      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('free')">
-        <p class="font-semibold">Gratuito</p>
-        <p class="text-sm text-gray-500">R$ 0/mês</p>
-      </button>
-      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('pro')">
-        <p class="font-semibold">Profissional</p>
-        <p class="text-sm text-gray-500">R$ 99,90/mês</p>
-      </button>
-      <button type="button" class="card-surface p-4 text-left hover:border-[#F74838] border-2 border-transparent" (click)="upgradePlan('enterprise')">
-        <p class="font-semibold">Empresarial</p>
-        <p class="text-sm text-gray-500">R$ 299,90/mês</p>
-      </button>
-    </div>
-
-    @if (billing.pharmacy.stripe_customer_id) {
-      <button type="button" class="btn-brand px-4 py-2" (click)="manageBilling()">Gerenciar assinatura no Stripe</button>
-    }
 
     <div class="card-surface p-6 mt-6">
       <h3 class="text-lg font-semibold mb-2">Stripe Connect (recebimentos)</h3>

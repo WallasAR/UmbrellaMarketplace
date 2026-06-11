@@ -43,6 +43,7 @@
       <div class="grid sm:grid-cols-2 gap-4">
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Nome da farmácia" [(ngModel)]="form.name" name="name" required>
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="CNPJ" [(ngModel)]="form.cnpj" name="cnpj" required>
+        <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2" placeholder="Domínio Tenant (ex: minhastore.app)" [(ngModel)]="form.tenant_domain" name="tenant_domain">
         <input class="rounded-lg border border-gray-200 px-3 py-2 sm:col-span-2" placeholder="Endereço" [(ngModel)]="form.address" name="address" required>
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Cidade" [(ngModel)]="form.city" name="city" required>
         <input class="rounded-lg border border-gray-200 px-3 py-2" placeholder="Estado" [(ngModel)]="form.state" name="state" required>

@@ -18,7 +18,7 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts' | 'team' | 'layout';
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'prescriptions' | 'boosts' | 'team' | 'layout';
 
 @Component({
   selector: 'app-pharmacy-panel',
@@ -102,7 +102,7 @@ export class PharmacyPanelComponent implements OnInit {
     }
 
     if (role === 'pharmacist') {
-      if (tab === 'billing' || tab === 'team') {
+      if (tab === 'team') {
         return this.authService.isPharmacyOwner();
       }
       return true;
@@ -178,11 +178,6 @@ export class PharmacyPanelComponent implements OnInit {
       });
     }
 
-    if (this.activeTab === 'billing') {
-      this.pharmacyService.getBilling().subscribe((data) => this.billing = data);
-      this.pharmacyService.getConnectStatus().subscribe((data) => this.connectStatus = data);
-      this.pharmacyService.listKycDocuments().subscribe((docs) => this.kycDocuments = docs);
-    }
 
     if (this.activeTab === 'team') {
       this.pharmacyService.getTeam().subscribe({
@@ -228,26 +223,6 @@ export class PharmacyPanelComponent implements OnInit {
     });
   }
 
-  upgradePlan(planTier: string) {
-    this.pharmacyService.checkoutPlan(planTier).subscribe({
-      next: (res) => {
-        if (res.mode === 'checkout' && res.url) {
-          window.location.href = res.url;
-          return;
-        }
-        this.toast.show('Plano atualizado.', 'success');
-        this.reload();
-      }
-    });
-  }
-
-  manageBilling() {
-    this.pharmacyService.openBillingPortal().subscribe({
-      next: (res) => {
-        if (res.url) window.location.href = res.url;
-      }
-    });
-  }
 
   changeFinancialPeriod(event: Event) {
     this.financialPeriod = (event.target as HTMLSelectElement).value;
@@ -479,7 +454,6 @@ export class PharmacyPanelComponent implements OnInit {
       financial: 'Financeiro',
       prescriptions: 'Receitas',
       status: 'Status operacional',
-      billing: 'Plano SaaS',
       team: 'Equipe'
     };
     return labels[key] || key;

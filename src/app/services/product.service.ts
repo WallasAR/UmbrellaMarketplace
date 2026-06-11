@@ -3,14 +3,20 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product, ProductAlternativesResponse, ProductFilters } from '../models/product.model';
+import { TenantService } from './tenant.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private apiUrl = `${environment.apiUrl}/product`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tenantService: TenantService) {}
 
   getProducts(filters: ProductFilters = {}): Observable<Product[]> {
+    const tenantId = this.tenantService.getTenantId();
+    if (tenantId && !filters.pharmacyId) {
+      filters.pharmacyId = tenantId;
+    }
+
     let params = new HttpParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
@@ -25,7 +31,14 @@ export class ProductService {
   }
 
   getCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/categories`);
+    // If tenant is defined, we should ideally filter categories by what the tenant has
+    // but the backend endpoint /categories currently does not take pharmacyId
+    // For now, we'll let it be or just pass a param if backend supports it.
+    let params = new HttpParams();
+    const tenantId = this.tenantService.getTenantId();
+    if (tenantId) params = params.set('pharmacyId', tenantId);
+
+    return this.http.get<string[]>(`${this.apiUrl}/categories`, { params });
   }
 
   getAlternatives(id: number | string): Observable<ProductAlternativesResponse> {
