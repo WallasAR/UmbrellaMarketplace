@@ -22,6 +22,7 @@ import { PrescriptionComponent } from './pages/prescription/prescription.compone
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { pharmacyGuard } from './guards/pharmacy.guard';
+import { FavoritesComponent } from './pages/favorites/favorites.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'favoritos', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
   { path: 'pharmacy', component: PharmacyPanelComponent, canActivate: [authGuard, pharmacyGuard] },

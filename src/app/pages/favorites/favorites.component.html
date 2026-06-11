@@ -1,0 +1,25 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Meus Favoritos</h1>
+    <p class="text-gray-500">Acompanhe os produtos que você mais gostou.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center p-12">
+    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#F74838]"></div>
+  </div>
+
+  <div *ngIf="!isLoading && favorites.length === 0" class="card-surface p-12 text-center max-w-lg mx-auto">
+    <div class="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 text-[#F74838]">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+      </svg>
+    </div>
+    <h2 class="text-xl font-bold text-gray-800 mb-2">Nenhum favorito ainda</h2>
+    <p class="text-gray-500 mb-6">Você ainda não curtiu nenhum produto. Navegue pela loja e adicione seus medicamentos preferidos.</p>
+    <a routerLink="/home" class="btn-brand inline-block px-6 py-3">Explorar produtos</a>
+  </div>
+
+  <div *ngIf="!isLoading && favorites.length > 0" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <app-product-card *ngFor="let item of favorites" [product]="item"></app-product-card>
+  </div>
+</div>

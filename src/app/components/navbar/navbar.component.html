@@ -69,6 +69,7 @@
         <div *ngIf="dropdownOpen === 'profile'" class="absolute right-0 z-50 mt-2 w-56 rounded-2xl bg-white py-2 shadow-xl border border-gray-100">
           @if (authService.isAuthenticated()) {
             <a routerLink="/profile" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meu perfil</a>
+            <a routerLink="/favoritos" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meus favoritos</a>
             <a routerLink="/orders" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meus pedidos</a>
             <div class="h-px bg-gray-100 my-1"></div>
             @if (authService.canRegisterPharmacy()) {
@@ -130,6 +131,7 @@
     <a routerLink="/pharmacies/nearby" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Farmácias próximas</a>
     @if (authService.isAuthenticated()) {
       <a routerLink="/orders" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Meus pedidos</a>
+      <a routerLink="/favoritos" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Meus favoritos</a>
       <a routerLink="/profile" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Perfil</a>
       <button type="button" (click)="logout()" class="text-left text-red-600 font-bold py-2 mt-2">Sair da Conta</button>
     } @else {

@@ -1,36 +1,68 @@
-<div class="container mx-auto px-4 py-16 max-w-lg text-center">
-  @if (loading) {
-    <p class="text-gray-500" role="status">Verificando pagamento...</p>
-  } @else if (error) {
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Ops!</h1>
-    <p class="text-gray-600 mb-6">{{ error }}</p>
-    <button type="button" (click)="goHome()" class="btn-brand px-6 py-3">Voltar à loja</button>
-  } @else if (status === 'paid') {
-  @if (isPharmacyBilling) {
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Plano ativado!</h1>
-    <p class="text-gray-600 mb-6">A assinatura SaaS da sua farmácia foi confirmada.</p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a routerLink="/pharmacy" class="btn-brand px-6 py-3">Ir ao painel da farmácia</a>
-      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar</button>
-    </div>
-  } @else if (isSubscription) {
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Assinatura confirmada!</h1>
-    <p class="text-gray-600 mb-6">Sua assinatura foi ativada com sucesso.</p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a routerLink="/subscriptions" class="btn-brand px-6 py-3">Ver assinaturas</a>
-      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar comprando</button>
-    </div>
-  } @else {
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento confirmado!</h1>
-    <p class="text-gray-600 mb-6">Seu pedido foi processado com sucesso. Obrigado pela compra!</p>
-    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a routerLink="/orders" class="btn-brand px-6 py-3">Ver meus pedidos</a>
-      <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar comprando</button>
-    </div>
-  }
-  } @else {
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento pendente</h1>
-    <p class="text-gray-600 mb-6">Status: {{ status }}. Aguarde a confirmação.</p>
-    <button type="button" (click)="goHome()" class="btn-brand px-6 py-3">Voltar à loja</button>
-  }
+<div class="container mx-auto px-4 py-12 md:py-20 flex justify-center items-center">
+  <div class="max-w-xl w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 md:p-12 text-center border border-gray-50">
+    @if (loading) {
+      <div class="flex flex-col items-center justify-center py-10">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#F74838] mb-4"></div>
+        <p class="text-gray-500 font-medium" role="status">Verificando pagamento...</p>
+      </div>
+    } @else if (error) {
+      <div class="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 text-[#F74838]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Ops, algo deu errado!</h1>
+      <p class="text-gray-600 mb-8 text-lg">{{ error }}</p>
+      <button type="button" (click)="goHome()" class="btn-brand w-full py-4 text-lg font-bold shadow-lg shadow-rose-500/30">Voltar à loja</button>
+    } @else if (status === 'paid') {
+      <div class="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-500 animate-squash">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-12 h-12">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
+
+      @if (isPharmacyBilling) {
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Plano Ativado!</h1>
+        <p class="text-gray-500 mb-8 text-lg">A assinatura SaaS da sua farmácia foi confirmada e os recursos já estão liberados.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a routerLink="/pharmacy" class="flex-1 btn-brand py-3 font-bold shadow-md shadow-rose-500/20">Ir ao painel</a>
+          <button type="button" (click)="goHome()" class="flex-1 py-3 rounded-full border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors">Voltar</button>
+        </div>
+      } @else if (isSubscription) {
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Assinatura Confirmada!</h1>
+        <p class="text-gray-500 mb-8 text-lg">Seus produtos recorrentes estão configurados. Nós cuidamos do resto!</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a routerLink="/subscriptions" class="flex-1 btn-brand py-3 font-bold shadow-md shadow-rose-500/20">Ver assinaturas</a>
+          <button type="button" (click)="goHome()" class="flex-1 py-3 rounded-full border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors">Continuar</button>
+        </div>
+      } @else {
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Pedido Confirmado!</h1>
+        <p class="text-gray-500 mb-8 text-lg">Obrigado pela sua compra. Já estamos preparando tudo com muito cuidado para você.</p>
+        <div class="bg-gray-50 p-6 rounded-2xl mb-8 flex flex-col sm:flex-row justify-center items-center gap-6 border border-gray-100">
+          <div class="text-center">
+            <span class="block text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Status</span>
+            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-bold">Aprovado</span>
+          </div>
+          <div class="hidden sm:block w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <span class="block text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Próximo Passo</span>
+            <span class="text-sm font-bold text-gray-700">Preparação</span>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a routerLink="/orders" class="flex-1 btn-brand py-4 text-base font-bold shadow-lg shadow-rose-500/30">Acompanhar Pedido</a>
+          <button type="button" (click)="goHome()" class="flex-1 py-4 rounded-full border-2 border-gray-100 text-gray-700 font-bold hover:border-gray-200 hover:bg-gray-50 transition-colors">Continuar Comprando</button>
+        </div>
+      }
+    } @else {
+      <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-10 h-10">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Aguardando Pagamento</h1>
+      <p class="text-gray-500 mb-8 text-lg">Status do pagamento: <strong class="text-gray-700 uppercase">{{ status }}</strong>. Aguarde a confirmação ou verifique seu extrato.</p>
+      <button type="button" (click)="goHome()" class="btn-brand w-full py-4 text-lg font-bold shadow-lg shadow-rose-500/30">Voltar à loja</button>
+    }
+  </div>
 </div>

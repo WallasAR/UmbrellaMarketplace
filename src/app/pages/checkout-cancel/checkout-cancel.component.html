@@ -1,8 +1,16 @@
-<div class="container mx-auto px-4 py-16 max-w-lg text-center">
-  <h1 class="text-2xl font-bold text-gray-800 mb-2">Pagamento cancelado</h1>
-  <p class="text-gray-600 mb-6">Você cancelou o checkout. Seus itens continuam no carrinho.</p>
-  <div class="flex flex-col sm:flex-row gap-3 justify-center">
-    <button type="button" (click)="goToCart()" class="btn-brand px-6 py-3">Voltar ao carrinho</button>
-    <button type="button" (click)="goHome()" class="px-6 py-3 rounded-lg border border-gray-200">Continuar comprando</button>
+<div class="container mx-auto px-4 py-12 md:py-20 flex justify-center items-center">
+  <div class="max-w-xl w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 md:p-12 text-center border border-gray-50">
+    <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-3 tracking-tight">Checkout Cancelado</h1>
+    <p class="text-gray-500 mb-8 text-lg">Você não concluiu o pagamento, mas não se preocupe! Seus itens continuam salvos no carrinho aguardando por você.</p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button type="button" (click)="goToCart()" class="flex-1 btn-brand py-4 text-base font-bold shadow-lg shadow-rose-500/30">Voltar ao Carrinho</button>
+      <button type="button" (click)="goHome()" class="flex-1 py-4 rounded-full border-2 border-gray-100 text-gray-700 font-bold hover:border-gray-200 hover:bg-gray-50 transition-colors">Ver Mais Ofertas</button>
+    </div>
   </div>
 </div>

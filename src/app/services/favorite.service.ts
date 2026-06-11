@@ -27,6 +27,10 @@ export class FavoriteService {
     });
   }
 
+  list(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
   isFavorite(medicineId: number): boolean {
     return this.favorites().has(medicineId);
   }

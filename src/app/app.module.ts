@@ -47,6 +47,7 @@ import { PromoGridComponent } from './components/promo-grid/promo-grid.component
 import { SearchModalComponent } from './components/search-modal/search-modal.component';
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
+import { FavoritesComponent } from './pages/favorites/favorites.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layo
     PromoGridComponent,
     SearchModalComponent,
     PrescriptionComponent,
-    LayoutConfigComponent
+    LayoutConfigComponent,
+    FavoritesComponent
   ],
   imports: [
     BrowserModule,
