@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { NotificationService } from '../../services/notification.service';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,6 +19,7 @@ export class NavbarComponent implements OnInit {
     public authService: AuthService,
     public cartService: CartService,
     public notificationService: NotificationService,
+    private searchService: SearchService,
     private router: Router
   ) {}
 
@@ -41,10 +43,7 @@ export class NavbarComponent implements OnInit {
   }
 
   search(): void {
-    if (this.searchQuery.trim()) {
-      this.router.navigate(['/home'], { queryParams: { q: this.searchQuery.trim() } });
-      this.closeDropdowns();
-    }
+    this.searchService.openModal();
   }
 
   goToCart(): void {

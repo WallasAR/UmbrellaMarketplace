@@ -37,6 +37,9 @@
     @if (canShowTab('team')) {
       <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'team'" (click)="setTab('team')">Equipe</button>
     }
+    @if (canShowTab('dashboard')) {
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'layout'" (click)="setTab('layout')">Layout</button>
+    }
   </div>
 
   @if (activeTab === 'dashboard' && dashboard) {
@@ -555,5 +558,9 @@
         }
       </div>
     </section>
+  }
+
+  @if (activeTab === 'layout') {
+    <app-layout-config></app-layout-config>
   }
 </div>

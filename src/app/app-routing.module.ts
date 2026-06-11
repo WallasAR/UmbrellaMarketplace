@@ -18,6 +18,7 @@ import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.co
 import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
 import { NearbyPharmaciesComponent } from './pages/nearby-pharmacies/nearby-pharmacies.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
+import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { pharmacyGuard } from './guards/pharmacy.guard';
@@ -38,6 +39,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'faqs', component: FaqsComponent },
   { path: 'category', component: CategoryComponent },
+  { path: 'prescription', component: PrescriptionComponent },
   { path: 'pharmacies/nearby', component: NearbyPharmaciesComponent },
   { path: 'checkout/success', component: CheckoutSuccessComponent },
   { path: 'checkout/cancel', component: CheckoutCancelComponent },

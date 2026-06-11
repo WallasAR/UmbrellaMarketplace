@@ -2,6 +2,8 @@ import { Component, input, signal } from '@angular/core';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
+import { FavoriteService } from '../../services/favorite.service';
 
 @Component({
   selector: 'app-product-card',
@@ -16,7 +18,9 @@ export class ProductCardComponent {
 
   constructor(
     private productService: ProductService,
-    private authService: AuthService
+    public authService: AuthService,
+    private cartService: CartService,
+    public favoriteService: FavoriteService
   ) {}
 
   getFinalPrice(): number {
@@ -36,5 +40,17 @@ export class ProductCardComponent {
   onProductClick() {
     if (!this.product().sponsored || !this.authService.getToken()) return;
     this.productService.trackSponsoredClick(this.product().id, 'listing').subscribe();
+  }
+
+  addToCart() {
+    this.cartService.addItem(this.product().id, 1).subscribe();
+  }
+
+  toggleFavorite() {
+    if (!this.authService.getToken()) {
+      // Could show a toast or redirect to login here
+      return;
+    }
+    this.favoriteService.toggleFavorite(this.product().id).subscribe();
   }
 }

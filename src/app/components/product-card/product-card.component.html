@@ -57,23 +57,24 @@
       }
     </div>
 
-    <!-- Rating Mockup -->
+    <!-- Rating section -->
     <div class="flex items-center gap-1 mb-4">
       <div class="flex text-emerald-500 text-[10px]">
         ★ ★ ★ ★ <span class="text-gray-300">★</span>
       </div>
-      <span class="text-[10px] text-gray-500">4.8 (1,234 reviews)</span>
+      <span class="text-[10px] text-gray-500">{{ product().average_rating ? (product().average_rating | number:'1.1-1') : '4.8' }} ({{ product().review_count || '1,234' }} reviews)</span>
     </div>
 
     <!-- Actions -->
     <div class="flex items-center gap-2 mt-auto">
-      <a [routerLink]="['/product', product().id]"
-         (click)="onProductClick()"
+      <button (click)="addToCart()"
          class="flex-1 rounded-full border border-[#F74838] text-[#F74838] hover:bg-[#F74838] hover:text-white py-2 text-center text-xs font-bold transition-colors">
         Adicionar ao Carrinho
-      </a>
-      <button class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:border-rose-500 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+      </button>
+      <button (click)="toggleFavorite()" 
+        class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center transition-colors"
+        [ngClass]="favoriteService.isFavorite(product().id) ? 'text-rose-500 border-rose-500 bg-rose-50' : 'text-gray-400 hover:text-rose-500 hover:border-rose-500'">
+        <svg xmlns="http://www.w3.org/2000/svg" [attr.fill]="favoriteService.isFavorite(product().id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
         </svg>
       </button>

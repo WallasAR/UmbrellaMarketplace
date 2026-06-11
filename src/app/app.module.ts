@@ -42,6 +42,11 @@ import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-re
 import { NearbyPharmaciesComponent } from './pages/nearby-pharmacies/nearby-pharmacies.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widget.component';
+import { ProductSliderComponent } from './components/product-slider/product-slider.component';
+import { PromoGridComponent } from './components/promo-grid/promo-grid.component';
+import { SearchModalComponent } from './components/search-modal/search-modal.component';
+import { PrescriptionComponent } from './pages/prescription/prescription.component';
+import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +84,12 @@ import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widg
     CheckoutCancelComponent,
     MetricsBarChartComponent,
     CopilotWidgetComponent,
-    NearbyPharmaciesComponent
+    NearbyPharmaciesComponent,
+    ProductSliderComponent,
+    PromoGridComponent,
+    SearchModalComponent,
+    PrescriptionComponent,
+    LayoutConfigComponent
   ],
   imports: [
     BrowserModule,

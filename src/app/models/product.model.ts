@@ -29,6 +29,8 @@ export interface Product {
   dosage?: string;
   symptoms?: string[];
   sponsored?: boolean;
+  average_rating?: number;
+  review_count?: number;
 }
 
 export interface ProductAlternative {

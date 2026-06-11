@@ -1,116 +1,89 @@
-<main class="pb-16 bg-gray-50">
+<main class="pb-16 bg-gray-50 min-h-screen">
   
-  <!-- Hero Section (Carousel acts as the main hero banner) -->
-  <section class="relative">
-    <app-carousel/>
-    
-    <!-- Floating Search Pill overlaying the hero banner -->
-    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl z-40">
-      <div class="bg-white rounded-full shadow-lg p-2 flex items-center justify-between border border-gray-100">
-        <div class="flex items-center flex-1 px-4 text-sm font-bold text-gray-800 border-r border-gray-200">
-          Selecione um produto
-        </div>
-        
-        <div class="flex-1 px-4">
-          <select class="w-full bg-transparent text-gray-600 focus:outline-none text-sm cursor-pointer appearance-none">
-            <option>Todas Categorias</option>
-            <option>Medicamentos</option>
-            <option>Vitaminas</option>
-            <option>Higiene</option>
-          </select>
-        </div>
-        
-        <div class="flex-1 px-4 border-l border-gray-200">
-          <select class="w-full bg-transparent text-gray-600 focus:outline-none text-sm cursor-pointer appearance-none">
-            <option>Marcas</option>
-            <option>Bayer</option>
-            <option>EMS</option>
-            <option>Neo Química</option>
-          </select>
-        </div>
-        
-        <div class="px-4 text-gray-400 text-sm">ou</div>
-        
-        <div class="flex-1 px-4 border-x border-gray-200">
-          <input type="text" placeholder="Digite a bula ou SKU" class="w-full bg-transparent text-gray-800 placeholder-gray-400 focus:outline-none text-sm" />
-        </div>
-        
-        <div class="pl-2 pr-1">
-          <button class="bg-[#F74838] text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-[#e03d2f] transition-colors shadow-md">
-            Buscar Agora
-          </button>
-        </div>
-      </div>
+  @if (isLoading) {
+    <div class="flex items-center justify-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F74838]"></div>
     </div>
-  </section>
+  }
 
-  <!-- Spacer for the floating bar -->
-  <div class="h-16"></div>
-
-  <section class="max-w-7xl mx-auto px-4 sm:px-6">
-
-    <!-- Shop by Category Section -->
-    <div class="mt-12 mb-16">
-      <div class="flex justify-between items-end mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">Compre por Categoria</h2>
-        <a routerLink="/category" class="text-sm font-bold text-[#F74838] hover:underline flex items-center">
-          Ver todas <span class="ml-1">&rarr;</span>
-        </a>
-      </div>
+  @if (!isLoading && layout) {
+    <!-- Dynamic Layout Engine -->
+    @for (section of layout.sections; track section.id) {
       
-      <div class="grid grid-cols-4 md:grid-cols-8 gap-4 text-center">
-        <!-- Categories Circles -->
-        @for (cat of ['Higiene', 'Vitaminas', 'Fitness', 'Diabetes', 'Primeiros Socorros', 'Natural', 'Digestão', 'Beleza']; track cat) {
-          <a routerLink="/category" class="group flex flex-col items-center cursor-pointer">
-            <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center mb-3 group-hover:shadow-md group-hover:border-[#F74838] transition-all overflow-hidden p-2">
-              <!-- Placeholder for category image -->
-              <div class="w-full h-full rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+      <!-- Section: Hero Carousel -->
+      @if (section.section_type === 'hero_carousel') {
+        <section class="relative">
+          <app-carousel></app-carousel>
+          <!-- Floating Search Pill -->
+          <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl z-40 hidden md:block">
+            <div class="bg-white rounded-full shadow-lg p-2 flex items-center justify-between border border-gray-100 cursor-pointer hover:shadow-xl transition-shadow" (click)="openSearchModal()">
+              <div class="flex items-center flex-1 px-4 text-sm font-bold text-gray-800 border-r border-gray-200">
+                Selecione um produto
+              </div>
+              <div class="flex-1 px-4 text-gray-400 text-sm">Categorias</div>
+              <div class="flex-1 px-4 border-l border-gray-200 text-gray-400 text-sm">Marcas</div>
+              <div class="px-4 text-gray-400 text-sm">ou</div>
+              <div class="flex-1 px-4 border-x border-gray-200 text-gray-400 text-sm">
+                Digite a bula ou SKU...
+              </div>
+              <div class="pl-2 pr-1">
+                <button class="bg-[#F74838] text-white px-8 py-3 rounded-full font-bold text-sm pointer-events-none">
+                  Buscar Agora
+                </button>
               </div>
             </div>
-            <span class="text-sm font-semibold text-gray-700 group-hover:text-[#F74838]">{{ cat }}</span>
-          </a>
-        }
-      </div>
-    </div>
+          </div>
+        </section>
+        <div class="h-16 hidden md:block"></div>
+      }
 
-    <!-- Featured Products -->
-    <div class="mb-16">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-8">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Medicamentos em destaque</h2>
-          <p class="text-gray-500 mt-1">As escolhas desta semana com os melhores preços</p>
+      <!-- Section: Category Circles -->
+      @if (section.section_type === 'category_circles') {
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-12 mb-16">
+          <div class="flex justify-between items-end mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">{{ section.title }}</h2>
+            <a routerLink="/category" class="text-sm font-bold text-[#F74838] hover:underline flex items-center">
+              Ver todas <span class="ml-1">&rarr;</span>
+            </a>
+          </div>
+          
+          <div class="flex overflow-x-auto gap-4 md:grid md:grid-cols-8 md:gap-4 text-center no-scrollbar pb-4 md:pb-0">
+            @for (item of section.items; track item.id) {
+              <a [routerLink]="item.link_url || '/category'" class="group flex flex-col items-center cursor-pointer min-w-[80px]">
+                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center mb-3 group-hover:shadow-md group-hover:border-[#F74838] transition-all p-2 relative overflow-hidden">
+                  @if (item.image_url) {
+                    <img [src]="item.image_url" [alt]="item.title" class="w-full h-full object-cover rounded-full" />
+                  } @else {
+                    <!-- Mock icons based on title for demonstration -->
+                    <div class="w-full h-full rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                  }
+                </div>
+                <span class="text-sm font-semibold text-gray-700 group-hover:text-[#F74838]">{{ item.title }}</span>
+              </a>
+            }
+          </div>
         </div>
-        <a routerLink="/home" class="mt-3 sm:mt-0 text-sm font-bold text-[#F74838] hover:underline flex items-center">
-          Ver todos os produtos <span class="ml-1">&rarr;</span>
-        </a>
-      </div>
-      
-      <app-product-list/>
-    </div>
+      }
 
-    <!-- Promotional Banners -->
-    <div class="grid md:grid-cols-2 gap-6 mb-16">
-      <div class="bg-[#eef2ff] rounded-3xl p-8 relative overflow-hidden flex items-center">
-        <div class="z-10 relative max-w-xs">
-          <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3">Exames Laboratoriais</span>
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Agende seus Exames</h3>
-          <p class="text-gray-600 text-sm mb-6">Coleta domiciliar de amostras disponível na sua região</p>
-          <button class="bg-white text-gray-900 border border-gray-200 px-6 py-2 rounded-full font-bold text-sm shadow-sm hover:shadow-md transition-shadow">Explorar Exames</button>
-        </div>
-        <div class="absolute right-0 bottom-0 top-0 w-1/2 bg-gradient-to-l from-blue-200/50 to-transparent"></div>
-      </div>
+      <!-- Section: Product Slider -->
+      @if (section.section_type === 'product_slider') {
+        <app-product-slider 
+          [title]="section.title || ''"
+          [products]="$any(section).products || []">
+        </app-product-slider>
+      }
 
-      <div class="bg-[#fdf4e3] rounded-3xl p-8 relative overflow-hidden flex items-center">
-        <div class="z-10 relative max-w-xs">
-          <span class="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full mb-3">Consulta Online</span>
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Videoconsultas a partir de R$ 50</h3>
-          <p class="text-gray-600 text-sm mb-6">Fale com um médico agora mesmo sem sair de casa</p>
-          <button class="bg-white text-gray-900 border border-gray-200 px-6 py-2 rounded-full font-bold text-sm shadow-sm hover:shadow-md transition-shadow">Agendar Consulta</button>
-        </div>
-        <div class="absolute right-0 bottom-0 top-0 w-1/2 bg-gradient-to-l from-amber-200/50 to-transparent"></div>
-      </div>
-    </div>
+      <!-- Section: Promo Grid -->
+      @if (section.section_type === 'promo_grid') {
+        <app-promo-grid 
+          [title]="section.title || ''" 
+          [items]="section.items || []">
+        </app-promo-grid>
+      }
 
-  </section>
+    }
+  }
+
 </main>

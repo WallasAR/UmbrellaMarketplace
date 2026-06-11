@@ -1,0 +1,27 @@
+<div class="mb-16" *ngIf="items && items.length > 0">
+  <div *ngIf="title" class="mb-6 px-4 sm:px-6 max-w-7xl mx-auto">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">{{ title }}</h2>
+  </div>
+
+  <div class="px-4 sm:px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (item of items; track item.id) {
+      <a [href]="item.link_url || '#'" class="relative block overflow-hidden rounded-3xl bg-gray-100 shadow-sm hover:shadow-lg transition-shadow group aspect-[4/3] md:aspect-auto md:h-64 cursor-pointer">
+        @if (item.image_url) {
+          <img [src]="item.image_url" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        }
+        
+        <!-- If no image provided by admin yet, fallback gradient -->
+        @if (!item.image_url) {
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+        }
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-6 flex flex-col justify-end">
+          @if (item.subtitle) {
+            <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-full mb-2 w-max">{{ item.subtitle }}</span>
+          }
+          <h3 class="text-xl md:text-2xl font-bold text-white leading-tight drop-shadow-md">{{ item.title }}</h3>
+        </div>
+      </a>
+    }
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="mb-16" *ngIf="products && products.length > 0">
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 px-4 sm:px-6 max-w-7xl mx-auto">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">{{ title }}</h2>
+    </div>
+    <a [routerLink]="linkUrl" class="mt-3 sm:mt-0 text-sm font-bold text-[#F74838] hover:underline flex items-center">
+      Ver todos <span class="ml-1">&rarr;</span>
+    </a>
+  </div>
+
+  <div class="relative group">
+    <!-- Left Arrow -->
+    <button (click)="scroll(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-r-full shadow-[4px_0_15px_rgba(0,0,0,0.1)] flex items-center justify-center text-[#F74838] opacity-0 group-hover:opacity-100 transition-opacity">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+    </button>
+
+    <!-- Scrollable Area -->
+    <div 
+      #slider 
+      class="flex overflow-x-auto gap-4 px-4 sm:px-6 pb-6 pt-2 snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
+      (mousedown)="onMouseDown($event)"
+      (mouseleave)="onMouseLeave()"
+      (mouseup)="onMouseUp()"
+      (mousemove)="onMouseMove($event)"
+      style="scroll-behavior: smooth;"
+    >
+      @for (product of products; track product.id) {
+        <div class="min-w-[240px] max-w-[240px] sm:min-w-[260px] sm:max-w-[260px] snap-start flex-shrink-0">
+          <app-product-card [product]="product"></app-product-card>
+        </div>
+      }
+      <!-- Empty space at the end to allow last item to be fully scrolled -->
+      <div class="min-w-[24px] flex-shrink-0"></div>
+    </div>
+
+    <!-- Right Arrow -->
+    <button (click)="scroll(1)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-l-full shadow-[-4px_0_15px_rgba(0,0,0,0.1)] flex items-center justify-center text-[#F74838] opacity-0 group-hover:opacity-100 transition-opacity">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </button>
+  </div>
+</div>

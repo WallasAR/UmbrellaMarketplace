@@ -1,0 +1,140 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-50 flex justify-center bg-black/60 backdrop-blur-sm transition-opacity">
+  
+  <!-- Click outside to close -->
+  <div class="absolute inset-0" (click)="closeModal()"></div>
+
+  <!-- Modal Content -->
+  <div class="relative w-full max-w-4xl bg-white mt-16 md:mt-24 rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden h-[85vh] md:h-auto md:max-h-[80vh] flex flex-col animate-slide-up md:animate-scale-in">
+    
+    <!-- Search Header -->
+    <div class="flex items-center px-4 py-4 md:px-6 md:py-6 border-b border-gray-100 bg-white">
+      <button (click)="closeModal()" class="p-2 mr-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50 md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      </button>
+      
+      <div class="flex-1 relative">
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input 
+          #searchInput
+          type="text" 
+          [value]="searchQuery"
+          (input)="onInput($event)"
+          (keydown.enter)="search(searchQuery)"
+          placeholder="Busque por medicamento, princípio ativo, laboratório..." 
+          class="w-full bg-gray-50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#F74838]/20 focus:bg-white border border-transparent focus:border-[#F74838] transition-all text-gray-800"
+        />
+        
+        <button *ngIf="searchQuery" (click)="searchQuery=''; searchInput.value=''; suggestions={terms:[],products:[]}" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <button (click)="closeModal()" class="hidden md:flex ml-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="flex-1 overflow-y-auto bg-white">
+      
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="p-8 flex justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F74838]"></div>
+      </div>
+
+      <div class="p-4 md:p-6" *ngIf="!isLoading">
+        
+        <!-- Default State: No query -->
+        <div *ngIf="searchQuery.length < 3">
+          
+          <!-- Comprar com Receita CTA -->
+          <div class="mb-8">
+            <button (click)="goToPrescription()" class="w-full flex items-center justify-between p-4 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-colors border border-blue-100 group">
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white mr-4 group-hover:scale-105 transition-transform">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div class="text-left">
+                  <h3 class="font-bold text-gray-800 text-lg">Comprar com Receita</h3>
+                  <p class="text-sm text-gray-500">Envie a foto da sua receita médica</p>
+                </div>
+              </div>
+              <div class="text-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </div>
+            </button>
+          </div>
+
+          <!-- History -->
+          <div *ngIf="history.length > 0" class="mb-8">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Buscas Recentes</h4>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button *ngFor="let h of history" (click)="search(h)" class="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-full text-sm text-gray-700 transition-colors flex items-center border border-gray-100">
+                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {{ h }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Search State -->
+        <div *ngIf="searchQuery.length >= 3">
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Suggested Terms -->
+            <div class="md:col-span-1">
+              <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Termos Sugeridos</h4>
+              <ul class="space-y-1">
+                <li *ngIf="suggestions.terms.length === 0" class="text-sm text-gray-500 py-2">
+                  Nenhum termo...
+                </li>
+                <li *ngFor="let term of suggestions.terms">
+                  <button (click)="search(term)" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:text-[#F74838] hover:bg-red-50 rounded-lg transition-colors font-medium">
+                    <span class="font-bold">{{ searchQuery }}</span>{{ term.substring(searchQuery.length) || term }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Suggested Products -->
+            <div class="md:col-span-3">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Produtos Sugeridos</h4>
+                <button (click)="search(searchQuery)" class="text-sm text-[#F74838] font-bold hover:underline">
+                  Ver todos resultados
+                </button>
+              </div>
+
+              <div *ngIf="suggestions.products.length === 0" class="text-gray-500 text-sm py-4">
+                Nenhum produto encontrado.
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div *ngFor="let prod of suggestions.products">
+                  <!-- Miniature product card -->
+                  <a [routerLink]="['/product', prod.id]" (click)="closeModal()" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-[#F74838]/30 hover:shadow-md transition-all group bg-white">
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
+                      <img *ngIf="prod.Images?.[0]?.thumb_img" [src]="prod.Images[0].thumb_img" class="max-w-full max-h-full object-contain" />
+                      <div *ngIf="!prod.Images?.[0]?.thumb_img" class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                    </div>
+                    <div class="ml-3 flex-1 min-w-0">
+                      <h5 class="text-sm font-bold text-gray-800 truncate group-hover:text-[#F74838] transition-colors">{{ prod.name }}</h5>
+                      <div class="flex items-center mt-1">
+                        <span class="font-extrabold text-[#F74838]">R$ {{ prod.price | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

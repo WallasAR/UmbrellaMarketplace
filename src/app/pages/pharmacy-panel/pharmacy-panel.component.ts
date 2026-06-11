@@ -18,7 +18,7 @@ import { Order } from '../../models/order.model';
 import { ToastService } from '../../services/toast.service';
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
-type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts' | 'team';
+type PharmacyTab = 'dashboard' | 'products' | 'batches' | 'orders' | 'alerts' | 'financial' | 'billing' | 'prescriptions' | 'boosts' | 'team' | 'layout';
 
 @Component({
   selector: 'app-pharmacy-panel',

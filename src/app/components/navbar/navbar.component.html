@@ -12,7 +12,7 @@
         <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Todas Categorias</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
       </div>
-      <input #searchInput type="text" placeholder="Pesquisar medicamentos, vitaminas..." class="flex-1 bg-transparent border-none px-4 py-2.5 focus:outline-none text-sm text-gray-800 placeholder-gray-400" (input)="onSearchInput(searchInput.value)" (keydown.enter)="search()" />
+      <input #searchInput type="text" placeholder="Pesquisar medicamentos, vitaminas..." class="flex-1 bg-transparent border-none px-4 py-2.5 focus:outline-none text-sm text-gray-800 placeholder-gray-400 cursor-pointer" readonly (click)="search()" />
       <button (click)="search()" class="p-2.5 mr-1 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
       </button>
@@ -98,7 +98,7 @@
   <!-- Mobile Search Bar -->
   <div class="md:hidden px-4 pb-3">
     <div class="flex items-center bg-gray-50 rounded-full border border-gray-200 px-3 py-1.5 focus-within:border-[#F74838]">
-      <input #mobileSearchInput type="text" placeholder="Pesquisar medicamentos..." class="flex-1 bg-transparent border-none text-sm focus:outline-none" (input)="onSearchInput(mobileSearchInput.value)" (keydown.enter)="search()">
+      <input #mobileSearchInput type="text" placeholder="Pesquisar medicamentos..." class="flex-1 bg-transparent border-none text-sm focus:outline-none cursor-pointer" readonly (click)="search()">
       <button (click)="search()" class="text-gray-400"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></button>
     </div>
   </div>
