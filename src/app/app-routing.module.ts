@@ -15,7 +15,7 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
-import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
+import { PharmacySetupComponent } from './pages/pharmacy-setup/pharmacy-setup.component';
 import { NearbyPharmaciesComponent } from './pages/nearby-pharmacies/nearby-pharmacies.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
@@ -37,7 +37,7 @@ const routes: Routes = [
   { path: 'subscriptions', component: SubscriptionsComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
   { path: 'pharmacy', component: PharmacyPanelComponent, canActivate: [authGuard, pharmacyGuard] },
-  { path: 'pharmacy/register', component: PharmacyRegisterComponent, canActivate: [authGuard] },
+  { path: 'pharmacy/setup', component: PharmacySetupComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'about', component: AboutComponent },
   { path: 'faqs', component: FaqsComponent },

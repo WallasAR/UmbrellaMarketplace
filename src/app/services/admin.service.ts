@@ -57,16 +57,20 @@ export class AdminService {
     return this.http.get<Prescription[]>(`${environment.apiUrl}/prescriptions/pending`);
   }
 
-  getPendingPharmacies(): Observable<PendingPharmacy[]> {
-    return this.http.get<PendingPharmacy[]>(`${environment.apiUrl}/admin/pharmacies/pending`);
+  getAllPharmacies(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/admin/pharmacies`);
   }
 
-  approvePharmacy(id: string) {
-    return this.http.patch(`${environment.apiUrl}/admin/pharmacies/${id}/approve`, {});
+  createPharmacy(pharmacy: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/admin/pharmacies`, pharmacy);
   }
 
-  rejectPharmacy(id: string, reason: string) {
-    return this.http.patch(`${environment.apiUrl}/admin/pharmacies/${id}/reject`, { reason });
+  updatePharmacy(id: string, pharmacy: any): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/admin/pharmacies/${id}`, pharmacy);
+  }
+
+  deletePharmacy(id: string): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/admin/pharmacies/${id}`);
   }
 
   getFinancial(period = '30d'): Observable<any> {

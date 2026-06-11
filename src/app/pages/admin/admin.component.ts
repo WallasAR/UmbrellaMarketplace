@@ -5,7 +5,7 @@ import { Order } from '../../models/order.model';
 import { UserProfile } from '../../models/user.model';
 import { Prescription } from '../../services/prescription.service';
 import { ToastService } from '../../services/toast.service';
-import { PendingPharmacy } from '../../services/onboarding.service';
+
 import { ChartPoint } from '../../components/metrics-bar-chart/metrics-bar-chart.component';
 
 @Component({
@@ -21,7 +21,13 @@ export class AdminComponent implements OnInit {
   orders: Order[] = [];
   users: UserProfile[] = [];
   prescriptions: Prescription[] = [];
-  pendingPharmacies: PendingPharmacy[] = [];
+  pharmacies: any[] = [];
+  pharmacyForm = {
+    name: '',
+    owner_email: ''
+  };
+  inviteModalOpen = false;
+  currentInviteUrl = '';
   selectedKycPharmacyId: string | null = null;
   kycReview: { pharmacy: any; documents: any[] } | null = null;
   financial: any = null;
@@ -61,7 +67,7 @@ export class AdminComponent implements OnInit {
     this.adminService.getOrders().subscribe((orders) => this.orders = orders);
     this.adminService.getUsers().subscribe((users) => this.users = users);
     this.prescriptionService.listPending().subscribe((items) => this.prescriptions = items);
-    this.adminService.getPendingPharmacies().subscribe((items) => this.pendingPharmacies = items);
+    this.adminService.getAllPharmacies().subscribe((items) => this.pharmacies = items);
     this.adminService.getFinancial(this.financialPeriod).subscribe((data) => {
       this.financial = data;
       this.revenueChart = this.toChartPoints(data?.daily);
@@ -164,20 +170,27 @@ export class AdminComponent implements OnInit {
     }));
   }
 
-  approvePharmacy(id: string) {
-    this.adminService.approvePharmacy(id).subscribe({
-      next: () => {
-        this.toast.show('Farmácia aprovada.', 'success');
+  createPharmacy() {
+    if (!this.pharmacyForm.name.trim() || !this.pharmacyForm.owner_email.trim()) return;
+
+    this.adminService.createPharmacy(this.pharmacyForm).subscribe({
+      next: (res) => {
+        this.toast.show('Farmácia criada.', 'success');
+        if (res.invite && res.invite.token) {
+          this.currentInviteUrl = `${window.location.origin}/pharmacy/setup?token=${res.invite.token}`;
+          this.inviteModalOpen = true;
+        }
+        this.pharmacyForm = { name: '', owner_email: '' };
         this.reload();
       }
     });
   }
 
-  rejectPharmacy(id: string) {
-    const reason = prompt('Motivo da recusa:') || 'Cadastro recusado';
-    this.adminService.rejectPharmacy(id, reason).subscribe({
+  deletePharmacy(id: string) {
+    if (!confirm('Deseja realmente remover esta farmácia?')) return;
+    this.adminService.deletePharmacy(id).subscribe({
       next: () => {
-        this.toast.show('Farmácia recusada.', 'success');
+        this.toast.show('Farmácia removida.', 'success');
         this.reload();
       }
     });

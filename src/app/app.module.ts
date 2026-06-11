@@ -38,7 +38,6 @@ import { ProductReviewsComponent } from './components/product-reviews/product-re
 import { SubscriptionsComponent } from './pages/subscriptions/subscriptions.component';
 import { MetricsBarChartComponent } from './components/metrics-bar-chart/metrics-bar-chart.component';
 import { PharmacyPanelComponent } from './pages/pharmacy-panel/pharmacy-panel.component';
-import { PharmacyRegisterComponent } from './pages/pharmacy-register/pharmacy-register.component';
 import { NearbyPharmaciesComponent } from './pages/nearby-pharmacies/nearby-pharmacies.component';
 import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel.component';
 import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widget.component';
@@ -49,6 +48,7 @@ import { PrescriptionComponent } from './pages/prescription/prescription.compone
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { TenantService } from './services/tenant.service';
+import { PharmacySetupComponent } from './pages/pharmacy-setup/pharmacy-setup.component';
 
 export function initializeTenant(tenantService: TenantService) {
   return () => tenantService.initTenant();
@@ -86,7 +86,6 @@ export function initializeTenant(tenantService: TenantService) {
     ProductReviewsComponent,
     SubscriptionsComponent,
     PharmacyPanelComponent,
-    PharmacyRegisterComponent,
     CheckoutCancelComponent,
     MetricsBarChartComponent,
     CopilotWidgetComponent,
@@ -96,7 +95,8 @@ export function initializeTenant(tenantService: TenantService) {
     SearchModalComponent,
     PrescriptionComponent,
     LayoutConfigComponent,
-    FavoritesComponent
+    FavoritesComponent,
+    PharmacySetupComponent
   ],
   imports: [
     BrowserModule,

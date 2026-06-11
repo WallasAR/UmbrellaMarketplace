@@ -1,0 +1,55 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+    <div class="h-2 w-full bg-[#F74838]"></div>
+    
+    <div class="p-8">
+      <div class="flex justify-center mb-6">
+        <div class="w-16 h-16 bg-red-50 text-[#F74838] rounded-2xl flex items-center justify-center font-bold text-2xl shadow-sm">
+          U
+        </div>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">Configure sua Farmácia</h2>
+      <p class="text-sm text-gray-500 text-center mb-8">Defina sua senha e adicione as informações finais para ativar sua conta na UmbrellaMarket.</p>
+
+      <form (ngSubmit)="submit()">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Crie uma Senha Segura</label>
+            <input type="password" required [(ngModel)]="form.password" name="password" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="Sua senha">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Confirme a Senha</label>
+            <input type="password" required [(ngModel)]="form.confirmPassword" name="confirmPassword" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="Repita a senha">
+          </div>
+
+          <div class="border-t border-gray-100 pt-4 mt-2">
+            <h3 class="text-sm font-bold text-gray-800 mb-4">Informações Legais</h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
+                <input type="text" required [(ngModel)]="form.cnpj" name="cnpj" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="00.000.000/0000-00">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Endereço Completo</label>
+                <input type="text" [(ngModel)]="form.address" name="address" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="Rua das Flores, 123">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Telefone de Contato</label>
+                <input type="tel" [(ngModel)]="form.phone" name="phone" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="(11) 99999-9999">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="isLoading" class="w-full mt-8 bg-[#F74838] hover:bg-red-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition disabled:opacity-50">
+          {{ isLoading ? 'Finalizando...' : 'Concluir Cadastro' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
