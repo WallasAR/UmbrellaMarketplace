@@ -12,6 +12,8 @@ export class ProductFiltersComponent implements OnInit {
   filtersChange = output<ProductFilters>();
 
   categories: string[] = [];
+  commonSymptoms: string[] = ['Dor de Cabeça', 'Febre', 'Gripe e Resfriado', 'Alergia', 'Enjoo', 'Azia'];
+  
   filters: ProductFilters = { sort: 'name_asc' };
   nearbyEnabled = false;
   geoLoading = false;
@@ -29,6 +31,34 @@ export class ProductFiltersComponent implements OnInit {
 
   emitFilters() {
     this.filtersChange.emit({ ...this.filters });
+  }
+
+  toggleCategory(cat: string) {
+    if (this.filters.category === cat) {
+      this.filters.category = undefined;
+    } else {
+      this.filters.category = cat;
+    }
+    this.emitFilters();
+  }
+
+  toggleSymptom(symp: string) {
+    if (this.filters.symptom === symp) {
+      this.filters.symptom = undefined;
+    } else {
+      this.filters.symptom = symp;
+    }
+    this.emitFilters();
+  }
+
+  setSort(sort: string) {
+    this.filters.sort = sort as 'price_asc' | 'price_desc' | 'discount_desc' | 'name_asc';
+    this.emitFilters();
+  }
+
+  toggleDiscount() {
+    this.filters.discount = !this.filters.discount;
+    this.emitFilters();
   }
 
   toggleNearby(enabled: boolean) {

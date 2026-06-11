@@ -4,6 +4,7 @@ import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { FavoriteService } from '../../services/favorite.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-card',
@@ -20,7 +21,8 @@ export class ProductCardComponent {
     private productService: ProductService,
     public authService: AuthService,
     private cartService: CartService,
-    public favoriteService: FavoriteService
+    public favoriteService: FavoriteService,
+    private router: Router
   ) {}
 
   getFinalPrice(): number {
@@ -43,6 +45,10 @@ export class ProductCardComponent {
   }
 
   addToCart() {
+    if (this.product().requires_prescription) {
+      this.router.navigate(['/prescription'], { queryParams: { medicine_id: this.product().id, qty: 1 } });
+      return;
+    }
     this.cartService.addItem(this.product().id, 1).subscribe();
   }
 

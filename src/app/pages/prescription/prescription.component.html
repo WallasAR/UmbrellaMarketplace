@@ -1,64 +1,135 @@
 <main class="min-h-screen bg-gray-50 pt-10 pb-20">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
     
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-800">Comprar com Receita</h1>
       <p class="text-gray-500 mt-2">Envie a foto da sua receita médica e nós cuidamos do resto para você.</p>
     </div>
 
+    <!-- Loading / Error -->
+    @if (isLoadingMedicine) {
+      <div class="flex items-center justify-center h-32">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F74838]"></div>
+      </div>
+    }
+    
+    @if (errorMsg) {
+      <div class="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl mb-6">
+        {{ errorMsg }}
+      </div>
+    }
+
     <!-- Success State -->
-    <div *ngIf="uploadSuccess" class="bg-emerald-50 border border-emerald-100 p-8 rounded-3xl text-center">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      </div>
-      <h2 class="text-2xl font-bold text-emerald-800 mb-2">Receita Enviada!</h2>
-      <p class="text-emerald-600">Nossa equipe de farmacêuticos irá analisar a sua receita e entraremos em contato.</p>
-    </div>
-
-    <!-- Upload Form -->
-    <div *ngIf="!uploadSuccess" class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10">
-      
-      <!-- Upload Area -->
-      <div *ngIf="!previewUrl" class="border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center hover:bg-gray-50 transition-colors cursor-pointer relative" (click)="fileInput.click()">
-        <input #fileInput type="file" class="hidden" accept="image/*,application/pdf" (change)="onFileSelected($event)">
-        
-        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+    @if (uploadSuccess) {
+      <div class="bg-emerald-50 border border-emerald-100 p-8 rounded-3xl text-center shadow-sm">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         </div>
-        <h3 class="font-bold text-gray-800 text-lg mb-1">Anexar Receita</h3>
-        <p class="text-gray-500 text-sm">Tire uma foto ou escolha um arquivo PDF (Máx. 10MB)</p>
+        <h2 class="text-2xl font-bold text-emerald-800 mb-2">Receita Enviada e Produto Adicionado!</h2>
+        <p class="text-emerald-600">Sua receita está em análise. Redirecionando você...</p>
       </div>
+    }
 
-      <!-- Preview Area -->
-      <div *ngIf="previewUrl" class="rounded-2xl border border-gray-200 overflow-hidden relative group bg-gray-50">
-        <img [src]="previewUrl" class="w-full max-h-96 object-contain" />
+    <!-- Upload Form Grid -->
+    @if (!uploadSuccess && medicine) {
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
         
-        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <button (click)="removeFile()" class="bg-white text-red-500 px-4 py-2 rounded-full font-bold flex items-center shadow-lg hover:bg-red-50">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            Remover Imagem
-          </button>
-        </div>
-      </div>
-
-      <!-- Action Button -->
-      <div class="mt-8 pt-6 border-t border-gray-100">
-        <button 
-          (click)="sendPrescription()" 
-          [disabled]="!selectedFile || isUploading"
-          class="w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center transition-all shadow-md"
-          [ngClass]="selectedFile ? 'bg-[#F74838] text-white hover:bg-red-600 hover:shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
-          
-          <span *ngIf="!isUploading">Enviar Receita para Análise</span>
-          
-          <div *ngIf="isUploading" class="flex items-center">
-            <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-3"></div>
-            Enviando...
+        <!-- Left Column: Medicine Preview -->
+        <div class="md:col-span-4 flex flex-col gap-6">
+          <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sticky top-6">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Medicamento Selecionado</h3>
+            <div class="flex flex-col items-center text-center">
+              <div class="w-32 h-32 bg-gray-50 rounded-2xl flex items-center justify-center p-2 mb-4 border border-gray-100">
+                <img [src]="medicine.Images && medicine.Images[0]?.thumb_img || '/defaultmed.png'" class="max-h-full max-w-full object-contain" [alt]="medicine.name">
+              </div>
+              <h4 class="font-bold text-gray-800 text-lg leading-tight mb-2">{{ medicine.name }}</h4>
+              <p class="text-gray-500 text-sm mb-4">Quantidade: {{ quantity }}</p>
+              <div class="text-[#F74838] font-extrabold text-xl">R$ {{ (medicine.price * quantity) | number:'1.2-2' }}</div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-100">
+              <p class="text-xs text-gray-400">
+                <svg class="w-4 h-4 inline text-blue-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Produto controlado. A venda só será concluída após aprovação da farmácia.
+              </p>
+            </div>
           </div>
-        </button>
-        <p class="text-xs text-center text-gray-400 mt-4">Suas informações médicas são tratadas com total segurança e confidencialidade.</p>
-      </div>
+        </div>
 
-    </div>
+        <!-- Right Column: Upload Area -->
+        <div class="md:col-span-8">
+          <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10">
+            
+            <!-- Upload Area -->
+            @if (!previewUrl) {
+              <div class="border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center hover:bg-gray-50 transition-colors cursor-pointer relative" (click)="fileInput.click()">
+                <input #fileInput type="file" class="hidden" accept="image/*,application/pdf" (change)="onFileSelected($event)">
+                
+                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                </div>
+                <h3 class="font-bold text-gray-800 text-lg mb-1">Anexar Receita Médica</h3>
+                <p class="text-gray-500 text-sm">Tire uma foto legível ou escolha um arquivo PDF (Máx. 10MB)</p>
+              </div>
+            }
+
+            <!-- Preview Area -->
+            @if (previewUrl) {
+              <div class="rounded-2xl border border-gray-200 overflow-hidden relative group bg-gray-50">
+                <img [src]="previewUrl" class="w-full max-h-96 object-contain" />
+                
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button (click)="removeFile()" class="bg-white text-red-500 px-4 py-2 rounded-full font-bold flex items-center shadow-lg hover:bg-red-50">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Remover Documento
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- Action Buttons -->
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
+              <button 
+                (click)="cancel()" 
+                [disabled]="isUploading"
+                class="flex-1 py-4 rounded-xl font-bold text-lg text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+                Cancelar
+              </button>
+              
+              <button 
+                (click)="sendPrescription()" 
+                [disabled]="!selectedFile || isUploading"
+                class="flex-[2] py-4 rounded-xl font-bold text-lg flex items-center justify-center transition-all shadow-md"
+                [ngClass]="selectedFile ? 'bg-[#F74838] text-white hover:bg-red-600 hover:shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
+                
+                @if (!isUploading) {
+                  <span>Adicionar ao Carrinho</span>
+                }
+                
+                @if (isUploading) {
+                  <div class="flex items-center">
+                    <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-3"></div>
+                    Enviando e Adicionando...
+                  </div>
+                }
+              </button>
+            </div>
+            
+            <p class="text-xs text-center text-gray-400 mt-4">Ao adicionar ao carrinho, a farmácia analisará sua receita antes de faturar a compra.</p>
+          </div>
+        </div>
+      </div>
+    }
+    
+    <!-- Empty State / No medicine_id provided -->
+    @if (!isLoadingMedicine && !medicine && !uploadSuccess) {
+      <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-10 text-center">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Nenhum produto selecionado</h3>
+        <p class="text-gray-500 mb-6">Você precisa selecionar um medicamento controlado no catálogo para anexar a receita.</p>
+        <button routerLink="/category" class="bg-[#F74838] text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-red-600">
+          Voltar ao Catálogo
+        </button>
+      </div>
+    }
   </div>
 </main>

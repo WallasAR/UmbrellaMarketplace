@@ -104,6 +104,11 @@ export class ProductDetailsComponent {
   addToCart() {
     if (!this.requireAuth()) return;
 
+    if (this.product.requires_prescription) {
+      this.router.navigate(['/prescription'], { queryParams: { medicine_id: this.product.id, qty: this.quantity() } });
+      return;
+    }
+
     this.loading = true;
     this.cartService.addItem(this.product.id, this.quantity()).subscribe({
       next: () => {
@@ -119,6 +124,11 @@ export class ProductDetailsComponent {
 
   buyNow() {
     if (!this.requireAuth()) return;
+
+    if (this.product.requires_prescription) {
+      this.router.navigate(['/prescription'], { queryParams: { medicine_id: this.product.id, qty: this.quantity(), checkout: true } });
+      return;
+    }
 
     this.loading = true;
     this.cartService.addItem(this.product.id, this.quantity()).subscribe({
