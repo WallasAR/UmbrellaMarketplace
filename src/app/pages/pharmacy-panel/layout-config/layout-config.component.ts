@@ -9,6 +9,8 @@ export interface LayoutItem {
   image_url?: string;
   link_url?: string;
   display_order: number;
+  file_data?: string;
+  file_name?: string;
 }
 
 export interface LayoutSection {
@@ -44,6 +46,34 @@ export class LayoutConfigComponent implements OnInit {
 
   ngOnInit() {
     this.fetchLayout();
+  }
+
+  loadPreset() {
+    if (!confirm('Deseja carregar o layout padrão? Isso substituirá suas seções atuais (não salva até você clicar em Salvar).')) return;
+    
+    this.isLoading = true;
+    this.http.get<PharmacyLayout>(`${environment.apiUrl}/layout/public`).subscribe({
+      next: (preset) => {
+        if (preset && preset.sections && this.layout) {
+          this.layout.sections = preset.sections;
+        }
+        this.isLoading = false;
+      },
+      error: () => this.isLoading = false
+    });
+  }
+
+  onImageSelected(event: any, item: LayoutItem) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        item.file_data = e.target.result.split(',')[1]; // Base64 without data:image/png;base64,
+        item.file_name = file.name;
+        item.image_url = e.target.result; // For local preview
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   fetchLayout() {
