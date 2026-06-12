@@ -48,6 +48,7 @@ import { SearchModalComponent } from './components/search-modal/search-modal.com
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
 import { DynamicLayoutSectionsComponent } from './components/dynamic-layout-sections/dynamic-layout-sections.component';
+import { AssetUrlPipe } from './pipes/asset-url.pipe';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { TenantService } from './services/tenant.service';
 import { PharmacySetupComponent } from './pages/pharmacy-setup/pharmacy-setup.component';
@@ -98,6 +99,7 @@ export function initializeTenant(tenantService: TenantService) {
     PrescriptionComponent,
     LayoutConfigComponent,
     DynamicLayoutSectionsComponent,
+    AssetUrlPipe,
     FavoritesComponent,
     PharmacySetupComponent
   ],

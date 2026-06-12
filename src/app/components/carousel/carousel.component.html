@@ -12,7 +12,7 @@
                 <!-- Mockup style: image placed on the right -->
                 <div class="absolute inset-0 w-full h-full">
                   <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
-                  <img [src]="slide.imageUrl" alt="" class="absolute right-0 top-0 h-full w-auto object-cover opacity-80" />
+                  <img [src]="slide.imageUrl | assetUrl" alt="" class="absolute right-0 top-0 h-full w-auto object-cover opacity-80" />
                 </div>
               } @else {
                 <!-- Default subtle pattern if no image -->

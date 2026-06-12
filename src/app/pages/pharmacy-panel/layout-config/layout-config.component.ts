@@ -286,6 +286,16 @@ export class LayoutConfigComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  private clearUploadedFileData() {
+    if (!this.layout) return;
+    this.layout.sections.forEach((section) => {
+      section.items?.forEach((item) => {
+        delete item.file_data;
+        delete item.file_name;
+      });
+    });
+  }
+
   saveLayout() {
     if (!this.layout) return;
     this.isSaving = true;
@@ -301,6 +311,7 @@ export class LayoutConfigComponent implements OnInit {
       next: () => {
         this.isSaving = false;
         this.toast.show('Layout salvo com sucesso!', 'success');
+        this.clearUploadedFileData();
         this.fetchLayout();
       },
       error: () => {

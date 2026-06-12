@@ -11,7 +11,7 @@
         [class.cursor-pointer]="!previewMode"
       >
         @if (item.image_url) {
-          <img [src]="item.image_url" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img [src]="item.image_url | assetUrl" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         }
         
         <!-- If no image provided by admin yet, fallback gradient -->

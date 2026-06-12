@@ -208,7 +208,7 @@
                 <button type="button" (click)="fileInput.click()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-500 hover:bg-red-50 transition flex items-center justify-center gap-2">
                   Alterar Imagem
                 </button>
-                <img *ngIf="item.image_url" [src]="item.image_url" class="mt-2 w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm">
+                <img *ngIf="item.image_url" [src]="item.image_url | assetUrl" class="mt-2 w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm">
               </div>
             </div>
 
