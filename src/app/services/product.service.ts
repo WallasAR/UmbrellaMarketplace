@@ -48,4 +48,8 @@ export class ProductService {
   trackSponsoredClick(id: number, source = 'listing'): Observable<unknown> {
     return this.http.post(`${this.apiUrl}/${id}/sponsored-click`, { source });
   }
+
+  getSponsored(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/sponsored`);
+  }
 }
