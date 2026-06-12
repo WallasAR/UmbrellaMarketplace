@@ -1,69 +1,103 @@
-<div class="px-4 mt-6">
+<div *ngIf="slides.length" class="px-4 mt-6 group">
   <div class="relative overflow-visible max-w-7xl mx-auto" (mouseenter)="pauseAutoSlide()" (mouseleave)="startAutoSlide()">
-    <!-- Carousel Container -->
     <div class="relative overflow-hidden rounded-3xl shadow-xl h-[400px] md:h-[480px]">
-      <div class="flex h-full transition-transform duration-700 ease-in-out"
-           [ngStyle]="{'transform': 'translateX(-' + (currentIndex * 100) + '%)'}">
-        <div *ngFor="let slide of slides" class="min-w-full h-full">
-          <a [routerLink]="slide.linkUrl || '/category'" class="block h-full cursor-pointer">
-            <div class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 bg-gradient-to-br relative overflow-hidden"
-                 [ngClass]="slide.gradient">
-              @if (slide.imageUrl) {
-                <!-- Mockup style: image placed on the right -->
-                <div class="absolute inset-0 w-full h-full">
-                  <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
-                  <img [src]="slide.imageUrl | assetUrl" alt="" class="absolute right-0 top-0 h-full w-auto object-cover opacity-80" />
-                </div>
-              } @else {
-                <!-- Default subtle pattern if no image -->
-                <div class="absolute inset-0 bg-white/10 opacity-20" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
-              }
-              
-              <div class="relative z-20 max-w-xl">
-                <!-- Trust badge -->
-                <div class="inline-flex items-center gap-2 mb-4">
-                  <div class="flex -space-x-2">
-                    <div class="w-8 h-8 rounded-full bg-gray-200 border-2 border-[#F74838]"></div>
-                    <div class="w-8 h-8 rounded-full bg-gray-300 border-2 border-[#F74838]"></div>
-                    <div class="w-8 h-8 rounded-full bg-gray-400 border-2 border-[#F74838]"></div>
-                  </div>
-                  <div class="flex flex-col text-white">
-                    <div class="flex text-yellow-400 text-xs">
-                      ★★★★★
-                    </div>
-                    <span class="text-[10px] font-medium opacity-90">Aprovado por +50.000 famílias</span>
-                  </div>
-                </div>
-
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight">{{ slide.title }}</h2>
-                <p class="text-base md:text-lg text-white/90 mb-8 max-w-md leading-relaxed">{{ slide.subtitle }}</p>
-                
-                <div class="flex flex-col sm:flex-row gap-3">
-                  <button class="bg-white text-[#F74838] px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-50 transition-transform hover:scale-105 active:scale-95" routerLink="/category" (click)="$event.stopPropagation()">Comprar Medicamentos</button>
-                  <button class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-bold hover:bg-white/10 transition-colors" routerLink="/prescription" (click)="$event.stopPropagation()">Enviar Receita</button>
-                </div>
-              </div>
+      <div
+        class="flex h-full transition-transform duration-700 ease-in-out"
+        [ngStyle]="{ transform: 'translateX(-' + (currentIndex * 100) + '%)' }"
+      >
+        <div *ngFor="let slide of slides; let i = index" class="min-w-full h-full">
+          <ng-container *ngIf="editable; else linkedSlide">
+            <div class="block h-full cursor-default">
+              <ng-container *ngTemplateOutlet="slideBody; context: { slide: slide, index: i }"></ng-container>
             </div>
-          </a>
+          </ng-container>
+          <ng-template #linkedSlide>
+            <a [routerLink]="slide.linkUrl || '/category'" class="block h-full cursor-pointer">
+              <ng-container *ngTemplateOutlet="slideBody; context: { slide: slide, index: i }"></ng-container>
+            </a>
+          </ng-template>
         </div>
       </div>
 
-      <!-- Arrow Controls -->
-      <button (click)="prevSlide()" class="absolute top-1/2 -translate-y-1/2 left-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer border border-white/20">
+      <ng-template #slideBody let-slide="slide" let-i="index">
+            <div
+              #slideCanvas
+              class="carousel-slide-canvas w-full h-full relative overflow-hidden"
+              [style.background-color]="slide.backgroundColor"
+            >
+              @if (slide.imageUrl) {
+                <img
+                  [src]="slide.imageUrl | assetUrl"
+                  alt=""
+                  class="carousel-slide-image"
+                  [class.is-editable]="editable"
+                  [class.is-selected]="editable && selectedItemIndex === i"
+                  [style.left.%]="slide.imageX"
+                  [style.top.%]="slide.imageY"
+                  [style.width.%]="slide.imageScale"
+                  (mousedown)="startDrag($event, slide.sourceIndex, 'move')"
+                />
+                @if (editable && selectedItemIndex === i) {
+                  <button
+                    type="button"
+                    class="carousel-resize-handle"
+                    [style.left.%]="slide.imageX + slide.imageScale / 4"
+                    [style.top.%]="slide.imageY + slide.imageScale / 4"
+                    aria-label="Redimensionar imagem"
+                    (mousedown)="startDrag($event, slide.sourceIndex, 'resize')"
+                  ></button>
+                }
+                @if (hasText(slide)) {
+                  <div class="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-10 pointer-events-none"></div>
+                }
+              }
+
+              @if (hasText(slide)) {
+                <div class="relative z-20 max-w-xl px-8 md:px-16 lg:px-24 py-10 h-full flex flex-col justify-center pointer-events-none">
+                  @if (slide.title) {
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight">{{ slide.title }}</h2>
+                  }
+                  @if (slide.subtitle) {
+                    <p class="text-base md:text-lg text-white/90 mb-8 max-w-md leading-relaxed">{{ slide.subtitle }}</p>
+                  }
+                </div>
+              }
+
+              @if (!editable) {
+                <div class="absolute bottom-10 left-8 md:left-16 lg:left-24 z-20 flex flex-col sm:flex-row gap-3">
+                  <button class="bg-white text-[#F74838] px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-50 transition-transform hover:scale-105 active:scale-95 pointer-events-auto" routerLink="/category" (click)="$event.stopPropagation()">Comprar Medicamentos</button>
+                  <button class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-bold hover:bg-white/10 transition-colors pointer-events-auto" routerLink="/prescription" (click)="$event.stopPropagation()">Enviar Receita</button>
+                </div>
+              }
+            </div>
+      </ng-template>
+
+      <button
+        *ngIf="slides.length > 1"
+        type="button"
+        (click)="prevSlide()"
+        class="absolute top-1/2 -translate-y-1/2 left-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer border border-white/20"
+      >
         &#10094;
       </button>
 
-      <button (click)="nextSlide()" class="absolute top-1/2 -translate-y-1/2 right-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer border border-white/20">
+      <button
+        *ngIf="slides.length > 1"
+        type="button"
+        (click)="nextSlide()"
+        class="absolute top-1/2 -translate-y-1/2 right-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer border border-white/20"
+      >
         &#10095;
       </button>
 
-      <!-- Dots Controls -->
-      <div class="absolute bottom-6 left-1/2 flex space-x-2 -translate-x-1/2 z-30">
-        <button *ngFor="let slide of slides; let i = index"
-                (click)="goToSlide(i)"
-                class="h-2 rounded-full transition-all duration-300"
-                [ngClass]="currentIndex === i ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/80'">
-        </button>
+      <div *ngIf="slides.length > 1" class="absolute bottom-6 left-1/2 flex space-x-2 -translate-x-1/2 z-30">
+        <button
+          *ngFor="let slide of slides; let i = index"
+          type="button"
+          (click)="goToSlide(i)"
+          class="h-2 rounded-full transition-all duration-300"
+          [ngClass]="currentIndex === i ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/80'"
+        ></button>
       </div>
     </div>
   </div>
