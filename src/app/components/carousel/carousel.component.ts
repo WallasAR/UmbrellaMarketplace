@@ -2,12 +2,14 @@ import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, On
 import { InstitutionalBanner, BannerService } from '../../services/banner.service';
 import { LayoutItem } from '../../services/layout.service';
 import {
+  CarouselImageFit,
   CarouselSlideMetadata,
   clampCarouselImageScale,
   clampCarouselImageX,
   clampCarouselImageY,
   getCarouselMetadata,
-  patchCarouselMetadata
+  patchCarouselMetadata,
+  usesFreeCarouselPosition
 } from '../../utils/carousel-slide.util';
 
 interface Slide {
@@ -20,6 +22,7 @@ interface Slide {
   imageX: number;
   imageY: number;
   imageScale: number;
+  imageFit: CarouselImageFit;
 }
 
 @Component({
@@ -129,7 +132,8 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
         {
           image_x: slide.imageX,
           image_y: slide.imageY,
-          image_scale: slide.imageScale
+          image_scale: slide.imageScale,
+          image_fit: slide.imageFit
         },
         this.primaryColor
       );
@@ -187,7 +191,8 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
         backgroundColor: '#F74838',
         imageX: 72,
         imageY: 50,
-        imageScale: 100
+        imageScale: 100,
+        imageFit: 'custom'
       },
       {
         sourceIndex: 1,
@@ -196,7 +201,8 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
         backgroundColor: '#e03d2f',
         imageX: 72,
         imageY: 50,
-        imageScale: 100
+        imageScale: 100,
+        imageFit: 'custom'
       }
     ];
   }
@@ -212,7 +218,8 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       backgroundColor: meta.background_color || this.primaryColor,
       imageX: meta.image_x ?? 72,
       imageY: meta.image_y ?? 50,
-      imageScale: meta.image_scale ?? 100
+      imageScale: meta.image_scale ?? 100,
+      imageFit: meta.image_fit ?? 'custom'
     };
   }
 
@@ -226,8 +233,37 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       backgroundColor: '#F74838',
       imageX: 72,
       imageY: 50,
-      imageScale: 100
+      imageScale: 100,
+      imageFit: 'custom'
     };
+  }
+
+  usesFreePosition(slide: Slide): boolean {
+    return usesFreeCarouselPosition(slide.imageFit);
+  }
+
+  canDragImage(slide: Slide): boolean {
+    return slide.imageFit !== 'fill';
+  }
+
+  canResizeImage(slide: Slide): boolean {
+    return slide.imageFit !== 'fill';
+  }
+
+  imageTransform(slide: Slide): string {
+    if (slide.imageFit === 'fill') return 'none';
+    if (slide.imageFit === 'custom' || slide.imageScale !== 100) {
+      return `scale(${slide.imageScale / 100})`;
+    }
+    return 'none';
+  }
+
+  objectPosition(slide: Slide): string {
+    return `${slide.imageX}% ${slide.imageY}%`;
+  }
+
+  transformOrigin(slide: Slide): string {
+    return `${slide.imageX}% ${slide.imageY}%`;
   }
 
   private resolveDragContainer(): HTMLElement | null {

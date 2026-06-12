@@ -31,19 +31,25 @@
               @if (slide.imageUrl) {
                 <div
                   class="carousel-image-layer"
-                  [class.is-editable]="editable"
+                  [class.is-editable]="editable && canDragImage(slide)"
                   [class.is-selected]="editable && selectedItemIndex === i"
-                  [style.left.%]="slide.imageX"
-                  [style.top.%]="slide.imageY"
-                  (mousedown)="startDrag($event, i, 'move')"
+                  [class.mode-custom]="slide.imageFit === 'custom'"
+                  [class.mode-contain]="slide.imageFit === 'contain'"
+                  [class.mode-cover]="slide.imageFit === 'cover'"
+                  [class.mode-fill]="slide.imageFit === 'fill'"
+                  [style.left.%]="usesFreePosition(slide) ? slide.imageX : null"
+                  [style.top.%]="usesFreePosition(slide) ? slide.imageY : null"
+                  (mousedown)="canDragImage(slide) && startDrag($event, i, 'move')"
                 >
                   <img
                     [src]="slide.imageUrl | assetUrl"
                     alt=""
                     draggable="false"
-                    [style.transform]="'scale(' + (slide.imageScale / 100) + ')'"
+                    [style.transform]="imageTransform(slide)"
+                    [style.transform-origin]="transformOrigin(slide)"
+                    [style.object-position]="slide.imageFit === 'cover' || slide.imageFit === 'contain' ? objectPosition(slide) : null"
                   />
-                  @if (editable && selectedItemIndex === i) {
+                  @if (editable && selectedItemIndex === i && canResizeImage(slide)) {
                     <button
                       type="button"
                       class="carousel-resize-handle"

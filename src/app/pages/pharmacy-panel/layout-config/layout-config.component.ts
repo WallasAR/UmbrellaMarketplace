@@ -7,6 +7,9 @@ import { LayoutItem, LayoutSection } from '../../../services/layout.service';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
 import {
+  CAROUSEL_FILL_PRESETS,
+  CAROUSEL_IMAGE_FIT_LABELS,
+  CarouselImageFit,
   CarouselSlideMetadata,
   ensureCarouselMetadata,
   getCarouselMetadata,
@@ -372,6 +375,12 @@ export class LayoutConfigComponent implements OnInit {
     return getCarouselMetadata(item, this.primaryColor);
   }
 
+  carouselFitOptions: CarouselImageFit[] = ['custom', 'cover', 'contain', 'fill'];
+
+  carouselFitLabel(fit: CarouselImageFit): string {
+    return CAROUSEL_IMAGE_FIT_LABELS[fit];
+  }
+
   updateCarouselBackground(item: LayoutItem, color: string) {
     patchCarouselMetadata(item, { background_color: color }, this.primaryColor);
     this.touchPreview();
@@ -379,6 +388,16 @@ export class LayoutConfigComponent implements OnInit {
 
   updateCarouselScale(item: LayoutItem, scale: number) {
     patchCarouselMetadata(item, { image_scale: Number(scale) }, this.primaryColor);
+    this.touchPreview();
+  }
+
+  updateCarouselFit(item: LayoutItem, fit: CarouselImageFit) {
+    patchCarouselMetadata(item, { image_fit: fit }, this.primaryColor);
+    this.touchPreview();
+  }
+
+  applyCarouselPreset(item: LayoutItem, preset: keyof typeof CAROUSEL_FILL_PRESETS) {
+    patchCarouselMetadata(item, CAROUSEL_FILL_PRESETS[preset], this.primaryColor);
     this.touchPreview();
   }
 

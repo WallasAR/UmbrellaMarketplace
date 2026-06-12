@@ -15,8 +15,6 @@
   position: absolute;
   z-index: 5;
   transform: translate(-50%, -50%);
-  max-width: 90%;
-  max-height: 90%;
   touch-action: none;
 }
 
@@ -30,14 +28,83 @@
   cursor: grabbing;
 }
 
-.carousel-image-layer img {
+/* Ajuste manual — escala livre, excesso cortado pelo canvas */
+.carousel-image-layer.mode-custom {
+  max-width: none;
+  max-height: none;
+}
+
+.carousel-image-layer.mode-custom img {
   display: block;
-  max-height: min(420px, 42vh);
-  max-width: min(560px, 58vw);
   width: auto;
-  height: auto;
+  height: 75%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
-  transform-origin: center center;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Conter — cabe na área, pode ampliar com zoom */
+.carousel-image-layer.mode-contain {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  max-width: none;
+  max-height: none;
+}
+
+.carousel-image-layer.mode-contain img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Preencher — cobre todo o carrossel, recorta excesso */
+.carousel-image-layer.mode-cover {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  max-width: none;
+  max-height: none;
+}
+
+.carousel-image-layer.mode-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Esticar — preenche distorcendo se necessário */
+.carousel-image-layer.mode-fill {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  max-width: none;
+  max-height: none;
+  cursor: default;
+}
+
+.carousel-image-layer.mode-fill img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: fill;
   user-select: none;
   pointer-events: none;
 }

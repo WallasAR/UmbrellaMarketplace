@@ -254,8 +254,33 @@
               </div>
 
               <div *ngIf="editingSection.section_type === 'hero_carousel'" class="mb-3">
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Tamanho da imagem ({{ carouselMetadata(item).image_scale }}%)</label>
-                <input type="range" min="40" max="200" [ngModel]="carouselMetadata(item).image_scale" (ngModelChange)="updateCarouselScale(item, $event)" class="w-full accent-[#F74838]">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Ajuste da imagem</label>
+                <select
+                  [ngModel]="carouselMetadata(item).image_fit"
+                  (ngModelChange)="updateCarouselFit(item, $event)"
+                  class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2"
+                >
+                  <option *ngFor="let fit of carouselFitOptions" [value]="fit">{{ carouselFitLabel(fit) }}</option>
+                </select>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" class="text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-100 transition" (click)="applyCarouselPreset(item, 'cover'); $event.stopPropagation()">
+                    Preencher carrossel
+                  </button>
+                  <button type="button" class="text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-100 transition" (click)="applyCarouselPreset(item, 'contain'); $event.stopPropagation()">
+                    Conter na área
+                  </button>
+                  <button type="button" class="text-[10px] font-bold px-2 py-1 rounded-lg border border-gray-200 hover:bg-gray-100 transition" (click)="applyCarouselPreset(item, 'fill'); $event.stopPropagation()">
+                    Esticar
+                  </button>
+                </div>
+                <p class="text-[10px] text-gray-500 mt-2">No modo preencher, partes fora do carrossel são cortadas automaticamente.</p>
+              </div>
+
+              <div *ngIf="editingSection.section_type === 'hero_carousel' && carouselMetadata(item).image_fit !== 'fill'" class="mb-3">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+                  {{ carouselMetadata(item).image_fit === 'cover' ? 'Zoom' : 'Tamanho' }} ({{ carouselMetadata(item).image_scale }}%)
+                </label>
+                <input type="range" min="20" max="400" [ngModel]="carouselMetadata(item).image_scale" (ngModelChange)="updateCarouselScale(item, $event)" class="w-full accent-[#F74838]">
               </div>
 
               <div *ngIf="editingSection.section_type === 'promo_mosaic'" class="mb-3 space-y-3">
