@@ -1,7 +1,14 @@
 @for (section of visibleSections(); track section.id) {
-  @if (section.section_type === 'hero_carousel') {
+  @if (section.section_type === 'hero_carousel' && (section.items || []).length > 0) {
     <section class="relative">
-      <app-carousel [items]="section.items || []"></app-carousel>
+      <app-carousel
+        [items]="section.items || []"
+        [layoutOnly]="true"
+        [editable]="previewMode && carouselEditable"
+        [selectedItemIndex]="carouselSelectedIndex"
+        [primaryColor]="primaryColor"
+        (itemMetadataChange)="carouselItemMetadataChange.emit($event)"
+      ></app-carousel>
       @if (showSearchPill) {
         <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl z-40 hidden md:block">
           <div
@@ -38,16 +45,18 @@
 
   @if (section.section_type === 'category_circles') {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-12 mb-16">
-      <div class="flex justify-between items-end mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">{{ section.title }}</h2>
-        <span
-          class="text-sm font-bold flex items-center"
-          [style.color]="primaryColor"
-          [class.pointer-events-none]="previewMode"
-        >
-          Ver todas <span class="ml-1">&rarr;</span>
-        </span>
-      </div>
+      @if (section.title) {
+        <div class="flex justify-between items-end mb-8">
+          <h2 class="text-2xl font-bold text-gray-800">{{ section.title }}</h2>
+          <span
+            class="text-sm font-bold flex items-center"
+            [style.color]="primaryColor"
+            [class.pointer-events-none]="previewMode"
+          >
+            Ver todas <span class="ml-1">&rarr;</span>
+          </span>
+        </div>
+      }
 
       <div class="flex overflow-x-auto gap-4 md:grid md:grid-cols-8 md:gap-4 text-center no-scrollbar pb-4 md:pb-0">
         @for (item of categoryItems(section); track item.id) {
@@ -77,6 +86,8 @@
       [products]="sectionProducts(section)"
       [previewMode]="previewMode"
       [accentColor]="primaryColor"
+      [displayConfig]="section.config?.display"
+      [linkUrl]="productSliderLink(section)"
     ></app-product-slider>
   }
 
@@ -86,5 +97,24 @@
       [items]="section.items || []"
       [previewMode]="previewMode"
     ></app-promo-grid>
+  }
+
+  @if (section.section_type === 'promo_mosaic') {
+    <app-promo-mosaic
+      [title]="section.title || ''"
+      [items]="section.items || []"
+      [previewMode]="previewMode"
+      [accentColor]="primaryColor"
+    ></app-promo-mosaic>
+  }
+
+  @if (section.section_type === 'product_spotlight') {
+    <app-product-spotlight
+      [title]="section.title || ''"
+      [item]="sectionSpotlightItem(section)"
+      [product]="sectionSpotlightProduct(section)"
+      [previewMode]="previewMode"
+      [accentColor]="primaryColor"
+    ></app-product-spotlight>
   }
 }

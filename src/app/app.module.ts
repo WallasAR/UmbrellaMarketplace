@@ -44,6 +44,8 @@ import { CheckoutCancelComponent } from './pages/checkout-cancel/checkout-cancel
 import { CopilotWidgetComponent } from './components/copilot-widget/copilot-widget.component';
 import { ProductSliderComponent } from './components/product-slider/product-slider.component';
 import { PromoGridComponent } from './components/promo-grid/promo-grid.component';
+import { PromoMosaicComponent } from './components/promo-mosaic/promo-mosaic.component';
+import { ProductSpotlightComponent } from './components/product-spotlight/product-spotlight.component';
 import { SearchModalComponent } from './components/search-modal/search-modal.component';
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
@@ -95,6 +97,8 @@ export function initializeTenant(tenantService: TenantService) {
     NearbyPharmaciesComponent,
     ProductSliderComponent,
     PromoGridComponent,
+    PromoMosaicComponent,
+    ProductSpotlightComponent,
     SearchModalComponent,
     PrescriptionComponent,
     LayoutConfigComponent,

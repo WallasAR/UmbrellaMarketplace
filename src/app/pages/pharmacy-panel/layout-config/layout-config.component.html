@@ -67,12 +67,18 @@
               </div>
             </div>
 
-            <div class="layout-section-content pointer-events-none">
+            <div
+              class="layout-section-content"
+              [class.pointer-events-none]="!isCarouselEditable(section)"
+            >
               <app-dynamic-layout-sections
                 [sections]="[section]"
                 [primaryColor]="primaryColor"
                 [previewMode]="true"
-                [showSearchPill]="section.section_type === 'hero_carousel'"
+                [showSearchPill]="section.section_type === 'hero_carousel' && (section.items || []).length > 0"
+                [carouselEditable]="isCarouselEditable(section)"
+                [carouselSelectedIndex]="selectedCarouselItemIndex"
+                (carouselItemMetadataChange)="onCarouselItemMetadataChange($event)"
               ></app-dynamic-layout-sections>
             </div>
 
@@ -178,48 +184,234 @@
           </button>
         </div>
 
-        <div class="mb-5" *ngIf="editingSection.section_type !== 'hero_carousel'">
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Título da seção</label>
+        <div class="mb-5">
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Título da seção (opcional)</label>
           <input type="text" [(ngModel)]="editingSection.title" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm font-medium transition" placeholder="Ex: Mais Vendidos">
         </div>
 
         <div class="mb-5" *ngIf="editingSection.section_type !== 'hero_carousel' && editingSection.section_type !== 'product_slider'">
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Subtítulo (opcional)</label>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Subtítulo da seção (opcional)</label>
           <input type="text" [(ngModel)]="editingSection.subtitle" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition" placeholder="Ex: Aproveite as ofertas">
+        </div>
+
+        <div class="mb-5" *ngIf="editingSection.section_type === 'product_spotlight'">
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">ID do produto (opcional)</label>
+          <input
+            type="number"
+            [ngModel]="editingSection.config?.product_id || ''"
+            (ngModelChange)="updateSpotlightProductId(editingSection, $event)"
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition"
+            placeholder="Ex: 42"
+          >
+          <p class="text-xs text-gray-500 mt-2">Se informado, título, preço e imagem vêm do catálogo. Os textos abaixo complementam o card.</p>
         </div>
 
         <div class="pt-4 border-t border-gray-100" *ngIf="editingSection.section_type !== 'product_slider'">
           <div class="flex items-center justify-between mb-4">
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Itens / Banners</label>
-            <button type="button" class="text-xs font-bold px-2 py-1 rounded transition text-white" [style.background-color]="primaryColor" (click)="addItem(editingSection)">+ Adicionar</button>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+              {{ editingSection.section_type === 'hero_carousel' ? 'Slides do carrossel' : editingSection.section_type === 'promo_mosaic' ? 'Cards do mosaico' : editingSection.section_type === 'product_spotlight' ? 'Conteúdo do destaque' : 'Itens / Banners' }}
+            </label>
+            <button *ngIf="editingSection.section_type !== 'product_spotlight'" type="button" class="text-xs font-bold px-2 py-1 rounded transition text-white" [style.background-color]="primaryColor" (click)="addItem(editingSection)">+ Adicionar</button>
           </div>
 
+          <p *ngIf="editingSection.section_type === 'hero_carousel'" class="text-xs text-gray-500 mb-4">
+            Selecione um slide e arraste a imagem no preview para posicionar. Use o ponto no canto para redimensionar.
+          </p>
+
           <div class="space-y-4">
-            <div *ngFor="let item of editingSection.items || []; let j = index" class="border border-gray-200 rounded-xl p-3 bg-gray-50/50 relative group">
-              <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" (click)="removeItem(editingSection, j)">
+            <div
+              *ngFor="let item of editingSection.items || []; let j = index"
+              class="border rounded-xl p-3 relative group transition"
+              [ngClass]="editingSection.section_type === 'hero_carousel' && selectedCarouselItemIndex === j ? 'border-[#F74838] bg-red-50' : 'border-gray-200 bg-gray-50'"
+              (click)="editingSection.section_type === 'hero_carousel' ? selectCarouselItem(j) : null"
+            >
+              <button *ngIf="editingSection.section_type !== 'product_spotlight'" type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" (click)="removeItem(editingSection, j); $event.stopPropagation()">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               </button>
 
-              <input type="text" [(ngModel)]="item.title" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Título / Texto">
+              <p *ngIf="editingSection.section_type === 'hero_carousel'" class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Slide {{ j + 1 }}</p>
+
+              <div *ngIf="editingSection.section_type === 'promo_mosaic'" class="mb-3">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Posição no mosaico</label>
+                <select [ngModel]="mosaicMetadata(item).slot" (ngModelChange)="updateMosaicSlot(item, $event)" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
+                  <option value="hero">{{ mosaicSlotLabel('hero') }}</option>
+                  <option value="top">{{ mosaicSlotLabel('top') }}</option>
+                  <option value="bottom">{{ mosaicSlotLabel('bottom') }}</option>
+                </select>
+              </div>
+
+              <input type="text" [(ngModel)]="item.title" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'hero_carousel' ? 'Título do slide (opcional)' : editingSection.section_type === 'product_spotlight' ? 'Título do produto' : 'Título / Texto'">
+              <input *ngIf="editingSection.section_type === 'hero_carousel' || editingSection.section_type === 'promo_mosaic'" type="text" [(ngModel)]="item.subtitle" class="w-full bg-transparent text-xs text-gray-600 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'promo_mosaic' ? 'Descrição (opcional)' : 'Subtítulo do slide (opcional)'">
               <input type="text" [(ngModel)]="item.link_url" class="w-full bg-transparent text-xs text-gray-500 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Link de redirecionamento (URL)">
+
+              <div *ngIf="editingSection.section_type === 'hero_carousel'" class="mb-3">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Cor de fundo do slide</label>
+                <div class="flex items-center gap-3">
+                  <input type="color" [ngModel]="carouselMetadata(item).background_color" (ngModelChange)="updateCarouselBackground(item, $event)" class="h-8 w-8 rounded cursor-pointer border-0 p-0">
+                  <input type="text" [ngModel]="carouselMetadata(item).background_color" (ngModelChange)="updateCarouselBackground(item, $event)" class="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-mono uppercase">
+                </div>
+              </div>
+
+              <div *ngIf="editingSection.section_type === 'hero_carousel'" class="mb-3">
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Tamanho da imagem ({{ carouselMetadata(item).image_scale }}%)</label>
+                <input type="range" min="40" max="200" [ngModel]="carouselMetadata(item).image_scale" (ngModelChange)="updateCarouselScale(item, $event)" class="w-full accent-[#F74838]">
+              </div>
+
+              <div *ngIf="editingSection.section_type === 'promo_mosaic'" class="mb-3 space-y-3">
+                <div>
+                  <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Badge promocional</label>
+                  <input type="text" [ngModel]="mosaicMetadata(item).badge" (ngModelChange)="updateMosaicMeta(item, 'badge', $event)" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="25% OFF">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Cor de fundo do card</label>
+                  <div class="flex items-center gap-3">
+                    <input type="color" [ngModel]="mosaicMetadata(item).background_color" (ngModelChange)="updateMosaicMeta(item, 'background_color', $event)" class="h-8 w-8 rounded cursor-pointer border-0 p-0">
+                    <input type="text" [ngModel]="mosaicMetadata(item).background_color" (ngModelChange)="updateMosaicMeta(item, 'background_color', $event)" class="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-mono uppercase">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" [ngModel]="mosaicMetadata(item).price_original" (ngModelChange)="updateMosaicMeta(item, 'price_original', $event)" class="px-3 py-2 rounded-lg border border-gray-200 text-xs" placeholder="Preço original">
+                  <input type="text" [ngModel]="mosaicMetadata(item).price_current" (ngModelChange)="updateMosaicMeta(item, 'price_current', $event)" class="px-3 py-2 rounded-lg border border-gray-200 text-xs" placeholder="Preço atual">
+                </div>
+                <input type="text" [ngModel]="mosaicMetadata(item).price_note" (ngModelChange)="updateMosaicMeta(item, 'price_note', $event)" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-xs" placeholder="Nota de preço (ex: Inclui impostos)">
+              </div>
+
+              <div *ngIf="editingSection.section_type === 'product_spotlight'" class="mb-3 space-y-3">
+                <input type="text" [ngModel]="spotlightMetadata(item).badge" (ngModelChange)="item.metadata = item.metadata || {}; item.metadata.badge = $event" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Badge (ex: Mais Vendido)">
+                <textarea [ngModel]="spotlightFeaturesText(item)" (ngModelChange)="updateSpotlightFeatures(item, $event)" rows="4" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Benefícios (um por linha)"></textarea>
+                <input type="text" [ngModel]="spotlightMetadata(item).cta_label" (ngModelChange)="item.metadata = item.metadata || {}; item.metadata.cta_label = $event" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Texto do botão">
+                <input type="text" [ngModel]="spotlightMetadata(item).footer_note" (ngModelChange)="item.metadata = item.metadata || {}; item.metadata.footer_note = $event" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Texto auxiliar abaixo do botão">
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="number" step="0.1" [ngModel]="spotlightMetadata(item).rating" (ngModelChange)="item.metadata = item.metadata || {}; item.metadata.rating = $event" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Nota">
+                  <input type="number" [ngModel]="spotlightMetadata(item).review_count" (ngModelChange)="item.metadata = item.metadata || {}; item.metadata.review_count = $event" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Qtd. avaliações">
+                </div>
+              </div>
 
               <div>
                 <input type="file" accept="image/*" (change)="onImageSelected($event, item)" class="hidden" #fileInput>
-                <button type="button" (click)="fileInput.click()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-500 hover:bg-red-50 transition flex items-center justify-center gap-2">
-                  Alterar Imagem
+                <button type="button" (click)="fileInput.click(); $event.stopPropagation()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-500 hover:bg-red-50 transition flex items-center justify-center gap-2">
+                  {{ item.image_url ? 'Alterar Imagem' : 'Adicionar Imagem' }}
                 </button>
-                <img *ngIf="item.image_url" [src]="item.image_url | assetUrl" class="mt-2 w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm">
+                <img *ngIf="item.image_url" [src]="item.image_url | assetUrl" class="mt-2 w-full h-24 object-contain rounded-lg border border-gray-200 shadow-sm bg-white">
               </div>
             </div>
 
             <div *ngIf="!editingSection.items?.length" class="text-center py-6 text-gray-400 text-sm border border-dashed border-gray-200 rounded-xl">
-              Nenhum item configurado.
+              {{ editingSection.section_type === 'hero_carousel' ? 'Nenhum slide configurado. O carrossel ficará oculto até adicionar itens.' : 'Nenhum item configurado.' }}
             </div>
           </div>
         </div>
 
-        <div *ngIf="editingSection.section_type === 'product_slider'" class="rounded-xl bg-blue-50 border border-blue-100 p-4 text-sm text-blue-800">
-          A vitrine exibe produtos reais com base no filtro configurado. Os cards são carregados automaticamente no preview.
+        <div *ngIf="editingSection.section_type === 'product_slider'" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Modo de visualização</label>
+            <select
+              [(ngModel)]="editingSection.config.display.layout"
+              (ngModelChange)="onProductSliderDisplayChange()"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition"
+            >
+              <option value="horizontal">Rolagem horizontal</option>
+              <option value="grid">Grade com colunas e linhas</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3" *ngIf="isProductSliderGrid()">
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Colunas</label>
+              <input type="number" min="1" max="6" [(ngModel)]="editingSection.config.display.columns" (ngModelChange)="onProductSliderDisplayChange()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Linhas</label>
+              <input type="number" min="1" max="4" [(ngModel)]="editingSection.config.display.rows" (ngModelChange)="onProductSliderDisplayChange()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Quantidade máxima de produtos</label>
+            <input type="number" min="1" max="48" [(ngModel)]="editingSection.config.display.limit" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Ex: 12">
+            <p class="text-xs text-gray-500 mt-2">Limite total carregado da API para esta vitrine.</p>
+          </div>
+
+          <label class="flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" [(ngModel)]="editingSection.config.display.pagination" class="rounded border-gray-300">
+            Ativar paginação
+          </label>
+
+          <div *ngIf="editingSection.config.display.pagination">
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Itens por página</label>
+            <input type="number" min="1" max="48" [(ngModel)]="editingSection.config.display.items_per_page" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Ex: 8">
+          </div>
+
+          <div class="pt-4 border-t border-gray-100 space-y-4">
+            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Filtros de produtos</h4>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
+              <select
+                [(ngModel)]="editingSection.config.filter.category"
+                (ngModelChange)="onProductSliderFilterChange()"
+                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
+              >
+                <option value="">Todas as categorias</option>
+                <option *ngFor="let category of productCategories" [value]="category">{{ category }}</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Sintoma / tag</label>
+              <input
+                type="text"
+                [(ngModel)]="editingSection.config.filter.symptom"
+                (ngModelChange)="onProductSliderFilterChange()"
+                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
+                placeholder="Ex: dor-de-cabeca"
+              >
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Busca por nome</label>
+              <input
+                type="text"
+                [(ngModel)]="editingSection.config.filter.q"
+                (ngModelChange)="onProductSliderFilterChange()"
+                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
+                placeholder="Ex: dipirona"
+              >
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Ordenação</label>
+              <select
+                [(ngModel)]="editingSection.config.filter.sort"
+                (ngModelChange)="onProductSliderFilterChange()"
+                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"
+              >
+                <option value="name_asc">Nome (A-Z)</option>
+                <option value="price_asc">Menor preço</option>
+                <option value="price_desc">Maior preço</option>
+                <option value="discount_desc">Maior desconto</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label class="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" [(ngModel)]="editingSection.config.filter.stock" (ngModelChange)="onProductSliderFilterChange()" class="rounded border-gray-300">
+                Apenas com estoque
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" [(ngModel)]="editingSection.config.filter.discount" (ngModelChange)="onProductSliderFilterChange()" class="rounded border-gray-300">
+                Apenas com desconto
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" [(ngModel)]="editingSection.config.filter.sponsored" (ngModelChange)="onProductSliderFilterChange()" class="rounded border-gray-300">
+                Apenas patrocinados
+              </label>
+            </div>
+          </div>
+
+          <p class="rounded-xl bg-blue-50 border border-blue-100 p-3 text-xs text-blue-800">
+            O preview carrega produtos reais conforme os filtros acima. No modo horizontal, arraste para rolar; na grade, use colunas e linhas ou paginação.
+          </p>
         </div>
       </ng-container>
 

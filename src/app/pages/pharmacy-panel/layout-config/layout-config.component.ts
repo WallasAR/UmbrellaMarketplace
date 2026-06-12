@@ -6,6 +6,27 @@ import { ToastService } from '../../../services/toast.service';
 import { LayoutItem, LayoutSection } from '../../../services/layout.service';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
+import {
+  CarouselSlideMetadata,
+  ensureCarouselMetadata,
+  getCarouselMetadata,
+  patchCarouselMetadata
+} from '../../../utils/carousel-slide.util';
+import {
+  createDefaultPromoMosaicItems,
+  createDefaultSpotlightItem,
+  ensurePromoMosaicItem,
+  getProductSpotlightMetadata,
+  getPromoMosaicMetadata,
+  PromoMosaicSlot
+} from '../../../utils/layout-card.util';
+import {
+  buildProductSliderApiFilters,
+  DEFAULT_PRODUCT_SLIDER_DISPLAY,
+  DEFAULT_PRODUCT_SLIDER_FILTER,
+  ensureProductSliderConfig,
+  getProductSliderDisplay
+} from '../../../utils/product-slider.util';
 
 export interface PharmacyLayout {
   id?: string;
@@ -15,7 +36,10 @@ export interface PharmacyLayout {
   sections: LayoutSection[];
 }
 
-type LayoutSectionWithProducts = LayoutSection & { products?: Product[] };
+type LayoutSectionWithProducts = LayoutSection & {
+  products?: Product[];
+  spotlightProduct?: Product | null;
+};
 
 interface ThemeConfig {
   primary_color: string;
@@ -38,12 +62,16 @@ export class LayoutConfigComponent implements OnInit {
   readonly sidebarWidth = 380;
 
   editingSection: LayoutSection | null = null;
+  selectedCarouselItemIndex = 0;
+  productCategories: string[] = [];
 
   toolbox = [
     { type: 'hero_carousel', label: 'Carrossel Principal', icon: 'M4 6h16M4 12h16M4 18h16' },
     { type: 'category_circles', label: 'Círculos de Categorias', icon: 'M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z' },
     { type: 'product_slider', label: 'Vitrine de Produtos', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
-    { type: 'promo_grid', label: 'Banners Promocionais', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' }
+    { type: 'promo_grid', label: 'Banners Promocionais', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { type: 'promo_mosaic', label: 'Mosaico Promocional', icon: 'M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
+    { type: 'product_spotlight', label: 'Destaque de Produto', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' }
   ];
 
   constructor(
@@ -57,6 +85,11 @@ export class LayoutConfigComponent implements OnInit {
       this.apiUrl = `${environment.apiUrl}/admin/layout`;
     }
     this.fetchLayout();
+    this.productService.getCategories().subscribe({
+      next: (categories) => {
+        this.productCategories = categories || [];
+      }
+    });
   }
 
   toggleSidebar() {
@@ -157,14 +190,20 @@ export class LayoutConfigComponent implements OnInit {
     if (!this.layout) return;
 
     this.layout.sections.forEach((section) => {
-      if (section.section_type !== 'product_slider') return;
+      if (section.section_type === 'product_slider') {
+        this.loadProductSliderProducts(section);
+      }
 
-      const filter = { ...(section.config?.filter || {}) };
-      this.productService.getProducts(filter).subscribe({
-        next: (products) => {
-          (section as LayoutSectionWithProducts).products = products;
-        }
-      });
+      if (section.section_type === 'product_spotlight' && section.config?.product_id) {
+        this.productService.getProductById(String(section.config.product_id)).subscribe({
+          next: (product) => {
+            (section as LayoutSectionWithProducts).spotlightProduct = product;
+          },
+          error: () => {
+            (section as LayoutSectionWithProducts).spotlightProduct = null;
+          }
+        });
+      }
     });
   }
 
@@ -215,8 +254,22 @@ export class LayoutConfigComponent implements OnInit {
         section_type: tool.type,
         title: this.defaultSectionTitle(tool.type),
         display_order: event.currentIndex,
-        items: []
+        items: [],
+        config: {}
       };
+
+      if (tool.type === 'promo_mosaic') {
+        newSection.items = createDefaultPromoMosaicItems();
+      } else if (tool.type === 'product_spotlight') {
+        newSection.items = [createDefaultSpotlightItem()];
+        newSection.config = { product_id: null };
+      } else if (tool.type === 'product_slider') {
+        newSection.config = {
+          filter: { ...DEFAULT_PRODUCT_SLIDER_FILTER },
+          display: { ...DEFAULT_PRODUCT_SLIDER_DISPLAY }
+        };
+      }
+
       display.splice(event.currentIndex, 0, newSection);
       this.editSection(newSection);
     }
@@ -230,7 +283,9 @@ export class LayoutConfigComponent implements OnInit {
       hero_carousel: 'Carrossel Principal',
       category_circles: 'Compre por Categoria',
       product_slider: 'Medicamentos em destaque',
-      promo_grid: 'Ofertas Especiais'
+      promo_grid: 'Ofertas Especiais',
+      promo_mosaic: 'Mosaico Promocional',
+      product_spotlight: 'Produto em Destaque'
     };
     return titles[type] || 'Nova Seção';
   }
@@ -243,6 +298,117 @@ export class LayoutConfigComponent implements OnInit {
     this.editingSection = section;
     this.sidebarTab = 'section';
     this.sidebarOpen = true;
+    if (section.section_type === 'hero_carousel') {
+      section.items?.forEach((item) => ensureCarouselMetadata(item, this.primaryColor));
+      this.selectedCarouselItemIndex = 0;
+    }
+    if (section.section_type === 'product_spotlight') {
+      if (!section.config) section.config = { product_id: null };
+      if (!section.items?.length) section.items = [createDefaultSpotlightItem()];
+    }
+    if (section.section_type === 'promo_mosaic') {
+      section.items?.forEach((item) => {
+        const slot = getPromoMosaicMetadata(item).slot;
+        ensurePromoMosaicItem(item, slot);
+      });
+    }
+    if (section.section_type === 'product_slider') {
+      ensureProductSliderConfig(section);
+    }
+  }
+
+  isProductSliderGrid(): boolean {
+    if (!this.editingSection) return false;
+    return getProductSliderDisplay(this.editingSection).layout === 'grid';
+  }
+
+  onProductSliderFilterChange() {
+    this.loadPreviewProducts();
+  }
+
+  onProductSliderDisplayChange() {
+    if (!this.editingSection?.config?.display) return;
+    const display = getProductSliderDisplay(this.editingSection);
+    if (!display.pagination && display.layout === 'grid') {
+      this.editingSection.config.display.items_per_page = display.columns * display.rows;
+    }
+  }
+
+  private loadProductSliderProducts(section: LayoutSectionWithProducts) {
+    const filters = buildProductSliderApiFilters(section);
+    const sponsored = Boolean((filters as { sponsored?: boolean }).sponsored);
+    delete (filters as { sponsored?: boolean }).sponsored;
+
+    const request = sponsored
+      ? this.productService.getSponsored()
+      : this.productService.getProducts(filters);
+
+    request.subscribe({
+      next: (products) => {
+        section.products = products;
+      }
+    });
+  }
+
+  isCarouselEditable(section: LayoutSection): boolean {
+    return this.editingSection === section && section.section_type === 'hero_carousel';
+  }
+
+  selectCarouselItem(index: number) {
+    this.selectedCarouselItemIndex = index;
+  }
+
+  carouselMetadata(item: LayoutItem): CarouselSlideMetadata {
+    return getCarouselMetadata(item, this.primaryColor);
+  }
+
+  updateCarouselBackground(item: LayoutItem, color: string) {
+    patchCarouselMetadata(item, { background_color: color }, this.primaryColor);
+  }
+
+  updateCarouselScale(item: LayoutItem, scale: number) {
+    patchCarouselMetadata(item, { image_scale: Number(scale) }, this.primaryColor);
+  }
+
+  onCarouselItemMetadataChange(event: { index: number; metadata: CarouselSlideMetadata }) {
+    if (!this.editingSection?.items?.[event.index]) return;
+    this.editingSection.items[event.index].metadata = { ...event.metadata };
+  }
+
+  mosaicMetadata(item: LayoutItem) {
+    return getPromoMosaicMetadata(item);
+  }
+
+  spotlightMetadata(item: LayoutItem) {
+    return getProductSpotlightMetadata(item);
+  }
+
+  spotlightFeaturesText(item: LayoutItem): string {
+    return (getProductSpotlightMetadata(item).features || []).join('\n');
+  }
+
+  updateSpotlightFeatures(item: LayoutItem, value: string) {
+    if (!item.metadata) item.metadata = {};
+    item.metadata.features = value.split('\n').map((line) => line.trim()).filter(Boolean);
+  }
+
+  updateSpotlightProductId(section: LayoutSection, productId: string) {
+    if (!section.config) section.config = {};
+    section.config.product_id = productId ? Number(productId) : null;
+    this.loadPreviewProducts();
+  }
+
+  mosaicSlotLabel(slot: PromoMosaicSlot): string {
+    return slot === 'hero' ? 'Card principal (esquerda)' : slot === 'top' ? 'Card superior (direita)' : 'Card inferior (direita)';
+  }
+
+  updateMosaicSlot(item: LayoutItem, slot: PromoMosaicSlot) {
+    ensurePromoMosaicItem(item, slot);
+  }
+
+  updateMosaicMeta(item: LayoutItem, key: string, value: string) {
+    if (!item.metadata) item.metadata = {};
+    item.metadata[key] = value;
   }
 
   closeEditor() {
@@ -259,17 +425,44 @@ export class LayoutConfigComponent implements OnInit {
   }
 
   addItem(section: LayoutSection) {
+    if (section.section_type === 'product_spotlight') {
+      this.toast.show('Destaque de produto usa apenas um card.', 'info');
+      return;
+    }
+
+    if (section.section_type === 'promo_mosaic' && (section.items?.length || 0) >= 3) {
+      this.toast.show('O mosaico promocional suporta até 3 cards.', 'info');
+      return;
+    }
+
     if (!section.items) section.items = [];
-    section.items.push({
+    const item: LayoutItem = {
       id: crypto.randomUUID(),
       display_order: section.items.length,
       title: '',
       image_url: ''
-    });
+    };
+
+    if (section.section_type === 'hero_carousel') {
+      ensureCarouselMetadata(item, this.primaryColor);
+    } else if (section.section_type === 'promo_mosaic') {
+      const slots: PromoMosaicSlot[] = ['hero', 'top', 'bottom'];
+      const used = new Set((section.items || []).map((i) => getPromoMosaicMetadata(i).slot));
+      const slot = slots.find((s) => !used.has(s)) || 'hero';
+      ensurePromoMosaicItem(item, slot);
+    }
+
+    section.items.push(item);
+    if (section.section_type === 'hero_carousel') {
+      this.selectedCarouselItemIndex = section.items.length - 1;
+    }
   }
 
   removeItem(section: LayoutSection, index: number) {
     section.items?.splice(index, 1);
+    if (section.section_type === 'hero_carousel') {
+      this.selectedCarouselItemIndex = Math.max(0, Math.min(this.selectedCarouselItemIndex, (section.items?.length || 1) - 1));
+    }
   }
 
   onImageSelected(event: Event, item: LayoutItem) {

@@ -4,6 +4,7 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { SearchService } from '../../services/search.service';
 import { ActivatedRoute } from '@angular/router';
+import { buildProductSliderApiFilters } from '../../utils/product-slider.util';
 
 @Component({
   selector: 'app-home',
@@ -50,14 +51,13 @@ export class HomeComponent implements OnInit {
   loadSectionData(layout: StoreLayout, pharmacyId?: string) {
     layout.sections.forEach(section => {
       if (section.section_type === 'product_slider') {
-        const filter = section.config?.filter || {};
-        if (pharmacyId) {
-          filter.pharmacy_id = pharmacyId;
-        }
-        this.productService.getProducts(filter).subscribe({
-          next: (products) => {
-            // Attach products to the section object temporarily for rendering
-            (section as any).products = products;
+        this.loadProductSliderProducts(section, pharmacyId);
+      }
+
+      if (section.section_type === 'product_spotlight' && section.config?.product_id) {
+        this.productService.getProductById(String(section.config.product_id)).subscribe({
+          next: (product) => {
+            (section as any).spotlightProduct = product;
           }
         });
       }
@@ -66,5 +66,25 @@ export class HomeComponent implements OnInit {
 
   openSearchModal() {
     this.searchService.openModal();
+  }
+
+  private loadProductSliderProducts(section: StoreLayout['sections'][number], pharmacyId?: string) {
+    const filters = buildProductSliderApiFilters(section, pharmacyId);
+    const sponsored = Boolean((filters as { sponsored?: boolean }).sponsored);
+    delete (filters as { sponsored?: boolean }).sponsored;
+
+    const request = sponsored
+      ? this.productService.getSponsored()
+      : this.productService.getProducts(filters);
+
+    request.subscribe({
+      next: (products) => {
+        let result = products;
+        if (sponsored && pharmacyId) {
+          result = products.filter((item) => item.pharmacy_id === pharmacyId);
+        }
+        (section as StoreLayout['sections'][number] & { products?: Product[] }).products = result;
+      }
+    });
   }
 }
