@@ -1,64 +1,45 @@
-<nav class="w-full bg-white border-b border-gray-100 pb-2" aria-label="Navegação principal">
-  <!-- Top Bar -->
+<nav *ngIf="cfg.visible" class="w-full bg-white border-b border-gray-100 pb-2" aria-label="Navegação principal" [class.pointer-events-none]="previewMode">
   <div class="px-4 sm:px-6 flex items-center justify-between h-20 w-full max-w-7xl mx-auto gap-4">
-    <!-- Logo -->
-    <a routerLink="/home" class="flex shrink-0 items-center mr-2 md:mr-6" aria-label="Umbrella Farmácia - início">
-      <img class="h-8 md:h-10 hover:animate-squash transition-transform" src="nav-logo.svg" alt="Umbrella Corporation">
+    <a [routerLink]="cfg.logo_link || '/home'" class="flex shrink-0 items-center mr-2 md:mr-6" [attr.aria-label]="cfg.logo_alt">
+      <img class="h-8 md:h-10 hover:animate-squash transition-transform" [src]="cfg.logo_url | assetUrl" [alt]="cfg.logo_alt">
     </a>
 
-    <!-- Main Search Bar (Desktop) -->
-    <div class="hidden md:flex flex-1 max-w-2xl bg-gray-50 rounded-full border border-gray-200 focus-within:border-[#F74838] focus-within:ring-1 focus-within:ring-[#F74838]/20 transition-all overflow-hidden items-center">
+    <div *ngIf="cfg.show_search" class="hidden md:flex flex-1 max-w-2xl bg-gray-50 rounded-full border border-gray-200 focus-within:ring-1 transition-all overflow-hidden items-center" [style.--tw-ring-color]="accentColor + '33'">
       <div class="flex items-center pl-4 pr-2 border-r border-gray-200">
         <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Todas Categorias</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
       </div>
-      <input #searchInput type="text" placeholder="Pesquisar medicamentos, vitaminas..." class="flex-1 bg-transparent border-none px-4 py-2.5 focus:outline-none text-sm text-gray-800 placeholder-gray-400 cursor-pointer" readonly (click)="search()" />
-      <button (click)="search()" class="p-2.5 mr-1 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
+      <input type="text" [placeholder]="cfg.search_placeholder" class="flex-1 bg-transparent border-none px-4 py-2.5 focus:outline-none text-sm text-gray-800 placeholder-gray-400 cursor-pointer" readonly (click)="search()" />
+      <button type="button" (click)="search()" class="p-2.5 mr-1 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
       </button>
     </div>
 
-    <!-- Location & Right Icons -->
     <div class="flex items-center gap-2 md:gap-4 ml-auto">
-      <!-- Location Selector -->
-      <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 cursor-pointer transition">
-        <div class="w-8 h-8 rounded-full bg-[#fff1ef] flex items-center justify-center text-[#F74838]">
+      <div *ngIf="cfg.show_location" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 cursor-pointer transition">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center" [style.background-color]="accentColor + '15'" [style.color]="accentColor">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
         </div>
         <div class="flex flex-col">
-          <span class="text-[10px] text-gray-500 uppercase tracking-wide">Entregar em</span>
-          <span class="text-xs font-bold text-gray-800 flex items-center gap-1">Raccoon City <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></span>
+          <span class="text-[10px] text-gray-500 uppercase tracking-wide">{{ cfg.location_label }}</span>
+          <span class="text-xs font-bold text-gray-800 flex items-center gap-1">{{ cfg.location_value }}</span>
         </div>
       </div>
 
-      <!-- Cart -->
-      <div class="relative">
-        <button type="button" (click)="toggleDropdown('cart')" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-[#fff1ef] hover:text-[#F74838] transition-colors" aria-label="Carrinho">
+      <div *ngIf="cfg.show_cart" class="relative">
+        <button type="button" (click)="goToCart()" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors" [style.--hover-bg]="accentColor + '15'" aria-label="Carrinho">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          @if (cartService.itemCount() > 0) {
-            <span class="absolute -top-1 -right-1 bg-[#F74838] text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white shadow-sm">{{ cartService.itemCount() }}</span>
+          @if (!previewMode && cartService.itemCount() > 0) {
+            <span class="absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white shadow-sm" [style.background-color]="accentColor">{{ cartService.itemCount() }}</span>
           }
         </button>
-        <!-- Cart Dropdown -->
-        <div *ngIf="dropdownOpen == 'cart'" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl z-50 border border-gray-100 p-4">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-bold text-gray-800">Seu Carrinho</span>
-            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ cartService.itemCount() }} {{ cartService.itemCount() === 1 ? 'item' : 'itens' }}</span>
-          </div>
-          <div class="py-3 border-y border-gray-100 mb-3 flex justify-between items-center">
-            <span class="text-sm text-gray-500">Subtotal</span>
-            <span class="text-lg font-bold text-[#F74838]">R$ {{ cartService.subtotal() | number:'1.2-2' }}</span>
-          </div>
-          <button type="button" (click)="goToCart()" class="w-full btn-brand py-2.5 text-sm">Finalizar Compra</button>
-        </div>
       </div>
 
-      <!-- User Profile -->
-      <div class="relative hidden sm:block">
+      <div *ngIf="cfg.show_profile" class="relative hidden sm:block">
         <button type="button" class="flex items-center gap-2 rounded-full border border-gray-100 p-1 pr-3 hover:bg-gray-50 transition-colors" (click)="toggleDropdown('profile')">
-          <div class="w-8 h-8 rounded-full bg-[#F74838] text-white flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
+          <div class="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden" [style.background-color]="accentColor">
             {{ authService.isAuthenticated() ? 'U' : '?' }}
           </div>
           <div class="flex flex-col text-left">
@@ -66,76 +47,23 @@
             <span class="text-xs font-bold text-gray-800 leading-none mt-1">{{ authService.isAuthenticated() ? 'Minha Conta' : 'Entrar' }}</span>
           </div>
         </button>
-        <div *ngIf="dropdownOpen === 'profile'" class="absolute right-0 z-50 mt-2 w-56 rounded-2xl bg-white py-2 shadow-xl border border-gray-100">
-          @if (authService.isAuthenticated()) {
-            <a routerLink="/profile" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meu perfil</a>
-            <a routerLink="/favoritos" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meus favoritos</a>
-            <a routerLink="/orders" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Meus pedidos</a>
-            <div class="h-px bg-gray-100 my-1"></div>
-            @if (authService.canRegisterPharmacy()) {
-              <a routerLink="/pharmacy/register" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Cadastre sua farmácia</a>
-            }
-            @if (authService.isPharmacyStaff()) {
-              <a routerLink="/pharmacy" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Painel da farmácia</a>
-            }
-            @if (authService.isAdmin()) {
-              <a routerLink="/admin" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Painel admin</a>
-            }
-            <div class="h-px bg-gray-100 my-1"></div>
-            <button type="button" (click)="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sair da conta</button>
-          } @else {
-            <a routerLink="/auth" (click)="closeDropdowns()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F74838]">Fazer Login ou Cadastro</a>
-          }
-        </div>
       </div>
-
-      <!-- Mobile Menu Button -->
-      <button type="button" class="sm:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full" (click)="toggleDropdown('mobile-menu')">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
     </div>
   </div>
 
-  <!-- Mobile Search Bar -->
-  <div class="md:hidden px-4 pb-3">
-    <div class="flex items-center bg-gray-50 rounded-full border border-gray-200 px-3 py-1.5 focus-within:border-[#F74838]">
-      <input #mobileSearchInput type="text" placeholder="Pesquisar medicamentos..." class="flex-1 bg-transparent border-none text-sm focus:outline-none cursor-pointer" readonly (click)="search()">
-      <button (click)="search()" class="text-gray-400"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></button>
+  <div *ngIf="cfg.show_search" class="md:hidden px-4 pb-3">
+    <div class="flex items-center bg-gray-50 rounded-full border border-gray-200 px-3 py-1.5">
+      <input type="text" [placeholder]="cfg.search_placeholder" class="flex-1 bg-transparent border-none text-sm focus:outline-none cursor-pointer" readonly (click)="search()">
+      <button type="button" (click)="search()" class="text-gray-400"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></button>
     </div>
   </div>
 
-  <!-- Bottom Categories Bar -->
-  <div class="hidden md:flex w-full max-w-7xl mx-auto px-4 sm:px-6 items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-    <a routerLink="/category" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-semibold bg-[#fff1ef] text-[#F74838] hover:bg-[#F74838] hover:text-white transition-colors cursor-pointer border border-[#fff1ef]">Comprar por Categoria</a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors">Menos de R$ 50</a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
-      <span class="text-emerald-500 font-bold">✧</span> Lançamentos
-    </a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
-      <span class="text-blue-500 font-bold">✓</span> Mais Vendidos
-    </a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-1.5">
-      <span class="text-rose-500 font-bold">%</span> Novas Ofertas
-    </a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors">Higiene Pessoal</a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors">Vitaminas & Suplementos</a>
-    <a routerLink="/home" class="whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium text-gray-600 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors">Mãe & Bebê</a>
+  <div *ngIf="cfg.show_category_bar && visibleCategoryLinks().length" class="hidden md:flex w-full max-w-7xl mx-auto px-4 sm:px-6 items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+    <a
+      *ngFor="let link of visibleCategoryLinks()"
+      [routerLink]="link.link_url"
+      [ngClass]="linkClasses(link)"
+      [ngStyle]="linkStyle(link)"
+    >{{ link.label }}</a>
   </div>
 </nav>
-
-<!-- Mobile Menu Dropdown -->
-<div *ngIf="dropdownOpen === 'mobile-menu'" class="sm:hidden border-b border-gray-100 bg-white px-4 py-3 shadow-inner">
-  <div class="flex flex-col space-y-1">
-    <a routerLink="/home" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Início</a>
-    <a routerLink="/category" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Categorias</a>
-    <a routerLink="/pharmacies/nearby" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Farmácias próximas</a>
-    @if (authService.isAuthenticated()) {
-      <a routerLink="/orders" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Meus pedidos</a>
-      <a routerLink="/favoritos" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Meus favoritos</a>
-      <a routerLink="/profile" (click)="closeDropdowns()" class="text-gray-700 font-medium py-2 border-b border-gray-50">Perfil</a>
-      <button type="button" (click)="logout()" class="text-left text-red-600 font-bold py-2 mt-2">Sair da Conta</button>
-    } @else {
-      <a routerLink="/auth" (click)="closeDropdowns()" class="text-[#F74838] font-bold py-2 mt-2">Fazer Login / Cadastro</a>
-    }
-  </div>
-</div>
