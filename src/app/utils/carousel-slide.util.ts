@@ -16,13 +16,18 @@ export const DEFAULT_CAROUSEL_METADATA: CarouselSlideMetadata = {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+const toNumber = (value: unknown, fallback: number): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
 export function getCarouselMetadata(item: LayoutItem, fallbackColor = '#F74838'): CarouselSlideMetadata {
   const raw = item.metadata || {};
   return {
     background_color: raw.background_color || fallbackColor,
-    image_x: clamp(Number(raw.image_x ?? DEFAULT_CAROUSEL_METADATA.image_x), 0, 100),
-    image_y: clamp(Number(raw.image_y ?? DEFAULT_CAROUSEL_METADATA.image_y), 0, 100),
-    image_scale: clamp(Number(raw.image_scale ?? DEFAULT_CAROUSEL_METADATA.image_scale), 40, 200)
+    image_x: clamp(toNumber(raw.image_x, DEFAULT_CAROUSEL_METADATA.image_x!), -15, 115),
+    image_y: clamp(toNumber(raw.image_y, DEFAULT_CAROUSEL_METADATA.image_y!), -15, 115),
+    image_scale: clamp(toNumber(raw.image_scale, DEFAULT_CAROUSEL_METADATA.image_scale!), 40, 200)
   };
 }
 
@@ -40,9 +45,9 @@ export function patchCarouselMetadata(
   const merged = { ...getCarouselMetadata(item, fallbackColor), ...patch };
   const next: CarouselSlideMetadata = {
     background_color: merged.background_color || fallbackColor,
-    image_x: clamp(Number(merged.image_x), 0, 100),
-    image_y: clamp(Number(merged.image_y), 0, 100),
-    image_scale: clamp(Number(merged.image_scale), 40, 200)
+    image_x: clamp(toNumber(merged.image_x, DEFAULT_CAROUSEL_METADATA.image_x!), -15, 115),
+    image_y: clamp(toNumber(merged.image_y, DEFAULT_CAROUSEL_METADATA.image_y!), -15, 115),
+    image_scale: clamp(toNumber(merged.image_scale, DEFAULT_CAROUSEL_METADATA.image_scale!), 40, 200)
   };
   item.metadata = next;
   return next;

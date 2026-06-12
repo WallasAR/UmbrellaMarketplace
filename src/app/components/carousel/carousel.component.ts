@@ -41,7 +41,10 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   private dragOriginX = 0;
   private dragOriginY = 0;
   private dragOriginScale = 100;
+  private dragPointerOffsetX = 0;
+  private dragPointerOffsetY = 0;
   private dragContainer: HTMLElement | null = null;
+  private pendingMetadata: { index: number; metadata: CarouselSlideMetadata } | null = null;
 
   constructor(private bannerService: BannerService) {}
 
@@ -58,7 +61,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       changes['items'] ||
       changes['primaryColor'] ||
       changes['layoutOnly'] ||
-      changes['previewRevision']
+      (changes['previewRevision'] && !this.dragMode)
     ) {
       this.buildSlides();
     }
@@ -74,31 +77,34 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.editable || !this.dragMode || this.dragIndex < 0 || !this.dragContainer) return;
 
     const rect = this.dragContainer.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
     const item = this.items[this.dragIndex];
     if (!item) return;
 
     if (this.dragMode === 'move') {
-      const deltaX = ((event.clientX - this.dragStartX) / rect.width) * 100;
-      const deltaY = ((event.clientY - this.dragStartY) / rect.height) * 100;
-      const metadata = patchCarouselMetadata(item, {
-        image_x: this.dragOriginX + deltaX,
-        image_y: this.dragOriginY + deltaY
-      }, this.primaryColor);
+      const imageX = ((event.clientX - this.dragPointerOffsetX - rect.left) / rect.width) * 100;
+      const imageY = ((event.clientY - this.dragPointerOffsetY - rect.top) / rect.height) * 100;
+      const metadata = patchCarouselMetadata(item, { image_x: imageX, image_y: imageY }, this.primaryColor);
       this.syncSlide(this.dragIndex, item);
-      this.itemMetadataChange.emit({ index: this.dragIndex, metadata });
+      this.pendingMetadata = { index: this.dragIndex, metadata };
       return;
     }
 
-    const delta = (((event.clientX - this.dragStartX) + (event.clientY - this.dragStartY)) / rect.width) * 120;
+    const delta = ((event.clientX - this.dragStartX) / rect.width) * 100;
     const metadata = patchCarouselMetadata(item, {
       image_scale: this.dragOriginScale + delta
     }, this.primaryColor);
     this.syncSlide(this.dragIndex, item);
-    this.itemMetadataChange.emit({ index: this.dragIndex, metadata });
+    this.pendingMetadata = { index: this.dragIndex, metadata };
   }
 
   @HostListener('document:mouseup')
   onDocumentMouseUp() {
+    if (this.pendingMetadata) {
+      this.itemMetadataChange.emit(this.pendingMetadata);
+      this.pendingMetadata = null;
+    }
     this.endDrag();
   }
 
@@ -232,6 +238,9 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     const item = this.items[index];
     if (!item) return;
 
+    const rect = container.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
     const meta = getCarouselMetadata(item, this.primaryColor);
     this.dragMode = mode;
     this.dragIndex = index;
@@ -241,7 +250,16 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     this.dragOriginY = meta.image_y ?? 50;
     this.dragOriginScale = meta.image_scale ?? 100;
     this.dragContainer = container;
-    this.currentIndex = index;
+    this.pendingMetadata = null;
+
+    const anchorX = rect.left + (this.dragOriginX / 100) * rect.width;
+    const anchorY = rect.top + (this.dragOriginY / 100) * rect.height;
+    this.dragPointerOffsetX = event.clientX - anchorX;
+    this.dragPointerOffsetY = event.clientY - anchorY;
+
+    if (this.currentIndex !== index) {
+      this.currentIndex = index;
+    }
   }
 
   private endDrag() {
