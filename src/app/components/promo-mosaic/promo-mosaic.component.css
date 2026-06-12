@@ -1,0 +1,28 @@
+.mosaic-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mosaic-card:not(.pointer-events-none):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.mosaic-image {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.mosaic-image-hero {
+  right: 1rem;
+  bottom: 0;
+  max-height: 85%;
+  max-width: 45%;
+}
+
+.mosaic-image-side {
+  right: 0.75rem;
+  bottom: 0;
+  max-height: 90%;
+  max-width: 42%;
+}

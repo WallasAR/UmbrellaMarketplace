@@ -1,0 +1,76 @@
+<div class="mb-16" *ngIf="hasContent() || previewMode">
+  <div *ngIf="title" class="mb-6 px-4 sm:px-6 max-w-7xl mx-auto">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">{{ title }}</h2>
+  </div>
+
+  <div class="px-4 sm:px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 min-h-[520px]">
+    <ng-container *ngIf="heroItem() as hero">
+      <ng-container *ngIf="previewMode; else heroLink">
+        <div class="mosaic-card mosaic-card-hero rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative min-h-[320px] lg:min-h-full lg:row-span-2 pointer-events-none" [style.background-color]="meta(hero).background_color">
+          <ng-container *ngTemplateOutlet="heroContent; context: { hero: hero }"></ng-container>
+        </div>
+      </ng-container>
+      <ng-template #heroLink>
+      <a
+        [routerLink]="hero.link_url || '/category'"
+        class="mosaic-card mosaic-card-hero rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden relative min-h-[320px] lg:min-h-full lg:row-span-2"
+        [style.background-color]="meta(hero).background_color"
+      >
+        <ng-container *ngTemplateOutlet="heroContent; context: { hero: hero }"></ng-container>
+      </a>
+      </ng-template>
+      <ng-template #heroContent let-hero="hero">
+        <div class="relative z-10 max-w-[55%]">
+          <span *ngIf="meta(hero).badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-4" [style.background-color]="accentColor">{{ meta(hero).badge }}</span>
+          <h3 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight mb-3">{{ hero.title }}</h3>
+          <p *ngIf="hero.subtitle" class="text-sm md:text-base text-gray-600 leading-relaxed mb-6">{{ hero.subtitle }}</p>
+          <div *ngIf="meta(hero).price_current" class="space-y-1">
+            <p *ngIf="meta(hero).price_original" class="text-sm text-gray-400 line-through">{{ meta(hero).price_original }}</p>
+            <p class="text-xl font-bold text-gray-900">{{ meta(hero).price_current }} <span *ngIf="meta(hero).price_note" class="text-sm font-normal text-gray-500">{{ meta(hero).price_note }}</span></p>
+          </div>
+        </div>
+        <img *ngIf="hero.image_url" [src]="hero.image_url | assetUrl" [alt]="hero.title" class="mosaic-image mosaic-image-hero" />
+      </ng-template>
+    </ng-container>
+
+    <div class="flex flex-col gap-4 lg:gap-5">
+      <ng-container *ngIf="topItem() as top">
+        <a
+          [routerLink]="previewMode ? null : (top.link_url || '/category')"
+          class="mosaic-card rounded-3xl p-5 md:p-6 flex items-center justify-between overflow-hidden relative flex-1 min-h-[200px]"
+          [style.background-color]="meta(top).background_color"
+          [class.pointer-events-none]="previewMode"
+        >
+          <div class="relative z-10 max-w-[58%] pr-2">
+            <span *ngIf="meta(top).badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-3" [style.background-color]="accentColor">{{ meta(top).badge }}</span>
+            <h3 class="text-lg md:text-xl font-bold text-gray-900 leading-snug mb-3">{{ top.title }}</h3>
+            <div *ngIf="meta(top).price_current" class="space-y-0.5">
+              <p *ngIf="meta(top).price_original" class="text-xs text-gray-400 line-through">{{ meta(top).price_original }}</p>
+              <p class="text-base font-bold text-gray-900">{{ meta(top).price_current }} <span *ngIf="meta(top).price_note" class="text-xs font-normal text-gray-500">{{ meta(top).price_note }}</span></p>
+            </div>
+          </div>
+          <img *ngIf="top.image_url" [src]="top.image_url | assetUrl" [alt]="top.title" class="mosaic-image mosaic-image-side" />
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="bottomItem() as bottom">
+        <a
+          [routerLink]="previewMode ? null : (bottom.link_url || '/category')"
+          class="mosaic-card rounded-3xl p-5 md:p-6 flex items-center justify-between overflow-hidden relative flex-1 min-h-[200px]"
+          [style.background-color]="meta(bottom).background_color"
+          [class.pointer-events-none]="previewMode"
+        >
+          <div class="relative z-10 max-w-[58%] pr-2">
+            <span *ngIf="meta(bottom).badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold text-white mb-3" [style.background-color]="accentColor">{{ meta(bottom).badge }}</span>
+            <h3 class="text-lg md:text-xl font-bold text-gray-900 leading-snug mb-3">{{ bottom.title }}</h3>
+            <div *ngIf="meta(bottom).price_current" class="space-y-0.5">
+              <p *ngIf="meta(bottom).price_original" class="text-xs text-gray-400 line-through">{{ meta(bottom).price_original }}</p>
+              <p class="text-base font-bold text-gray-900">{{ meta(bottom).price_current }} <span *ngIf="meta(bottom).price_note" class="text-xs font-normal text-gray-500">{{ meta(bottom).price_note }}</span></p>
+            </div>
+          </div>
+          <img *ngIf="bottom.image_url" [src]="bottom.image_url | assetUrl" [alt]="bottom.title" class="mosaic-image mosaic-image-side" />
+        </a>
+      </ng-container>
+    </div>
+  </div>
+</div>
