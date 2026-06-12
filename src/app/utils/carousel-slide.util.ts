@@ -37,7 +37,13 @@ export function patchCarouselMetadata(
   patch: Partial<CarouselSlideMetadata>,
   fallbackColor = '#F74838'
 ): CarouselSlideMetadata {
-  const next = { ...getCarouselMetadata(item, fallbackColor), ...patch };
+  const merged = { ...getCarouselMetadata(item, fallbackColor), ...patch };
+  const next: CarouselSlideMetadata = {
+    background_color: merged.background_color || fallbackColor,
+    image_x: clamp(Number(merged.image_x), 0, 100),
+    image_y: clamp(Number(merged.image_y), 0, 100),
+    image_scale: clamp(Number(merged.image_scale), 40, 200)
+  };
   item.metadata = next;
   return next;
 }

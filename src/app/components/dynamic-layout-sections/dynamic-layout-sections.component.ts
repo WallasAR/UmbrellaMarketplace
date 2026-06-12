@@ -17,6 +17,7 @@ export class DynamicLayoutSectionsComponent {
   @Input() previewMode = false;
   @Input() carouselEditable = false;
   @Input() carouselSelectedIndex = 0;
+  @Input() previewRevision = 0;
   @Output() searchClick = new EventEmitter<void>();
   @Output() carouselItemMetadataChange = new EventEmitter<{ index: number; metadata: CarouselSlideMetadata }>();
 

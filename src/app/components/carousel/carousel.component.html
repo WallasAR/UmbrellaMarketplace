@@ -26,27 +26,29 @@
               [style.background-color]="slide.backgroundColor"
             >
               @if (slide.imageUrl) {
-                <img
-                  [src]="slide.imageUrl | assetUrl"
-                  alt=""
-                  class="carousel-slide-image"
+                <div
+                  class="carousel-image-layer"
                   [class.is-editable]="editable"
                   [class.is-selected]="editable && selectedItemIndex === i"
                   [style.left.%]="slide.imageX"
                   [style.top.%]="slide.imageY"
-                  [style.width.%]="slide.imageScale"
                   (mousedown)="startDrag($event, slide.sourceIndex, 'move')"
-                />
-                @if (editable && selectedItemIndex === i) {
-                  <button
-                    type="button"
-                    class="carousel-resize-handle"
-                    [style.left.%]="slide.imageX + slide.imageScale / 4"
-                    [style.top.%]="slide.imageY + slide.imageScale / 4"
-                    aria-label="Redimensionar imagem"
-                    (mousedown)="startDrag($event, slide.sourceIndex, 'resize')"
-                  ></button>
-                }
+                >
+                  <img
+                    [src]="slide.imageUrl | assetUrl"
+                    alt=""
+                    draggable="false"
+                    [style.transform]="'scale(' + (slide.imageScale / 100) + ')'"
+                  />
+                  @if (editable && selectedItemIndex === i) {
+                    <button
+                      type="button"
+                      class="carousel-resize-handle"
+                      aria-label="Redimensionar imagem"
+                      (mousedown)="startDrag($event, slide.sourceIndex, 'resize')"
+                    ></button>
+                  }
+                </div>
                 @if (hasText(slide)) {
                   <div class="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-10 pointer-events-none"></div>
                 }

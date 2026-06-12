@@ -19,6 +19,7 @@ export class ProductSliderComponent implements OnChanges {
   @Input() previewMode = false;
   @Input() accentColor = '#F74838';
   @Input() displayConfig: ProductSliderSectionConfig['display'] | null = null;
+  @Input() previewRevision = 0;
 
   @ViewChild('slider') sliderRef?: ElementRef<HTMLElement>;
 
@@ -40,7 +41,7 @@ export class ProductSliderComponent implements OnChanges {
   private scrollLeft = 0;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['displayConfig'] || changes['products']) {
+    if (changes['displayConfig'] || changes['products'] || changes['previewRevision']) {
       this.display = getProductSliderDisplay({ config: { display: this.displayConfig || {} } } as any);
       this.applyVisibleProducts();
     }

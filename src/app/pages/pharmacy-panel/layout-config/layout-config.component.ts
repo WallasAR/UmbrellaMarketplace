@@ -64,6 +64,7 @@ export class LayoutConfigComponent implements OnInit {
   editingSection: LayoutSection | null = null;
   selectedCarouselItemIndex = 0;
   productCategories: string[] = [];
+  previewRevision = 0;
 
   toolbox = [
     { type: 'hero_carousel', label: 'Carrossel Principal', icon: 'M4 6h16M4 12h16M4 18h16' },
@@ -94,6 +95,10 @@ export class LayoutConfigComponent implements OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  touchPreview() {
+    this.previewRevision += 1;
   }
 
   get displaySections(): LayoutSection[] {
@@ -237,6 +242,7 @@ export class LayoutConfigComponent implements OnInit {
     document.documentElement.style.setProperty('--color-brand', color);
     document.documentElement.style.setProperty('--color-brand-soft', `${color}15`);
     document.documentElement.style.setProperty('--color-brand-hover', `${color}E6`);
+    this.touchPreview();
   }
 
   drop(event: CdkDragDrop<any>) {
@@ -324,6 +330,7 @@ export class LayoutConfigComponent implements OnInit {
 
   onProductSliderFilterChange() {
     this.loadPreviewProducts();
+    this.touchPreview();
   }
 
   onProductSliderDisplayChange() {
@@ -332,6 +339,7 @@ export class LayoutConfigComponent implements OnInit {
     if (!display.pagination && display.layout === 'grid') {
       this.editingSection.config.display.items_per_page = display.columns * display.rows;
     }
+    this.touchPreview();
   }
 
   private loadProductSliderProducts(section: LayoutSectionWithProducts) {
@@ -346,6 +354,7 @@ export class LayoutConfigComponent implements OnInit {
     request.subscribe({
       next: (products) => {
         section.products = products;
+        this.touchPreview();
       }
     });
   }
@@ -356,6 +365,7 @@ export class LayoutConfigComponent implements OnInit {
 
   selectCarouselItem(index: number) {
     this.selectedCarouselItemIndex = index;
+    this.touchPreview();
   }
 
   carouselMetadata(item: LayoutItem): CarouselSlideMetadata {
@@ -364,10 +374,12 @@ export class LayoutConfigComponent implements OnInit {
 
   updateCarouselBackground(item: LayoutItem, color: string) {
     patchCarouselMetadata(item, { background_color: color }, this.primaryColor);
+    this.touchPreview();
   }
 
   updateCarouselScale(item: LayoutItem, scale: number) {
     patchCarouselMetadata(item, { image_scale: Number(scale) }, this.primaryColor);
+    this.touchPreview();
   }
 
   onCarouselItemMetadataChange(event: { index: number; metadata: CarouselSlideMetadata }) {
@@ -390,6 +402,7 @@ export class LayoutConfigComponent implements OnInit {
   updateSpotlightFeatures(item: LayoutItem, value: string) {
     if (!item.metadata) item.metadata = {};
     item.metadata.features = value.split('\n').map((line) => line.trim()).filter(Boolean);
+    this.touchPreview();
   }
 
   updateSpotlightProductId(section: LayoutSection, productId: string) {
@@ -404,11 +417,13 @@ export class LayoutConfigComponent implements OnInit {
 
   updateMosaicSlot(item: LayoutItem, slot: PromoMosaicSlot) {
     ensurePromoMosaicItem(item, slot);
+    this.touchPreview();
   }
 
   updateMosaicMeta(item: LayoutItem, key: string, value: string) {
     if (!item.metadata) item.metadata = {};
     item.metadata[key] = value;
+    this.touchPreview();
   }
 
   closeEditor() {
@@ -456,6 +471,7 @@ export class LayoutConfigComponent implements OnInit {
     if (section.section_type === 'hero_carousel') {
       this.selectedCarouselItemIndex = section.items.length - 1;
     }
+    this.touchPreview();
   }
 
   removeItem(section: LayoutSection, index: number) {
@@ -463,6 +479,7 @@ export class LayoutConfigComponent implements OnInit {
     if (section.section_type === 'hero_carousel') {
       this.selectedCarouselItemIndex = Math.max(0, Math.min(this.selectedCarouselItemIndex, (section.items?.length || 1) - 1));
     }
+    this.touchPreview();
   }
 
   onImageSelected(event: Event, item: LayoutItem) {
@@ -475,6 +492,7 @@ export class LayoutConfigComponent implements OnInit {
       item.file_data = result.split(',')[1];
       item.file_name = file.name;
       item.image_url = result;
+      this.touchPreview();
     };
     reader.readAsDataURL(file);
   }

@@ -27,6 +27,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   @Input() editable = false;
   @Input() selectedItemIndex = 0;
   @Input() primaryColor = '#F74838';
+  @Input() previewRevision = 0;
   @Output() itemMetadataChange = new EventEmitter<{ index: number; metadata: CarouselSlideMetadata }>();
 
   slides: Slide[] = [];
@@ -49,7 +50,16 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['items'] || changes['primaryColor'] || changes['layoutOnly']) {
+    if (changes['selectedItemIndex'] && this.editable) {
+      this.currentIndex = this.selectedItemIndex;
+    }
+
+    if (
+      changes['items'] ||
+      changes['primaryColor'] ||
+      changes['layoutOnly'] ||
+      changes['previewRevision']
+    ) {
       this.buildSlides();
     }
   }
@@ -79,7 +89,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    const delta = ((event.clientX - this.dragStartX) / rect.width) * 180;
+    const delta = (((event.clientX - this.dragStartX) + (event.clientY - this.dragStartY)) / rect.width) * 120;
     const metadata = patchCarouselMetadata(item, {
       image_scale: this.dragOriginScale + delta
     }, this.primaryColor);
@@ -186,13 +196,18 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   private syncSlide(index: number, item: LayoutItem) {
     if (!this.slides[index]) return;
     const meta = getCarouselMetadata(item, this.primaryColor);
-    this.slides[index] = {
+    const updated: Slide = {
       ...this.slides[index],
+      title: item.title || '',
+      subtitle: item.subtitle || '',
+      linkUrl: item.link_url,
+      imageUrl: item.image_url,
       backgroundColor: meta.background_color || this.primaryColor,
       imageX: meta.image_x ?? 72,
       imageY: meta.image_y ?? 50,
       imageScale: meta.image_scale ?? 100
     };
+    this.slides = this.slides.map((slide, idx) => (idx === index ? updated : slide));
   }
 
   private clampCurrentIndex() {

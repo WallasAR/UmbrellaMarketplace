@@ -7,6 +7,7 @@
         [editable]="previewMode && carouselEditable"
         [selectedItemIndex]="carouselSelectedIndex"
         [primaryColor]="primaryColor"
+        [previewRevision]="previewRevision"
         (itemMetadataChange)="carouselItemMetadataChange.emit($event)"
       ></app-carousel>
       @if (showSearchPill) {
@@ -87,6 +88,7 @@
       [previewMode]="previewMode"
       [accentColor]="primaryColor"
       [displayConfig]="section.config?.display"
+      [previewRevision]="previewRevision"
       [linkUrl]="productSliderLink(section)"
     ></app-product-slider>
   }
