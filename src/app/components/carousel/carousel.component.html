@@ -1,4 +1,4 @@
-<div *ngIf="slides.length" class="px-4 mt-6 group">
+<div *ngIf="slides.length" class="px-4 mt-6 group" [class.carousel-is-dragging]="isDragging">
   <div class="relative overflow-visible max-w-7xl mx-auto" (mouseenter)="pauseAutoSlide()" (mouseleave)="startAutoSlide()">
     <div class="relative overflow-hidden rounded-3xl shadow-xl h-[400px] md:h-[480px]">
       <div
@@ -7,7 +7,7 @@
         [class.duration-700]="!editable"
         [ngStyle]="{ transform: 'translateX(-' + (currentIndex * 100) + '%)' }"
       >
-        <div *ngFor="let slide of slides; let i = index" class="min-w-full h-full">
+        <div *ngFor="let slide of slides; let i = index; trackBy: trackSlide" class="min-w-full h-full">
           <ng-container *ngIf="editable; else linkedSlide">
             <div class="block h-full cursor-default">
               <ng-container *ngTemplateOutlet="slideBody; context: { slide: slide, index: i }"></ng-container>
@@ -25,6 +25,7 @@
             <div
               #slideCanvas
               class="carousel-slide-canvas w-full h-full relative overflow-hidden"
+              [attr.data-carousel-slide-index]="i"
               [style.background-color]="slide.backgroundColor"
             >
               @if (slide.imageUrl) {

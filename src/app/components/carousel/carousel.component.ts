@@ -1,7 +1,14 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { InstitutionalBanner, BannerService } from '../../services/banner.service';
 import { LayoutItem } from '../../services/layout.service';
-import { CarouselSlideMetadata, getCarouselMetadata, patchCarouselMetadata } from '../../utils/carousel-slide.util';
+import {
+  CarouselSlideMetadata,
+  clampCarouselImageScale,
+  clampCarouselImageX,
+  clampCarouselImageY,
+  getCarouselMetadata,
+  patchCarouselMetadata
+} from '../../utils/carousel-slide.util';
 
 interface Slide {
   sourceIndex: number;
@@ -32,27 +39,29 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
 
   slides: Slide[] = [];
   currentIndex = 0;
+  isDragging = false;
   autoSlideInterval: ReturnType<typeof setInterval> | null = null;
 
   private dragMode: 'move' | 'resize' | null = null;
   private dragIndex = -1;
   private dragStartX = 0;
-  private dragStartY = 0;
-  private dragOriginX = 0;
-  private dragOriginY = 0;
   private dragOriginScale = 100;
   private dragPointerOffsetX = 0;
   private dragPointerOffsetY = 0;
   private dragContainer: HTMLElement | null = null;
-  private pendingMetadata: { index: number; metadata: CarouselSlideMetadata } | null = null;
 
-  constructor(private bannerService: BannerService) {}
+  constructor(
+    private bannerService: BannerService,
+    private hostRef: ElementRef<HTMLElement>
+  ) {}
 
   ngOnInit() {
     this.buildSlides();
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.isDragging) return;
+
     if (changes['selectedItemIndex'] && this.editable) {
       this.currentIndex = this.selectedItemIndex;
     }
@@ -61,7 +70,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       changes['items'] ||
       changes['primaryColor'] ||
       changes['layoutOnly'] ||
-      (changes['previewRevision'] && !this.dragMode)
+      changes['previewRevision']
     ) {
       this.buildSlides();
     }
@@ -72,39 +81,61 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     this.endDrag();
   }
 
+  trackSlide(_index: number, slide: Slide): number {
+    return slide.sourceIndex;
+  }
+
   @HostListener('document:mousemove', ['$event'])
   onDocumentMouseMove(event: MouseEvent) {
-    if (!this.editable || !this.dragMode || this.dragIndex < 0 || !this.dragContainer) return;
+    if (!this.editable || !this.dragMode || this.dragIndex < 0) return;
 
-    const rect = this.dragContainer.getBoundingClientRect();
+    event.preventDefault();
+
+    const container = this.resolveDragContainer();
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
 
-    const item = this.items[this.dragIndex];
-    if (!item) return;
+    const slide = this.slides[this.dragIndex];
+    if (!slide) return;
 
     if (this.dragMode === 'move') {
-      const imageX = ((event.clientX - this.dragPointerOffsetX - rect.left) / rect.width) * 100;
-      const imageY = ((event.clientY - this.dragPointerOffsetY - rect.top) / rect.height) * 100;
-      const metadata = patchCarouselMetadata(item, { image_x: imageX, image_y: imageY }, this.primaryColor);
-      this.syncSlide(this.dragIndex, item);
-      this.pendingMetadata = { index: this.dragIndex, metadata };
+      slide.imageX = clampCarouselImageX(
+        ((event.clientX - this.dragPointerOffsetX - rect.left) / rect.width) * 100
+      );
+      slide.imageY = clampCarouselImageY(
+        ((event.clientY - this.dragPointerOffsetY - rect.top) / rect.height) * 100
+      );
       return;
     }
 
     const delta = ((event.clientX - this.dragStartX) / rect.width) * 100;
-    const metadata = patchCarouselMetadata(item, {
-      image_scale: this.dragOriginScale + delta
-    }, this.primaryColor);
-    this.syncSlide(this.dragIndex, item);
-    this.pendingMetadata = { index: this.dragIndex, metadata };
+    slide.imageScale = clampCarouselImageScale(this.dragOriginScale + delta);
   }
 
   @HostListener('document:mouseup')
   onDocumentMouseUp() {
-    if (this.pendingMetadata) {
-      this.itemMetadataChange.emit(this.pendingMetadata);
-      this.pendingMetadata = null;
+    if (!this.dragMode || this.dragIndex < 0) {
+      this.endDrag();
+      return;
     }
+
+    const item = this.items[this.dragIndex];
+    const slide = this.slides[this.dragIndex];
+    if (item && slide) {
+      const metadata = patchCarouselMetadata(
+        item,
+        {
+          image_x: slide.imageX,
+          image_y: slide.imageY,
+          image_scale: slide.imageScale
+        },
+        this.primaryColor
+      );
+      this.itemMetadataChange.emit({ index: this.dragIndex, metadata });
+    }
+
     this.endDrag();
   }
 
@@ -199,21 +230,16 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  private syncSlide(index: number, item: LayoutItem) {
-    if (!this.slides[index]) return;
-    const meta = getCarouselMetadata(item, this.primaryColor);
-    const updated: Slide = {
-      ...this.slides[index],
-      title: item.title || '',
-      subtitle: item.subtitle || '',
-      linkUrl: item.link_url,
-      imageUrl: item.image_url,
-      backgroundColor: meta.background_color || this.primaryColor,
-      imageX: meta.image_x ?? 72,
-      imageY: meta.image_y ?? 50,
-      imageScale: meta.image_scale ?? 100
-    };
-    this.slides = this.slides.map((slide, idx) => (idx === index ? updated : slide));
+  private resolveDragContainer(): HTMLElement | null {
+    if (this.dragContainer?.isConnected) {
+      return this.dragContainer;
+    }
+
+    this.dragContainer = this.hostRef.nativeElement.querySelector(
+      `[data-carousel-slide-index="${this.dragIndex}"]`
+    ) as HTMLElement | null;
+
+    return this.dragContainer;
   }
 
   private clampCurrentIndex() {
@@ -235,25 +261,21 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
     const container = (event.currentTarget as HTMLElement).closest('.carousel-slide-canvas') as HTMLElement | null;
     if (!container) return;
 
-    const item = this.items[index];
-    if (!item) return;
+    const slide = this.slides[index];
+    if (!slide) return;
 
     const rect = container.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
 
-    const meta = getCarouselMetadata(item, this.primaryColor);
+    this.isDragging = true;
     this.dragMode = mode;
     this.dragIndex = index;
     this.dragStartX = event.clientX;
-    this.dragStartY = event.clientY;
-    this.dragOriginX = meta.image_x ?? 72;
-    this.dragOriginY = meta.image_y ?? 50;
-    this.dragOriginScale = meta.image_scale ?? 100;
+    this.dragOriginScale = slide.imageScale;
     this.dragContainer = container;
-    this.pendingMetadata = null;
 
-    const anchorX = rect.left + (this.dragOriginX / 100) * rect.width;
-    const anchorY = rect.top + (this.dragOriginY / 100) * rect.height;
+    const anchorX = rect.left + (slide.imageX / 100) * rect.width;
+    const anchorY = rect.top + (slide.imageY / 100) * rect.height;
     this.dragPointerOffsetX = event.clientX - anchorX;
     this.dragPointerOffsetY = event.clientY - anchorY;
 
@@ -263,6 +285,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private endDrag() {
+    this.isDragging = false;
     this.dragMode = null;
     this.dragIndex = -1;
     this.dragContainer = null;

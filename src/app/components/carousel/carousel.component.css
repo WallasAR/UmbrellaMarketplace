@@ -2,6 +2,15 @@
   isolation: isolate;
 }
 
+.carousel-is-dragging {
+  user-select: none;
+  cursor: grabbing;
+}
+
+.carousel-is-dragging .carousel-image-layer {
+  cursor: grabbing;
+}
+
 .carousel-image-layer {
   position: absolute;
   z-index: 5;
