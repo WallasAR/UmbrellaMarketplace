@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 export class PromoGridComponent {
   @Input() items: any[] = [];
   @Input() title: string = '';
+  @Input() previewMode = false;
 }

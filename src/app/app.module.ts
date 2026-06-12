@@ -47,6 +47,7 @@ import { PromoGridComponent } from './components/promo-grid/promo-grid.component
 import { SearchModalComponent } from './components/search-modal/search-modal.component';
 import { PrescriptionComponent } from './pages/prescription/prescription.component';
 import { LayoutConfigComponent } from './pages/pharmacy-panel/layout-config/layout-config.component';
+import { DynamicLayoutSectionsComponent } from './components/dynamic-layout-sections/dynamic-layout-sections.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { TenantService } from './services/tenant.service';
 import { PharmacySetupComponent } from './pages/pharmacy-setup/pharmacy-setup.component';
@@ -96,6 +97,7 @@ export function initializeTenant(tenantService: TenantService) {
     SearchModalComponent,
     PrescriptionComponent,
     LayoutConfigComponent,
+    DynamicLayoutSectionsComponent,
     FavoritesComponent,
     PharmacySetupComponent
   ],

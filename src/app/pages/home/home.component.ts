@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   layout: StoreLayout | null = null;
   featuredProducts: Product[] = [];
   isLoading = true;
+  primaryColor = '#F74838';
 
   constructor(
     private layoutService: LayoutService,
@@ -35,6 +36,8 @@ export class HomeComponent implements OnInit {
     this.layoutService.getPublicLayout(pharmacyId).subscribe({
       next: (data) => {
         this.layout = data;
+        const themeSection = data.sections?.find((s) => s.section_type === 'theme_config');
+        this.primaryColor = themeSection?.config?.primary_color || '#F74838';
         this.loadSectionData(data, pharmacyId);
         this.isLoading = false;
       },

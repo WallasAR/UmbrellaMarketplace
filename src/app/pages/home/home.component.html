@@ -1,5 +1,4 @@
 <main class="pb-16 bg-gray-50 min-h-screen">
-  
   @if (isLoading) {
     <div class="flex items-center justify-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F74838]"></div>
@@ -7,83 +6,10 @@
   }
 
   @if (!isLoading && layout) {
-    <!-- Dynamic Layout Engine -->
-    @for (section of layout.sections; track section.id) {
-      
-      <!-- Section: Hero Carousel -->
-      @if (section.section_type === 'hero_carousel') {
-        <section class="relative">
-          <app-carousel [items]="section.items || []"></app-carousel>
-          <!-- Floating Search Pill -->
-          <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl z-40 hidden md:block">
-            <div class="bg-white rounded-full shadow-lg p-2 flex items-center justify-between border border-gray-100 cursor-pointer hover:shadow-xl transition-shadow" (click)="openSearchModal()">
-              <div class="flex items-center flex-1 px-4 text-sm font-bold text-gray-800 border-r border-gray-200">
-                Selecione um produto
-              </div>
-              <div class="flex-1 px-4 text-gray-400 text-sm">Categorias</div>
-              <div class="flex-1 px-4 border-l border-gray-200 text-gray-400 text-sm">Marcas</div>
-              <div class="px-4 text-gray-400 text-sm">ou</div>
-              <div class="flex-1 px-4 border-x border-gray-200 text-gray-400 text-sm">
-                Digite a bula ou SKU...
-              </div>
-              <div class="pl-2 pr-1">
-                <button class="bg-[#F74838] text-white px-8 py-3 rounded-full font-bold text-sm pointer-events-none">
-                  Buscar Agora
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div class="h-16 hidden md:block"></div>
-      }
-
-      <!-- Section: Category Circles -->
-      @if (section.section_type === 'category_circles') {
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-12 mb-16">
-          <div class="flex justify-between items-end mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">{{ section.title }}</h2>
-            <a routerLink="/category" class="text-sm font-bold text-[#F74838] hover:underline flex items-center">
-              Ver todas <span class="ml-1">&rarr;</span>
-            </a>
-          </div>
-          
-          <div class="flex overflow-x-auto gap-4 md:grid md:grid-cols-8 md:gap-4 text-center no-scrollbar pb-4 md:pb-0">
-            @for (item of section.items; track item.id) {
-              <a [routerLink]="item.link_url || '/category'" class="group flex flex-col items-center cursor-pointer min-w-[80px]">
-                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center mb-3 group-hover:shadow-md group-hover:border-[#F74838] transition-all p-2 relative overflow-hidden">
-                  @if (item.image_url) {
-                    <img [src]="item.image_url" [alt]="item.title" class="w-full h-full object-cover rounded-full" />
-                  } @else {
-                    <!-- Mock icons based on title for demonstration -->
-                    <div class="w-full h-full rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
-                      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                  }
-                </div>
-                <span class="text-sm font-semibold text-gray-700 group-hover:text-[#F74838]">{{ item.title }}</span>
-              </a>
-            }
-          </div>
-        </div>
-      }
-
-      <!-- Section: Product Slider -->
-      @if (section.section_type === 'product_slider') {
-        <app-product-slider 
-          [title]="section.title || ''"
-          [products]="$any(section).products || []">
-        </app-product-slider>
-      }
-
-      <!-- Section: Promo Grid -->
-      @if (section.section_type === 'promo_grid') {
-        <app-promo-grid 
-          [title]="section.title || ''" 
-          [items]="section.items || []">
-        </app-promo-grid>
-      }
-
-    }
+    <app-dynamic-layout-sections
+      [sections]="layout.sections"
+      [primaryColor]="primaryColor"
+      (searchClick)="openSearchModal()"
+    ></app-dynamic-layout-sections>
   }
-
 </main>

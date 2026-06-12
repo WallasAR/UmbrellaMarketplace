@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { InstitutionalBanner, BannerService } from '../../services/banner.service';
-import { LayoutItem } from '../../pages/pharmacy-panel/layout-config/layout-config.component';
+import { LayoutItem } from '../../services/layout.service';
 
 interface Slide {
   title: string;

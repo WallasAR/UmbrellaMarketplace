@@ -3,27 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../services/toast.service';
-
-export interface LayoutItem {
-  id: string;
-  title?: string;
-  subtitle?: string;
-  image_url?: string;
-  link_url?: string;
-  display_order: number;
-  file_data?: string;
-  file_name?: string;
-}
-
-export interface LayoutSection {
-  id: string;
-  section_type: string;
-  title: string;
-  subtitle?: string;
-  display_order: number;
-  items: LayoutItem[];
-  config?: any;
-}
+import { LayoutItem, LayoutSection } from '../../../services/layout.service';
+import { ProductService } from '../../../services/product.service';
+import { Product } from '../../../models/product.model';
 
 export interface PharmacyLayout {
   id?: string;
@@ -31,6 +13,12 @@ export interface PharmacyLayout {
   isPreset?: boolean;
   is_active: boolean;
   sections: LayoutSection[];
+}
+
+type LayoutSectionWithProducts = LayoutSection & { products?: Product[] };
+
+interface ThemeConfig {
+  primary_color: string;
 }
 
 @Component({
@@ -45,7 +33,8 @@ export class LayoutConfigComponent implements OnInit {
   layout: PharmacyLayout | null = null;
   isLoading = true;
   isSaving = false;
-  
+  sidebarTab: 'components' | 'section' = 'components';
+
   editingSection: LayoutSection | null = null;
 
   toolbox = [
@@ -55,13 +44,25 @@ export class LayoutConfigComponent implements OnInit {
     { type: 'promo_grid', label: 'Banners Promocionais', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' }
   ];
 
-  constructor(private http: HttpClient, private toast: ToastService) {}
+  constructor(
+    private http: HttpClient,
+    private toast: ToastService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit() {
     if (this.isAdmin) {
       this.apiUrl = `${environment.apiUrl}/admin/layout`;
     }
     this.fetchLayout();
+  }
+
+  get displaySections(): LayoutSection[] {
+    return this.layout?.sections.filter((s) => s.section_type !== 'theme_config') || [];
+  }
+
+  get primaryColor(): string {
+    return this.themeConfig.primary_color || '#F74838';
   }
 
   loadPreset() {
@@ -78,6 +79,7 @@ export class LayoutConfigComponent implements OnInit {
         next: (restored) => {
           this.layout = restored;
           this.ensureThemeConfig();
+          this.loadPreviewProducts();
           this.isLoading = false;
           this.toast.show('Layout padrão de fábrica restaurado.', 'success');
         },
@@ -119,6 +121,7 @@ export class LayoutConfigComponent implements OnInit {
       : factorySections;
 
     this.ensureThemeConfig();
+    this.loadPreviewProducts();
     this.isLoading = false;
     this.toast.show('Layout padrão carregado no editor. Clique em Publicar para salvar.', 'info');
   }
@@ -134,6 +137,7 @@ export class LayoutConfigComponent implements OnInit {
           sections: []
         };
         this.ensureThemeConfig();
+        this.loadPreviewProducts();
         this.isLoading = false;
       },
       error: () => {
@@ -143,9 +147,24 @@ export class LayoutConfigComponent implements OnInit {
     });
   }
 
+  loadPreviewProducts() {
+    if (!this.layout) return;
+
+    this.layout.sections.forEach((section) => {
+      if (section.section_type !== 'product_slider') return;
+
+      const filter = { ...(section.config?.filter || {}) };
+      this.productService.getProducts(filter).subscribe({
+        next: (products) => {
+          (section as LayoutSectionWithProducts).products = products;
+        }
+      });
+    });
+  }
+
   ensureThemeConfig() {
     if (!this.layout) return;
-    let themeSection = this.layout.sections.find(s => s.section_type === 'theme_config');
+    let themeSection = this.layout.sections.find((s) => s.section_type === 'theme_config');
     if (!themeSection) {
       themeSection = {
         id: crypto.randomUUID(),
@@ -154,57 +173,86 @@ export class LayoutConfigComponent implements OnInit {
         display_order: -1,
         items: [],
         config: { primary_color: '#F74838' }
-      } as any;
-      this.layout.sections.push(themeSection as LayoutSection);
+      };
+      this.layout.sections.push(themeSection);
     }
   }
 
-  get themeConfig(): any {
-    if (!this.layout) return {};
-    const sec = this.layout.sections.find(s => s.section_type === 'theme_config');
-    if (!sec) return {};
+  get themeConfig(): ThemeConfig {
+    if (!this.layout) return { primary_color: '#F74838' };
+    const sec = this.layout.sections.find((s) => s.section_type === 'theme_config');
+    if (!sec) return { primary_color: '#F74838' };
     if (!sec.config) sec.config = { primary_color: '#F74838' };
-    return sec.config;
+    return sec.config as ThemeConfig;
   }
 
-  drop(event: CdkDragDrop<LayoutSection[] | any[]>) {
+  onThemeColorChange() {
+    const color = this.themeConfig.primary_color;
+    if (!color) return;
+    document.documentElement.style.setProperty('--color-brand', color);
+    document.documentElement.style.setProperty('--color-brand-soft', `${color}15`);
+    document.documentElement.style.setProperty('--color-brand-hover', `${color}E6`);
+  }
+
+  drop(event: CdkDragDrop<any>) {
     if (!this.layout) return;
 
+    const themeSections = this.layout.sections.filter((s) => s.section_type === 'theme_config');
+    const display = this.layout.sections.filter((s) => s.section_type !== 'theme_config');
+
     if (event.previousContainer === event.container) {
-      // Moving inside the same list
-      moveItemInArray(this.layout.sections, event.previousIndex, event.currentIndex);
+      moveItemInArray(display, event.previousIndex, event.currentIndex);
     } else {
-      // Dragging from toolbox
-      const itemType = event.previousContainer.data[event.previousIndex].type;
+      const tool = event.previousContainer.data[event.previousIndex] as { type: string };
       const newSection: LayoutSection = {
         id: crypto.randomUUID(),
-        section_type: itemType,
-        title: itemType === 'hero_carousel' ? 'Carrossel Principal' : (itemType === 'product_slider' ? 'Vitrine de Produtos' : 'Nova Seção'),
+        section_type: tool.type,
+        title: this.defaultSectionTitle(tool.type),
         display_order: event.currentIndex,
         items: []
       };
-      this.layout.sections.splice(event.currentIndex, 0, newSection);
+      display.splice(event.currentIndex, 0, newSection);
       this.editSection(newSection);
     }
+
+    this.layout.sections = [...display, ...themeSections];
+    this.loadPreviewProducts();
+  }
+
+  private defaultSectionTitle(type: string): string {
+    const titles: Record<string, string> = {
+      hero_carousel: 'Carrossel Principal',
+      category_circles: 'Compre por Categoria',
+      product_slider: 'Medicamentos em destaque',
+      promo_grid: 'Ofertas Especiais'
+    };
+    return titles[type] || 'Nova Seção';
+  }
+
+  sectionLabel(section: LayoutSection): string {
+    return this.toolbox.find((t) => t.type === section.section_type)?.label || section.section_type;
   }
 
   editSection(section: LayoutSection) {
     this.editingSection = section;
+    this.sidebarTab = 'section';
   }
 
   closeEditor() {
     this.editingSection = null;
+    this.sidebarTab = 'components';
   }
 
-  removeSection(index: number) {
+  removeSection(section: LayoutSection) {
     if (!this.layout) return;
-    if (this.editingSection === this.layout.sections[index]) {
-      this.editingSection = null;
+    if (this.editingSection === section) {
+      this.closeEditor();
     }
-    this.layout.sections.splice(index, 1);
+    this.layout.sections = this.layout.sections.filter((s) => s.id !== section.id);
   }
 
   addItem(section: LayoutSection) {
+    if (!section.items) section.items = [];
     section.items.push({
       id: crypto.randomUUID(),
       display_order: section.items.length,
@@ -214,29 +262,30 @@ export class LayoutConfigComponent implements OnInit {
   }
 
   removeItem(section: LayoutSection, index: number) {
-    section.items.splice(index, 1);
+    section.items?.splice(index, 1);
   }
 
-  onImageSelected(event: any, item: LayoutItem) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        item.file_data = e.target.result.split(',')[1];
-        item.file_name = file.name;
-        item.image_url = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+  onImageSelected(event: Event, item: LayoutItem) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const result = e.target?.result as string;
+      item.file_data = result.split(',')[1];
+      item.file_name = file.name;
+      item.image_url = result;
+    };
+    reader.readAsDataURL(file);
   }
 
   saveLayout() {
     if (!this.layout) return;
     this.isSaving = true;
-    
+
     this.layout.sections.forEach((s, idx) => {
       s.display_order = idx;
-      s.items.forEach((item, itemIdx) => {
+      s.items?.forEach((item, itemIdx) => {
         item.display_order = itemIdx;
       });
     });
@@ -247,7 +296,7 @@ export class LayoutConfigComponent implements OnInit {
         this.toast.show('Layout salvo com sucesso!', 'success');
         this.fetchLayout();
       },
-      error: (err) => {
+      error: () => {
         this.isSaving = false;
         this.toast.show('Erro ao salvar layout.', 'error');
       }

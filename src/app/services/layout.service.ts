@@ -12,6 +12,8 @@ export interface LayoutItem {
   link_url?: string;
   display_order: number;
   metadata?: any;
+  file_data?: string;
+  file_name?: string;
 }
 
 export interface LayoutSection {

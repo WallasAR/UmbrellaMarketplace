@@ -1,213 +1,250 @@
-<div class="h-[calc(100vh-8rem)] flex flex-col sm:flex-row gap-6 bg-gray-50 p-6 rounded-3xl border border-gray-100 overflow-hidden">
-  
-  <!-- Left Column: Toolbox -->
-  <div class="w-full sm:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col shrink-0 overflow-hidden">
-    <div class="p-5 border-b border-gray-100 bg-gray-50/50">
-      <h2 class="text-lg font-bold text-gray-800">Ferramentas de Layout</h2>
-      <p class="text-xs text-gray-500 mt-1">Arraste os componentes para a área central para montar sua página principal.</p>
+<div class="layout-editor h-[calc(100vh-6rem)] min-h-[640px] flex flex-col lg:flex-row gap-0 bg-gray-200 rounded-2xl border border-gray-200 overflow-hidden shadow-inner">
+
+  <!-- Preview: réplica da loja -->
+  <div class="flex-1 flex flex-col min-w-0 relative">
+    <div class="h-10 bg-gray-900 flex items-center justify-between px-4 shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-300">Preview ao vivo</span>
+      </div>
+      <span class="text-[11px] text-gray-500 font-mono hidden sm:block">umbrellamarket.com/home</span>
     </div>
-    
-    <div class="p-5 overflow-y-auto flex-1">
-      <div cdkDropList id="toolbox" [cdkDropListData]="toolbox" [cdkDropListConnectedTo]="['layout-canvas']" class="space-y-3">
-        <div *ngFor="let tool of toolbox" cdkDrag [cdkDragData]="tool" class="border border-gray-200 rounded-xl p-3 bg-white hover:border-[#F74838] hover:shadow-sm transition cursor-move flex items-center gap-3">
-          <div class="w-10 h-10 bg-red-50 text-[#F74838] rounded-lg flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tool.icon"></path></svg>
-          </div>
-          <div>
-            <p class="text-sm font-bold text-gray-800">{{ tool.label }}</p>
-            <p class="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">Componente</p>
-          </div>
-          <!-- Drag Preview -->
-          <div *cdkDragPreview class="bg-white border-2 border-[#F74838] rounded-xl p-3 shadow-xl flex items-center gap-3 w-72 opacity-90">
-            <div class="w-10 h-10 bg-[#F74838] text-white rounded-lg flex items-center justify-center shrink-0">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tool.icon"></path></svg>
+
+    <div class="flex-1 overflow-y-auto layout-preview-scroll bg-gray-100">
+      <div *ngIf="isLoading" class="absolute inset-0 bg-white/60 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#F74838]"></div>
+      </div>
+
+      <div
+        *ngIf="layout"
+        class="layout-preview-frame min-h-full bg-gray-50 shadow-2xl mx-auto"
+        [style.--color-brand]="primaryColor"
+        [style.--color-brand-soft]="primaryColor + '15'"
+        [style.--color-brand-hover]="primaryColor + 'E6'"
+      >
+        <div class="pointer-events-none select-none">
+          <app-navbar></app-navbar>
+        </div>
+
+        <main class="pb-16 bg-gray-50 relative">
+          <div
+            class="min-h-[480px]"
+            cdkDropList
+            id="layout-canvas"
+            [cdkDropListData]="displaySections"
+            [cdkDropListConnectedTo]="['toolbox']"
+            (cdkDropListDropped)="drop($event)"
+          >
+            <div
+              *ngIf="displaySections.length === 0"
+              class="mx-4 sm:mx-6 my-16 border-2 border-dashed border-gray-300 rounded-3xl bg-white/80 p-12 text-center"
+            >
+              <svg class="w-14 h-14 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+              <p class="text-lg font-bold text-gray-600">Sua vitrine está vazia</p>
+              <p class="text-sm text-gray-400 mt-1">Arraste componentes da barra lateral direita para montar a página inicial</p>
             </div>
-            <p class="text-sm font-bold text-gray-800">{{ tool.label }}</p>
+
+            <div
+              *ngFor="let section of displaySections; let i = index"
+              cdkDrag
+              class="layout-section-shell group relative"
+              [class.is-selected]="editingSection === section"
+              (click)="editSection(section)"
+            >
+              <div class="layout-section-overlay">
+                <div class="layout-section-toolbar">
+                  <span class="layout-section-badge">{{ sectionLabel(section) }}</span>
+                  <div class="flex items-center gap-1">
+                    <button type="button" class="layout-section-btn" cdkDragHandle title="Mover" (click)="$event.stopPropagation()">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                    </button>
+                    <button type="button" class="layout-section-btn" title="Editar" (click)="editSection(section); $event.stopPropagation()">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </button>
+                    <button type="button" class="layout-section-btn layout-section-btn-danger" title="Remover" (click)="removeSection(section); $event.stopPropagation()">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="layout-section-content pointer-events-none">
+                <app-dynamic-layout-sections
+                  [sections]="[section]"
+                  [primaryColor]="primaryColor"
+                  [previewMode]="true"
+                  [showSearchPill]="section.section_type === 'hero_carousel'"
+                ></app-dynamic-layout-sections>
+              </div>
+
+              <div *cdkDragPlaceholder class="layout-section-placeholder"></div>
+            </div>
           </div>
+        </main>
+
+        <div class="pointer-events-none select-none opacity-90">
+          <app-footer></app-footer>
         </div>
       </div>
     </div>
-    
-    <!-- Theme Configuration -->
-    <div class="p-5 border-t border-gray-100 bg-gray-50/50" *ngIf="layout">
-      <h3 class="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
-        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
-        Paleta de Cores
-      </h3>
-      <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-200">
-        <input type="color" [(ngModel)]="themeConfig.primary_color" class="h-8 w-8 rounded cursor-pointer border-0 p-0">
-        <input type="text" [(ngModel)]="themeConfig.primary_color" class="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 focus:border-[#F74838] outline-none text-xs font-mono uppercase" placeholder="#F74838">
+  </div>
+
+  <!-- Sidebar: ferramentas -->
+  <aside class="w-full lg:w-[360px] xl:w-[400px] bg-white border-l border-gray-200 flex flex-col shrink-0 z-20 shadow-xl lg:shadow-none">
+    <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+      <h2 class="text-lg font-bold text-gray-800">Editor de Layout</h2>
+      <p class="text-xs text-gray-500 mt-1">Monte a página inicial com preview em tempo real.</p>
+    </div>
+
+    <div class="flex border-b border-gray-100">
+      <button
+        type="button"
+        class="flex-1 py-3 text-xs font-bold uppercase tracking-wide transition"
+        [class.text-[#F74838]]="sidebarTab === 'components'"
+        [class.border-b-2]="sidebarTab === 'components'"
+        [class.border-[#F74838]]="sidebarTab === 'components'"
+        [class.text-gray-400]="sidebarTab !== 'components'"
+        (click)="sidebarTab = 'components'"
+      >
+        Componentes
+      </button>
+      <button
+        type="button"
+        class="flex-1 py-3 text-xs font-bold uppercase tracking-wide transition"
+        [class.text-[#F74838]]="sidebarTab === 'section'"
+        [class.border-b-2]="sidebarTab === 'section'"
+        [class.border-[#F74838]]="sidebarTab === 'section'"
+        [class.text-gray-400]="sidebarTab !== 'section'"
+        [disabled]="!editingSection"
+        (click)="sidebarTab = 'section'"
+      >
+        Seção
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto layout-preview-scroll p-5">
+      <!-- Tab: Componentes -->
+      <ng-container *ngIf="sidebarTab === 'components'">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Arraste para o preview</p>
+        <div
+          cdkDropList
+          id="toolbox"
+          [cdkDropListData]="toolbox"
+          [cdkDropListConnectedTo]="['layout-canvas']"
+          class="space-y-2 mb-6"
+        >
+          <div
+            *ngFor="let tool of toolbox"
+            cdkDrag
+            [cdkDragData]="tool"
+            class="toolbox-item"
+          >
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" [style.background-color]="primaryColor">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tool.icon"></path></svg>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-gray-800 truncate">{{ tool.label }}</p>
+              <p class="text-[10px] text-gray-400 uppercase tracking-wider">Bloco</p>
+            </div>
+            <div *cdkDragPreview class="toolbox-drag-preview">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white" [style.background-color]="primaryColor">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="tool.icon"></path></svg>
+              </div>
+              <p class="text-sm font-bold text-gray-800">{{ tool.label }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6" *ngIf="layout">
+          <h3 class="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+            Cor principal da loja
+          </h3>
+          <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
+            <input type="color" [(ngModel)]="themeConfig.primary_color" (ngModelChange)="onThemeColorChange()" class="h-9 w-9 rounded cursor-pointer border-0 p-0">
+            <input type="text" [(ngModel)]="themeConfig.primary_color" (ngModelChange)="onThemeColorChange()" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:border-[#F74838] outline-none text-xs font-mono uppercase" placeholder="#F74838">
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Tab: Edição da seção -->
+      <ng-container *ngIf="sidebarTab === 'section' && editingSection">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Editando</p>
+            <h3 class="font-bold text-gray-800">{{ sectionLabel(editingSection) }}</h3>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1" (click)="closeEditor()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <div class="mb-5" *ngIf="editingSection.section_type !== 'hero_carousel'">
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Título da seção</label>
+          <input type="text" [(ngModel)]="editingSection.title" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm font-medium transition" placeholder="Ex: Mais Vendidos">
+        </div>
+
+        <div class="mb-5" *ngIf="editingSection.section_type !== 'hero_carousel' && editingSection.section_type !== 'product_slider'">
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Subtítulo (opcional)</label>
+          <input type="text" [(ngModel)]="editingSection.subtitle" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition" placeholder="Ex: Aproveite as ofertas">
+        </div>
+
+        <div class="pt-4 border-t border-gray-100" *ngIf="editingSection.section_type !== 'product_slider'">
+          <div class="flex items-center justify-between mb-4">
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Itens / Banners</label>
+            <button type="button" class="text-xs font-bold px-2 py-1 rounded transition text-white" [style.background-color]="primaryColor" (click)="addItem(editingSection)">+ Adicionar</button>
+          </div>
+
+          <div class="space-y-4">
+            <div *ngFor="let item of editingSection.items || []; let j = index" class="border border-gray-200 rounded-xl p-3 bg-gray-50/50 relative group">
+              <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" (click)="removeItem(editingSection, j)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+
+              <input type="text" [(ngModel)]="item.title" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Título / Texto">
+              <input type="text" [(ngModel)]="item.link_url" class="w-full bg-transparent text-xs text-gray-500 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Link de redirecionamento (URL)">
+
+              <div>
+                <input type="file" accept="image/*" (change)="onImageSelected($event, item)" class="hidden" #fileInput>
+                <button type="button" (click)="fileInput.click()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-500 hover:bg-red-50 transition flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                  Alterar Imagem
+                </button>
+                <img *ngIf="item.image_url" [src]="item.image_url" class="mt-2 w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm">
+              </div>
+            </div>
+
+            <div *ngIf="!editingSection.items?.length" class="text-center py-6 text-gray-400 text-sm border border-dashed border-gray-200 rounded-xl">
+              Nenhum item configurado.
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="editingSection.section_type === 'product_slider'" class="rounded-xl bg-blue-50 border border-blue-100 p-4 text-sm text-blue-800">
+          A vitrine exibe produtos reais com base no filtro configurado (ex.: destaques). Os cards são carregados automaticamente no preview.
+        </div>
+      </ng-container>
+
+      <div *ngIf="sidebarTab === 'section' && !editingSection" class="text-center py-12 text-gray-400 text-sm">
+        Clique em uma seção no preview para editá-la.
       </div>
     </div>
 
-    <!-- General Settings -->
-    <div class="p-5 border-t border-gray-100 bg-gray-50/50" *ngIf="layout">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-sm font-bold text-gray-700">Ativar Layout Público</span>
-        <label class="flex items-center cursor-pointer">
+    <div class="p-5 border-t border-gray-100 bg-gray-50/80 space-y-3" *ngIf="layout">
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-bold text-gray-700">Layout público ativo</span>
+        <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" [(ngModel)]="layout.is_active" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+          <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-green-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
         </label>
       </div>
-      <button (click)="loadPreset()" [disabled]="isSaving || isLoading" class="w-full mb-2 text-xs font-bold text-gray-500 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50 transition">Restaurar Padrão de Fábrica</button>
-      <button (click)="saveLayout()" [disabled]="isSaving || isLoading" class="w-full bg-[#F74838] text-white px-4 py-3 rounded-xl font-bold hover:bg-red-600 transition shadow-sm flex justify-center items-center">
+      <button type="button" (click)="loadPreset()" [disabled]="isSaving || isLoading" class="w-full text-xs font-bold text-gray-500 bg-white border border-gray-200 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition">
+        Restaurar Padrão de Fábrica
+      </button>
+      <button type="button" (click)="saveLayout()" [disabled]="isSaving || isLoading" class="w-full text-white px-4 py-3 rounded-xl font-bold transition shadow-sm flex justify-center items-center" [style.background-color]="primaryColor">
         <span *ngIf="isSaving" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></span>
         Publicar Alterações
       </button>
     </div>
-  </div>
-
-  <!-- Central Column: Canvas -->
-  <div class="flex-1 flex flex-col overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 relative">
-    <div class="h-12 bg-gray-800 flex items-center px-4 justify-between shrink-0">
-      <div class="flex gap-1.5">
-        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-      </div>
-      <div class="bg-gray-700/50 rounded-md px-3 py-1 text-xs text-gray-300 font-mono flex-1 mx-4 max-w-sm text-center truncate">
-        umbrella-marketplace.com
-      </div>
-      <div class="w-10"></div>
-    </div>
-    
-    <div class="flex-1 overflow-y-auto bg-gray-100 relative custom-scrollbar">
-      <div *ngIf="isLoading" class="absolute inset-0 bg-white/50 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#F74838]"></div>
-      </div>
-
-      <div class="max-w-4xl mx-auto py-8 px-4" *ngIf="layout">
-        <div class="min-h-[400px] border-2 border-dashed border-gray-300 rounded-2xl p-4" 
-             cdkDropList id="layout-canvas" 
-             [cdkDropListData]="layout.sections" 
-             [cdkDropListConnectedTo]="['toolbox']" 
-             (cdkDropListDropped)="drop($event)">
-          
-          <div *ngIf="layout.sections.length === 0" class="h-64 flex flex-col items-center justify-center text-gray-400">
-            <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <p class="font-medium text-lg">Área de Montagem</p>
-            <p class="text-sm">Arraste os componentes da lateral esquerda para cá</p>
-          </div>
-
-          <!-- Section Item in Canvas -->
-          <div *ngFor="let section of layout.sections; let i = index" cdkDrag class="relative group mb-6 bg-white rounded-2xl shadow-sm border-2 transition-colors overflow-hidden" [class.border-[#F74838]]="editingSection === section" [class.border-transparent]="editingSection !== section" (click)="editSection(section)">
-            <!-- Action Toolbar (Hover) -->
-            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-              <div class="bg-gray-800 text-white p-1.5 rounded-lg cursor-move" cdkDragHandle>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
-              </div>
-              <button class="bg-red-500 text-white p-1.5 rounded-lg hover:bg-red-600" (click)="removeSection(i); $event.stopPropagation()">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-              </button>
-            </div>
-            
-            <!-- Component Preview Mocks -->
-            
-            <!-- Hero Carousel Preview -->
-            <div *ngIf="section.section_type === 'hero_carousel'" class="w-full aspect-[21/9] bg-gray-100 relative">
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="text-center">
-                  <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-2 text-[#F74838] shadow-sm"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
-                  <p class="font-bold text-gray-600 text-lg">Carrossel Principal</p>
-                  <p class="text-xs text-gray-400">{{ section.items.length }} slide(s) configurado(s)</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Category Circles Preview -->
-            <div *ngIf="section.section_type === 'category_circles'" class="p-6">
-              <h3 class="font-bold text-xl text-gray-800 mb-4">{{ section.title || 'Categorias' }}</h3>
-              <div class="flex gap-4 overflow-hidden">
-                <div *ngFor="let item of [1,2,3,4,5]" class="flex flex-col items-center">
-                  <div class="w-20 h-20 bg-gray-100 rounded-full mb-2"></div>
-                  <div class="w-16 h-2 bg-gray-200 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Product Slider Preview -->
-            <div *ngIf="section.section_type === 'product_slider'" class="p-6">
-              <h3 class="font-bold text-xl text-gray-800 mb-4">{{ section.title || 'Vitrine de Produtos' }}</h3>
-              <div class="flex gap-4 overflow-hidden">
-                <div *ngFor="let item of [1,2,3,4]" class="w-48 shrink-0 bg-white border border-gray-100 rounded-2xl p-4 h-64 flex flex-col">
-                  <div class="h-32 bg-gray-100 rounded-xl mb-auto"></div>
-                  <div class="w-full h-3 bg-gray-200 rounded-full mb-2 mt-4"></div>
-                  <div class="w-2/3 h-4 bg-gray-300 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Promo Grid Preview -->
-            <div *ngIf="section.section_type === 'promo_grid'" class="p-6">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="h-40 bg-gray-100 rounded-2xl flex items-center justify-center">
-                  <span class="text-gray-400 font-bold">Banner 1</span>
-                </div>
-                <div class="h-40 bg-gray-100 rounded-2xl flex items-center justify-center">
-                  <span class="text-gray-400 font-bold">Banner 2</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Drag Placeholder -->
-            <div *cdkDragPlaceholder class="min-h-[150px] border-2 border-dashed border-[#F74838] rounded-2xl bg-red-50/50 mb-6"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right Column: Settings Panel (Conditionally shown when editing) -->
-  <div *ngIf="editingSection" class="w-full sm:w-80 bg-white rounded-2xl shadow-xl border border-gray-200 flex flex-col shrink-0 overflow-hidden fixed top-6 right-6 bottom-6 z-50 animate-fade-in-right sm:static sm:z-auto sm:shadow-sm sm:border-gray-100">
-    <div class="h-16 border-b border-gray-100 flex items-center justify-between px-5 bg-gray-50/50">
-      <h3 class="font-bold text-gray-800">Editar Seção</h3>
-      <button class="text-gray-400 hover:text-gray-600" (click)="closeEditor()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-    
-    <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
-      
-      <div class="mb-6">
-        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Título da Seção</label>
-        <input type="text" [(ngModel)]="editingSection.title" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm font-medium transition" placeholder="Ex: Mais Vendidos">
-      </div>
-      
-      <div class="mb-6" *ngIf="editingSection.section_type !== 'hero_carousel'">
-        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Subtítulo (Opcional)</label>
-        <input type="text" [(ngModel)]="editingSection.subtitle" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition" placeholder="Ex: Aproveite as ofertas">
-      </div>
-
-      <div class="pt-4 border-t border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Itens / Banners</label>
-          <button class="text-xs font-bold text-[#F74838] bg-red-50 px-2 py-1 rounded hover:bg-red-100 transition" (click)="addItem(editingSection)">+ Adicionar</button>
-        </div>
-
-        <div class="space-y-4">
-          <div *ngFor="let item of editingSection.items; let j = index" class="border border-gray-200 rounded-xl p-3 bg-gray-50/50 relative group">
-            <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" (click)="removeItem(editingSection, j)">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <input type="text" [(ngModel)]="item.title" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Título / Texto">
-            <input type="text" [(ngModel)]="item.link_url" class="w-full bg-transparent text-xs text-gray-500 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Link de redirecionamento (URL)">
-            
-            <div>
-              <input type="file" accept="image/*" (change)="onImageSelected($event, item)" class="hidden" #fileInput>
-              <button (click)="fileInput.click()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-500 hover:text-[#F74838] hover:border-[#F74838] hover:bg-red-50 transition flex items-center justify-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                Alterar Imagem
-              </button>
-              <img *ngIf="item.image_url" [src]="item.image_url" class="mt-2 w-full h-20 object-cover rounded-lg border border-gray-200 shadow-sm">
-            </div>
-          </div>
-          
-          <div *ngIf="editingSection.items.length === 0" class="text-center py-6 text-gray-400 text-sm">
-            Nenhum item configurado.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </aside>
 </div>

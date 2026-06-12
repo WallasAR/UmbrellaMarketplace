@@ -11,6 +11,8 @@ export class ProductSliderComponent {
   @Input() title: string = '';
   @Input() linkUrl?: string = '/home';
   @Input() products: Product[] = [];
+  @Input() previewMode = false;
+  @Input() accentColor = '#F74838';
 
   @ViewChild('slider') sliderRef!: ElementRef;
 
