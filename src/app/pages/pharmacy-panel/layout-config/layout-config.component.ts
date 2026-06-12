@@ -65,40 +65,81 @@ export class LayoutConfigComponent implements OnInit {
   }
 
   loadPreset() {
-    if (!confirm('Deseja carregar o layout padrão? Isso substituirá suas seções atuais (não salva até você clicar em Salvar).')) return;
-    
+    const message = this.isAdmin
+      ? 'Restaurar o layout global para o padrão de fábrica? O layout publicado será substituído imediatamente.'
+      : 'Deseja carregar o layout padrão? Isso substituirá suas seções atuais (não salva até você clicar em Publicar).';
+
+    if (!confirm(message)) return;
+
     this.isLoading = true;
-    this.http.get<PharmacyLayout>(`${environment.apiUrl}/layout/public`).subscribe({
-      next: (preset: any) => {
-        // preset returns an array sometimes from global
-        const presetLayout = Array.isArray(preset) ? preset[0] : preset;
-        if (presetLayout && presetLayout.sections && this.layout) {
-          this.layout.sections = presetLayout.sections.map((s: any) => ({
-            ...s,
-            id: crypto.randomUUID(),
-            items: (s.items || []).map((i: any) => ({ ...i, id: crypto.randomUUID() }))
-          }));
+
+    if (this.isAdmin) {
+      this.http.post<PharmacyLayout>(`${environment.apiUrl}/admin/layout/restore`, {}).subscribe({
+        next: (restored) => {
+          this.layout = restored;
           this.ensureThemeConfig();
+          this.isLoading = false;
+          this.toast.show('Layout padrão de fábrica restaurado.', 'success');
+        },
+        error: () => {
+          this.isLoading = false;
+          this.toast.show('Erro ao restaurar layout padrão.', 'error');
         }
+      });
+      return;
+    }
+
+    this.http.get<PharmacyLayout>(`${environment.apiUrl}/layout/factory-template`).subscribe({
+      next: (preset) => this.applyFactoryTemplate(preset),
+      error: () => {
         this.isLoading = false;
-      },
-      error: () => this.isLoading = false
+        this.toast.show('Erro ao carregar layout padrão.', 'error');
+      }
     });
+  }
+
+  private applyFactoryTemplate(preset: PharmacyLayout) {
+    if (!this.layout || !preset?.sections?.length) {
+      this.isLoading = false;
+      this.toast.show('Template de fábrica indisponível.', 'error');
+      return;
+    }
+
+    const themeSection = this.layout.sections.find((s) => s.section_type === 'theme_config');
+    const factorySections = preset.sections
+      .filter((s) => s.section_type !== 'theme_config')
+      .map((s) => ({
+        ...s,
+        id: crypto.randomUUID(),
+        items: (s.items || []).map((i) => ({ ...i, id: crypto.randomUUID() }))
+      }));
+
+    this.layout.sections = themeSection
+      ? [themeSection, ...factorySections]
+      : factorySections;
+
+    this.ensureThemeConfig();
+    this.isLoading = false;
+    this.toast.show('Layout padrão carregado no editor. Clique em Publicar para salvar.', 'info');
   }
 
   fetchLayout() {
     this.isLoading = true;
     this.http.get<PharmacyLayout[]>(this.apiUrl).subscribe({
       next: (layouts) => {
-        this.layout = layouts.find(l => l.is_active) || {
-          name: 'Meu Layout Personalizado',
+        const active = layouts.find((l) => l.is_active) || layouts.find((l) => l.isPreset) || layouts[0];
+        this.layout = active || {
+          name: this.isAdmin ? 'Layout Global' : 'Meu Layout Personalizado',
           is_active: true,
           sections: []
         };
         this.ensureThemeConfig();
         this.isLoading = false;
       },
-      error: () => this.isLoading = false
+      error: () => {
+        this.isLoading = false;
+        this.toast.show('Erro ao carregar layout.', 'error');
+      }
     });
   }
 
