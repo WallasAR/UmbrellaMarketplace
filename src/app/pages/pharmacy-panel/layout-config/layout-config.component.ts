@@ -34,6 +34,8 @@ export class LayoutConfigComponent implements OnInit {
   isLoading = true;
   isSaving = false;
   sidebarTab: 'components' | 'section' = 'components';
+  sidebarOpen = true;
+  readonly sidebarWidth = 380;
 
   editingSection: LayoutSection | null = null;
 
@@ -55,6 +57,10 @@ export class LayoutConfigComponent implements OnInit {
       this.apiUrl = `${environment.apiUrl}/admin/layout`;
     }
     this.fetchLayout();
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 
   get displaySections(): LayoutSection[] {
@@ -236,6 +242,7 @@ export class LayoutConfigComponent implements OnInit {
   editSection(section: LayoutSection) {
     this.editingSection = section;
     this.sidebarTab = 'section';
+    this.sidebarOpen = true;
   }
 
   closeEditor() {
