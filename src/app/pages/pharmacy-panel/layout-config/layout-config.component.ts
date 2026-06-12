@@ -30,6 +30,17 @@ import {
   ensureProductSliderConfig,
   getProductSliderDisplay
 } from '../../../utils/product-slider.util';
+import {
+  ChromeLinkItem,
+  ensureThemeChromeConfig,
+  FooterColumnConfig,
+  FooterConfig,
+  getFooterConfig,
+  getNavbarConfig,
+  NavbarConfig,
+  SocialLinkConfig,
+  ThemeLayoutConfig
+} from '../../../utils/layout-chrome.util';
 
 export interface PharmacyLayout {
   id?: string;
@@ -44,9 +55,9 @@ type LayoutSectionWithProducts = LayoutSection & {
   spotlightProduct?: Product | null;
 };
 
-interface ThemeConfig {
-  primary_color: string;
-}
+interface ThemeConfig extends ThemeLayoutConfig {}
+
+type LayoutSidebarTab = 'components' | 'section' | 'navbar' | 'footer';
 
 @Component({
   selector: 'app-layout-config',
@@ -60,7 +71,7 @@ export class LayoutConfigComponent implements OnInit {
   layout: PharmacyLayout | null = null;
   isLoading = true;
   isSaving = false;
-  sidebarTab: 'components' | 'section' = 'components';
+  sidebarTab: LayoutSidebarTab = 'components';
   sidebarOpen = true;
   readonly sidebarWidth = 380;
 
@@ -225,10 +236,37 @@ export class LayoutConfigComponent implements OnInit {
         title: 'Theme Settings',
         display_order: -1,
         items: [],
-        config: { primary_color: '#F74838' }
+        config: ensureThemeChromeConfig({ primary_color: '#F74838' })
       };
       this.layout.sections.push(themeSection);
+      return;
     }
+    themeSection.config = ensureThemeChromeConfig(themeSection.config || { primary_color: '#F74838' });
+  }
+
+  private get themeSection(): LayoutSection {
+    this.ensureThemeConfig();
+    return this.layout!.sections.find((s) => s.section_type === 'theme_config')!;
+  }
+
+  get navbarConfig(): NavbarConfig {
+    return getNavbarConfig(this.themeConfig);
+  }
+
+  get footerConfig(): FooterConfig {
+    return getFooterConfig(this.themeConfig);
+  }
+
+  get navbarDraft(): NavbarConfig {
+    const config = this.themeSection.config as ThemeLayoutConfig;
+    if (!config.navbar) config.navbar = getNavbarConfig(config);
+    return config.navbar as NavbarConfig;
+  }
+
+  get footerDraft(): FooterConfig {
+    const config = this.themeSection.config as ThemeLayoutConfig;
+    if (!config.footer) config.footer = getFooterConfig(config);
+    return config.footer as FooterConfig;
   }
 
   get themeConfig(): ThemeConfig {
@@ -445,6 +483,81 @@ export class LayoutConfigComponent implements OnInit {
     this.touchPreview();
   }
 
+  editNavbar() {
+    this.editingSection = null;
+    this.sidebarTab = 'navbar';
+    this.sidebarOpen = true;
+    this.ensureThemeConfig();
+  }
+
+  editFooter() {
+    this.editingSection = null;
+    this.sidebarTab = 'footer';
+    this.sidebarOpen = true;
+    this.ensureThemeConfig();
+  }
+
+  addNavbarLink() {
+    this.navbarDraft.category_links.push({
+      id: crypto.randomUUID(),
+      label: 'Novo link',
+      link_url: '/home',
+      visible: true
+    });
+    this.touchPreview();
+  }
+
+  removeNavbarLink(index: number) {
+    this.navbarDraft.category_links.splice(index, 1);
+    this.touchPreview();
+  }
+
+  addFooterColumnLink(column: FooterColumnConfig) {
+    column.links.push({
+      id: crypto.randomUUID(),
+      label: 'Novo link',
+      link_url: '/home',
+      visible: true
+    });
+    this.touchPreview();
+  }
+
+  removeFooterColumnLink(column: FooterColumnConfig, index: number) {
+    column.links.splice(index, 1);
+    this.touchPreview();
+  }
+
+  addFooterSocialLink() {
+    this.footerDraft.social_links.push({
+      id: crypto.randomUUID(),
+      label: 'Rede social',
+      url: 'https://',
+      visible: true
+    });
+    this.touchPreview();
+  }
+
+  removeFooterSocialLink(index: number) {
+    this.footerDraft.social_links.splice(index, 1);
+    this.touchPreview();
+  }
+
+  onChromeLogoSelected(event: Event, target: 'navbar' | 'footer') {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const result = e.target?.result as string;
+      const block = target === 'navbar' ? this.navbarDraft : this.footerDraft;
+      block.logo_file_data = result.split(',')[1];
+      block.logo_file_name = file.name;
+      block.logo_url = result;
+      this.touchPreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
   closeEditor() {
     this.editingSection = null;
     this.sidebarTab = 'components';
@@ -523,6 +636,12 @@ export class LayoutConfigComponent implements OnInit {
         delete item.file_data;
         delete item.file_name;
       });
+      if (section.section_type === 'theme_config' && section.config) {
+        delete section.config.navbar?.logo_file_data;
+        delete section.config.navbar?.logo_file_name;
+        delete section.config.footer?.logo_file_data;
+        delete section.config.footer?.logo_file_name;
+      }
     });
   }
 

@@ -53,10 +53,14 @@ import { DynamicLayoutSectionsComponent } from './components/dynamic-layout-sect
 import { AssetUrlPipe } from './pipes/asset-url.pipe';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { TenantService } from './services/tenant.service';
+import { LayoutChromeService } from './services/layout-chrome.service';
 import { PharmacySetupComponent } from './pages/pharmacy-setup/pharmacy-setup.component';
 
-export function initializeTenant(tenantService: TenantService) {
-  return () => tenantService.initTenant();
+export function initializeApp(tenantService: TenantService, chromeService: LayoutChromeService) {
+  return () => tenantService.initTenant().then(() => {
+    chromeService.initFromTenant();
+    return true;
+  });
 }
 
 @NgModule({
@@ -117,8 +121,8 @@ export function initializeTenant(tenantService: TenantService) {
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: initializeTenant,
-      deps: [TenantService],
+      useFactory: initializeApp,
+      deps: [TenantService, LayoutChromeService],
       multi: true
     },
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor]))

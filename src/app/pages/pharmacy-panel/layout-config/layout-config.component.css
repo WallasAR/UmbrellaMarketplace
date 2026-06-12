@@ -201,6 +201,53 @@
   color: var(--color-brand, #F74838);
 }
 
+.layout-chrome-shell {
+  position: relative;
+  cursor: pointer;
+}
+
+.layout-chrome-shell-footer {
+  margin-top: 0;
+}
+
+.layout-chrome-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  pointer-events: none;
+  z-index: 35;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.layout-chrome-shell.is-selected::after,
+.layout-chrome-shell:hover::after {
+  border-color: color-mix(in srgb, var(--color-brand, #F74838) 70%, transparent);
+  background-color: color-mix(in srgb, var(--color-brand, #F74838) 4%, transparent);
+}
+
+.layout-chrome-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.75rem;
+  z-index: 36;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: rgba(17, 24, 39, 0.82);
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.layout-chrome-shell:hover .layout-chrome-badge,
+.layout-chrome-shell.is-selected .layout-chrome-badge {
+  opacity: 1;
+}
+
 .layout-preview-scroll {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;

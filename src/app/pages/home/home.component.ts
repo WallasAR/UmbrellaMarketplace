@@ -5,6 +5,7 @@ import { Product } from '../../models/product.model';
 import { SearchService } from '../../services/search.service';
 import { ActivatedRoute } from '@angular/router';
 import { buildProductSliderApiFilters } from '../../utils/product-slider.util';
+import { LayoutChromeService } from '../../services/layout-chrome.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,8 @@ export class HomeComponent implements OnInit {
     private layoutService: LayoutService,
     private productService: ProductService,
     private searchService: SearchService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private chromeService: LayoutChromeService
   ) {}
 
   ngOnInit() {
@@ -39,6 +41,7 @@ export class HomeComponent implements OnInit {
         this.layout = data;
         const themeSection = data.sections?.find((s) => s.section_type === 'theme_config');
         this.primaryColor = themeSection?.config?.primary_color || '#F74838';
+        this.chromeService.applyFromThemeConfig(themeSection?.config);
         this.loadSectionData(data, pharmacyId);
         this.isLoading = false;
       },

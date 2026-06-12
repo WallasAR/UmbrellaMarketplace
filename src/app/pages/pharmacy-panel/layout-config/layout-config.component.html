@@ -21,8 +21,13 @@
         Preview ao vivo
       </div>
 
-      <div class="pointer-events-none select-none layout-preview-chrome">
-        <app-navbar></app-navbar>
+      <div
+        class="layout-preview-chrome layout-chrome-shell"
+        [class.is-selected]="sidebarTab === 'navbar'"
+        (click)="editNavbar()"
+      >
+        <div class="layout-chrome-badge">Navbar</div>
+        <app-navbar [config]="navbarConfig" [previewMode]="true" [accentColor]="primaryColor"></app-navbar>
       </div>
 
       <main class="pb-16 bg-gray-50 relative layout-preview-main">
@@ -88,8 +93,13 @@
         </div>
       </main>
 
-      <div class="pointer-events-none select-none layout-preview-chrome">
-        <app-footer></app-footer>
+      <div
+        class="layout-preview-chrome layout-chrome-shell layout-chrome-shell-footer"
+        [class.is-selected]="sidebarTab === 'footer'"
+        (click)="editFooter()"
+      >
+        <div class="layout-chrome-badge">Footer</div>
+        <app-footer [config]="footerConfig" [previewMode]="true" [accentColor]="primaryColor"></app-footer>
       </div>
     </div>
   </div>
@@ -126,6 +136,22 @@
         (click)="sidebarTab = 'components'"
       >
         Componentes
+      </button>
+      <button
+        type="button"
+        class="layout-sidebar-tab"
+        [class.is-active]="sidebarTab === 'navbar'"
+        (click)="editNavbar()"
+      >
+        Navbar
+      </button>
+      <button
+        type="button"
+        class="layout-sidebar-tab"
+        [class.is-active]="sidebarTab === 'footer'"
+        (click)="editFooter()"
+      >
+        Footer
       </button>
       <button
         type="button"
@@ -438,6 +464,125 @@
           <p class="rounded-xl bg-blue-50 border border-blue-100 p-3 text-xs text-blue-800">
             O preview carrega produtos reais conforme os filtros acima. No modo horizontal, arraste para rolar; na grade, use colunas e linhas ou paginação.
           </p>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="sidebarTab === 'navbar'">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Editando</p>
+            <h3 class="font-bold text-gray-800">Navbar</h3>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1" (click)="closeEditor()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-gray-700 mb-4">
+          <input type="checkbox" [(ngModel)]="navbarDraft.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300">
+          Exibir navbar
+        </label>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Logo</label>
+            <input type="text" [(ngModel)]="navbarDraft.logo_url" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="URL ou caminho da logo">
+            <input type="text" [(ngModel)]="navbarDraft.logo_alt" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Texto alternativo">
+            <input type="text" [(ngModel)]="navbarDraft.logo_link" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Link da logo (ex: /home)">
+            <input type="file" accept="image/*" (change)="onChromeLogoSelected($event, 'navbar')" class="w-full text-xs">
+          </div>
+
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="navbarDraft.show_search" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Busca</label>
+          <input *ngIf="navbarDraft.show_search" type="text" [(ngModel)]="navbarDraft.search_placeholder" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Placeholder da busca">
+
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="navbarDraft.show_location" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Localização</label>
+          <div *ngIf="navbarDraft.show_location" class="grid grid-cols-1 gap-2">
+            <input type="text" [(ngModel)]="navbarDraft.location_label" (ngModelChange)="touchPreview()" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Rótulo">
+            <input type="text" [(ngModel)]="navbarDraft.location_value" (ngModelChange)="touchPreview()" class="px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Cidade">
+          </div>
+
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="navbarDraft.show_cart" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Carrinho</label>
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="navbarDraft.show_profile" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Perfil</label>
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="navbarDraft.show_category_bar" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Barra de categorias</label>
+
+          <div *ngIf="navbarDraft.show_category_bar" class="pt-2 border-t border-gray-100">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Links da barra</label>
+              <button type="button" class="text-xs font-bold px-2 py-1 rounded text-white" [style.background-color]="primaryColor" (click)="addNavbarLink()">+ Link</button>
+            </div>
+            <div *ngFor="let link of navbarDraft.category_links; let i = index" class="border border-gray-200 rounded-xl p-3 mb-3 bg-gray-50">
+              <div class="flex items-center justify-between mb-2">
+                <label class="flex items-center gap-2 text-xs text-gray-600"><input type="checkbox" [(ngModel)]="link.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Visível</label>
+                <button type="button" class="text-xs text-red-500" (click)="removeNavbarLink(i)">Remover</button>
+              </div>
+              <input type="text" [(ngModel)]="link.label" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Texto">
+              <input type="text" [(ngModel)]="link.link_url" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="URL">
+              <label class="flex items-center gap-2 text-xs text-gray-600 mt-2"><input type="checkbox" [(ngModel)]="link.highlight" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Destaque</label>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="sidebarTab === 'footer'">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Editando</p>
+            <h3 class="font-bold text-gray-800">Footer</h3>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 p-1" (click)="closeEditor()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-gray-700 mb-4">
+          <input type="checkbox" [(ngModel)]="footerDraft.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300">
+          Exibir footer
+        </label>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Marca</label>
+            <input type="text" [(ngModel)]="footerDraft.brand_name" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Nome da marca">
+            <textarea [(ngModel)]="footerDraft.description" (ngModelChange)="touchPreview()" rows="3" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Descrição"></textarea>
+            <input type="text" [(ngModel)]="footerDraft.logo_url" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="URL da logo">
+            <input type="file" accept="image/*" (change)="onChromeLogoSelected($event, 'footer')" class="w-full text-xs">
+          </div>
+
+          <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="footerDraft.show_social" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Redes sociais</label>
+          <div *ngIf="footerDraft.show_social">
+            <button type="button" class="text-xs font-bold mb-2 px-2 py-1 rounded text-white" [style.background-color]="primaryColor" (click)="addFooterSocialLink()">+ Rede social</button>
+            <div *ngFor="let social of footerDraft.social_links; let i = index" class="border border-gray-200 rounded-xl p-3 mb-2 bg-gray-50">
+              <div class="flex justify-between mb-2">
+                <label class="flex items-center gap-2 text-xs"><input type="checkbox" [(ngModel)]="social.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Visível</label>
+                <button type="button" class="text-xs text-red-500" (click)="removeFooterSocialLink(i)">Remover</button>
+              </div>
+              <input type="text" [(ngModel)]="social.label" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Nome">
+              <input type="text" [(ngModel)]="social.url" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="URL">
+            </div>
+          </div>
+
+          <div *ngFor="let column of footerDraft.columns" class="pt-2 border-t border-gray-100">
+            <label class="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2"><input type="checkbox" [(ngModel)]="column.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> {{ column.title }}</label>
+            <input type="text" [(ngModel)]="column.title" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Título da coluna">
+            <button type="button" class="text-xs font-bold mb-2 px-2 py-1 rounded text-white" [style.background-color]="primaryColor" (click)="addFooterColumnLink(column)">+ Link</button>
+            <div *ngFor="let link of column.links; let j = index" class="border border-gray-200 rounded-lg p-2 mb-2">
+              <div class="flex justify-between mb-1">
+                <label class="flex items-center gap-2 text-xs"><input type="checkbox" [(ngModel)]="link.visible" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Visível</label>
+                <button type="button" class="text-xs text-red-500" (click)="removeFooterColumnLink(column, j)">Remover</button>
+              </div>
+              <input type="text" [(ngModel)]="link.label" (ngModelChange)="touchPreview()" class="w-full px-2 py-1.5 rounded border border-gray-200 text-sm mb-1" placeholder="Texto">
+              <input type="text" [(ngModel)]="link.link_url" (ngModelChange)="touchPreview()" class="w-full px-2 py-1.5 rounded border border-gray-200 text-sm mb-1" placeholder="URL">
+              <label class="flex items-center gap-2 text-xs"><input type="checkbox" [(ngModel)]="link.external" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Link externo</label>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-gray-100">
+            <label class="flex items-center gap-2 text-sm text-gray-700 mb-2"><input type="checkbox" [(ngModel)]="footerDraft.show_contact" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Bloco de contato</label>
+            <textarea [(ngModel)]="footerDraft.contact_address" (ngModelChange)="touchPreview()" rows="2" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Endereço"></textarea>
+            <input type="text" [(ngModel)]="footerDraft.contact_email" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="E-mail">
+            <input type="text" [(ngModel)]="footerDraft.copyright" (ngModelChange)="touchPreview()" class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm mb-2" placeholder="Copyright">
+            <label class="flex items-center gap-2 text-sm text-gray-700"><input type="checkbox" [(ngModel)]="footerDraft.show_payment_badges" (ngModelChange)="touchPreview()" class="rounded border-gray-300"> Badges de pagamento</label>
+          </div>
         </div>
       </ng-container>
 
