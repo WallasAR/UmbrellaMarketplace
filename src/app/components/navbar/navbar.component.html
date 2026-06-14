@@ -1,4 +1,4 @@
-<nav *ngIf="cfg.visible" class="w-full bg-white border-b border-gray-100 pb-2" aria-label="Navegação principal" [class.pointer-events-none]="previewMode">
+<nav *ngIf="cfg.visible" class="sticky top-0 z-50 w-full bg-white border-b border-gray-100 pb-2" aria-label="Navegação principal" [class.pointer-events-none]="previewMode">
   <div class="px-4 sm:px-6 flex items-center justify-between h-20 w-full max-w-7xl mx-auto gap-4">
     <a [routerLink]="cfg.logo_link || '/home'" class="flex shrink-0 items-center mr-2 md:mr-6" [attr.aria-label]="cfg.logo_alt">
       <img class="h-8 md:h-10 hover:animate-squash transition-transform" [src]="cfg.logo_url | assetUrl" [alt]="cfg.logo_alt">
