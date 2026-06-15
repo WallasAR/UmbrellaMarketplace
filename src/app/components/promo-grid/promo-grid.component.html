@@ -4,7 +4,7 @@
   </div>
 
   <div class="px-4 sm:px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    @for (item of (items?.length ? items : (previewMode ? [{ id: 'p1' }, { id: 'p2' }] : [])); track item.id) {
+    @for (item of (items.length ? items : (previewMode ? [{ id: 'p1' }, { id: 'p2' }] : [])); track item.id) {
       <div
         class="relative block overflow-hidden rounded-3xl bg-gray-100 shadow-sm transition-shadow group aspect-[4/3] md:aspect-auto md:h-64"
         [class.hover:shadow-lg]="!previewMode"
