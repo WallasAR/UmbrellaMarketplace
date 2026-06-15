@@ -1,4 +1,4 @@
-<div class="flex relative items-center justify-center min-h-screen bg-gradient-to-br from-[#fff1ef] via-[#fafafa] to-[#f4f4f5] px-4 sm:px-6 md:px-8 lg:px-10">
+<div class="flex relative items-center justify-center min-h-screen bg-gradient-to-br from-brand-soft via-[#fafafa] to-[#f4f4f5] px-4 sm:px-6 md:px-8 lg:px-10">
   
   <!-- Elemento de fundo decorativo -->
   <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -9,7 +9,7 @@
   <div class="bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] w-full max-w-[440px] border border-white/60 relative z-10 transition-all duration-300">
     
     <div class="mb-8 text-center">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#F74838] to-[#ff7e73] mb-4 shadow-lg shadow-[#F74838]/30">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand to-[#ff7e73] mb-4 shadow-lg shadow-brand/30">
         <img src="nav-logo.svg" alt="Logo" class="h-8 filter brightness-0 invert" />
       </div>
       <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Umbrella Farmácia</h1>
@@ -47,14 +47,14 @@
       <app-input placeholder="Senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
       
       <div class="flex justify-end pt-1">
-        <a href="javascript:void(0)" class="text-sm text-[#F74838] hover:text-[#e03d2f] font-medium transition-colors">Esqueceu a senha?</a>
+        <a href="javascript:void(0)" class="text-sm text-brand hover:text-brand-hover font-medium transition-colors">Esqueceu a senha?</a>
       </div>
 
-      <app-button [label]="loading ? 'Entrando...' : 'Entrar'" bgColor="bg-[#F74838]" hoverColor="hover:bg-[#e03d2f]" [disabled]="loading" class="w-full shadow-md shadow-[#F74838]/20" (btnClicked)="submitLogin()"/>
+      <app-button [label]="loading ? 'Entrando...' : 'Entrar'" bgColor="bg-brand" hoverColor="hover:bg-brand-hover" [disabled]="loading" class="w-full shadow-md shadow-brand/20" (btnClicked)="submitLogin()"/>
       
       <p class="text-center text-gray-600 mt-6 text-sm">
         Ainda não tem uma conta? 
-        <button type="button" class="text-[#F74838] hover:text-[#e03d2f] font-semibold transition-colors ml-1" (click)="toggleForm('register')">Registre-se</button>
+        <button type="button" class="text-brand hover:text-brand-hover font-semibold transition-colors ml-1" (click)="toggleForm('register')">Registre-se</button>
       </p>
     </form>
 
@@ -63,11 +63,11 @@
       <app-input placeholder="Senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getPass($event)"/>
       <app-input placeholder="Confirmar senha" class="w-full" [iconRight]="true" icon="pass" (getInputValue)="getConfirmPass($event)"/>
       
-      <app-button [label]="loading ? 'Registrando...' : 'Registrar'" bgColor="bg-[#F74838]" hoverColor="hover:bg-[#e03d2f]" [disabled]="loading" class="w-full shadow-md shadow-[#F74838]/20 mt-2" (btnClicked)="submitRegister()"/>
+      <app-button [label]="loading ? 'Registrando...' : 'Registrar'" bgColor="bg-brand" hoverColor="hover:bg-brand-hover" [disabled]="loading" class="w-full shadow-md shadow-brand/20 mt-2" (btnClicked)="submitRegister()"/>
       
       <p class="text-center text-gray-600 mt-6 text-sm">
         Já tem uma conta? 
-        <button type="button" class="text-[#F74838] hover:text-[#e03d2f] font-semibold transition-colors ml-1" (click)="toggleForm('login')">Entrar</button>
+        <button type="button" class="text-brand hover:text-brand-hover font-semibold transition-colors ml-1" (click)="toggleForm('login')">Entrar</button>
       </p>
     </form>
   </div>

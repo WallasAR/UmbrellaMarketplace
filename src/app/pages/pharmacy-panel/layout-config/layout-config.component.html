@@ -6,7 +6,7 @@
   <!-- Preview em tela cheia -->
   <div class="layout-preview-area">
     <div *ngIf="isLoading" class="layout-loading">
-      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#F74838]"></div>
+      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-brand"></div>
     </div>
 
     <div
@@ -195,7 +195,7 @@
           <h3 class="font-bold text-gray-800 mb-3 text-sm">Cor principal da loja</h3>
           <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
             <input type="color" [(ngModel)]="themeConfig.primary_color" (ngModelChange)="onThemeColorChange()" class="h-9 w-9 rounded cursor-pointer border-0 p-0">
-            <input type="text" [(ngModel)]="themeConfig.primary_color" (ngModelChange)="onThemeColorChange()" class="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 focus:border-[#F74838] outline-none text-xs font-mono uppercase" placeholder="#F74838">
+            <input type="text" [(ngModel)]="themeConfig.primary_color" (ngModelChange)="onThemeColorChange()" class="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 focus:border-brand outline-none text-xs font-mono uppercase" placeholder="#F74838">
           </div>
         </div>
       </ng-container>
@@ -213,12 +213,12 @@
 
         <div class="mb-5">
           <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Título da seção (opcional)</label>
-          <input type="text" [(ngModel)]="editingSection.title" (ngModelChange)="touchPreview()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm font-medium transition" placeholder="Ex: Mais Vendidos">
+          <input type="text" [(ngModel)]="editingSection.title" (ngModelChange)="touchPreview()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand outline-none text-sm font-medium transition" placeholder="Ex: Mais Vendidos">
         </div>
 
         <div class="mb-5" *ngIf="editingSection.section_type !== 'hero_carousel' && editingSection.section_type !== 'product_slider'">
           <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Subtítulo da seção (opcional)</label>
-          <input type="text" [(ngModel)]="editingSection.subtitle" (ngModelChange)="touchPreview()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition" placeholder="Ex: Aproveite as ofertas">
+          <input type="text" [(ngModel)]="editingSection.subtitle" (ngModelChange)="touchPreview()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand outline-none text-sm transition" placeholder="Ex: Aproveite as ofertas">
         </div>
 
         <div class="mb-5" *ngIf="editingSection.section_type === 'product_spotlight'">
@@ -227,7 +227,7 @@
             type="number"
             [ngModel]="editingSection.config?.product_id || ''"
             (ngModelChange)="updateSpotlightProductId(editingSection, $event)"
-            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition"
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand outline-none text-sm transition"
             placeholder="Ex: 42"
           >
           <p class="text-xs text-gray-500 mt-2">Se informado, título, preço e imagem vêm do catálogo. Os textos abaixo complementam o card.</p>
@@ -249,7 +249,7 @@
             <div
               *ngFor="let item of editingSection.items || []; let j = index"
               class="border rounded-xl p-3 relative group transition"
-              [ngClass]="editingSection.section_type === 'hero_carousel' && selectedCarouselItemIndex === j ? 'border-[#F74838] bg-red-50' : 'border-gray-200 bg-gray-50'"
+              [ngClass]="editingSection.section_type === 'hero_carousel' && selectedCarouselItemIndex === j ? 'border-brand bg-red-50' : 'border-gray-200 bg-gray-50'"
               (click)="editingSection.section_type === 'hero_carousel' ? selectCarouselItem(j) : null"
             >
               <button *ngIf="editingSection.section_type !== 'product_spotlight'" type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition" (click)="removeItem(editingSection, j); $event.stopPropagation()">
@@ -267,9 +267,9 @@
                 </select>
               </div>
 
-              <input type="text" [(ngModel)]="item.title" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'hero_carousel' ? 'Título do slide (opcional)' : editingSection.section_type === 'product_spotlight' ? 'Título do produto' : 'Título / Texto'">
-              <input *ngIf="editingSection.section_type === 'hero_carousel' || editingSection.section_type === 'promo_mosaic'" type="text" [(ngModel)]="item.subtitle" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-xs text-gray-600 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'promo_mosaic' ? 'Descrição (opcional)' : 'Subtítulo do slide (opcional)'">
-              <input type="text" [(ngModel)]="item.link_url" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-xs text-gray-500 border-b border-gray-300 focus:border-[#F74838] outline-none mb-3 pb-1" placeholder="Link de redirecionamento (URL)">
+              <input type="text" [(ngModel)]="item.title" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-sm font-bold border-b border-gray-300 focus:border-brand outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'hero_carousel' ? 'Título do slide (opcional)' : editingSection.section_type === 'product_spotlight' ? 'Título do produto' : 'Título / Texto'">
+              <input *ngIf="editingSection.section_type === 'hero_carousel' || editingSection.section_type === 'promo_mosaic'" type="text" [(ngModel)]="item.subtitle" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-xs text-gray-600 border-b border-gray-300 focus:border-brand outline-none mb-3 pb-1" [placeholder]="editingSection.section_type === 'promo_mosaic' ? 'Descrição (opcional)' : 'Subtítulo do slide (opcional)'">
+              <input type="text" [(ngModel)]="item.link_url" (ngModelChange)="touchPreview()" class="w-full bg-transparent text-xs text-gray-500 border-b border-gray-300 focus:border-brand outline-none mb-3 pb-1" placeholder="Link de redirecionamento (URL)">
 
               <div *ngIf="editingSection.section_type === 'hero_carousel'" class="mb-3">
                 <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Cor de fundo do slide</label>
@@ -306,7 +306,7 @@
                 <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
                   {{ carouselMetadata(item).image_fit === 'cover' ? 'Zoom' : 'Tamanho' }} ({{ carouselMetadata(item).image_scale }}%)
                 </label>
-                <input type="range" min="20" max="400" [ngModel]="carouselMetadata(item).image_scale" (ngModelChange)="updateCarouselScale(item, $event)" class="w-full accent-[#F74838]">
+                <input type="range" min="20" max="400" [ngModel]="carouselMetadata(item).image_scale" (ngModelChange)="updateCarouselScale(item, $event)" class="w-full accent-brand">
               </div>
 
               <div *ngIf="editingSection.section_type === 'promo_mosaic'" class="mb-3 space-y-3">
@@ -360,7 +360,7 @@
             <select
               [(ngModel)]="editingSection.config.display.layout"
               (ngModelChange)="onProductSliderDisplayChange()"
-              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#F74838] outline-none text-sm transition"
+              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand outline-none text-sm transition"
             >
               <option value="horizontal">Rolagem horizontal</option>
               <option value="grid">Grade com colunas e linhas</option>

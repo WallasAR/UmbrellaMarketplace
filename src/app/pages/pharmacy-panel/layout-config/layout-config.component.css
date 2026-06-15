@@ -147,8 +147,8 @@
 }
 
 .layout-sidebar-tab.is-active {
-  color: var(--color-brand, #F74838);
-  border-bottom: 2px solid var(--color-brand, #F74838);
+  color: var(--color-brand, var(--color-brand));
+  border-bottom: 2px solid var(--color-brand, var(--color-brand));
 }
 
 .layout-sidebar-tab:disabled {
@@ -198,7 +198,7 @@
 
 .layout-sidebar-toggle:hover {
   background: #f9fafb;
-  color: var(--color-brand, #F74838);
+  color: var(--color-brand, var(--color-brand));
 }
 
 .layout-chrome-shell {
@@ -222,8 +222,8 @@
 
 .layout-chrome-shell.is-selected::after,
 .layout-chrome-shell:hover::after {
-  border-color: color-mix(in srgb, var(--color-brand, #F74838) 70%, transparent);
-  background-color: color-mix(in srgb, var(--color-brand, #F74838) 4%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand, var(--color-brand)) 70%, transparent);
+  background-color: color-mix(in srgb, var(--color-brand, var(--color-brand)) 4%, transparent);
 }
 
 .layout-chrome-badge {
@@ -277,8 +277,8 @@
 
 .layout-section-shell:hover::after,
 .layout-section-shell.is-selected::after {
-  border-color: color-mix(in srgb, var(--color-brand, #F74838) 70%, transparent);
-  background-color: color-mix(in srgb, var(--color-brand, #F74838) 4%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand, var(--color-brand)) 70%, transparent);
+  background-color: color-mix(in srgb, var(--color-brand, var(--color-brand)) 4%, transparent);
 }
 
 .layout-section-overlay {
@@ -342,9 +342,9 @@
 .layout-section-placeholder {
   min-height: 120px;
   margin: 0.5rem 1rem;
-  border: 2px dashed var(--color-brand, #F74838);
+  border: 2px dashed var(--color-brand, var(--color-brand));
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--color-brand, #F74838) 8%, white);
+  background: color-mix(in srgb, var(--color-brand, var(--color-brand)) 8%, white);
 }
 
 .toolbox-item {
@@ -360,7 +360,7 @@
 }
 
 .toolbox-item:hover {
-  border-color: var(--color-brand, #F74838);
+  border-color: var(--color-brand, var(--color-brand));
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
@@ -373,7 +373,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border: 2px solid var(--color-brand, #F74838);
+  border: 2px solid var(--color-brand, var(--color-brand));
   border-radius: 0.9rem;
   background: #fff;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);

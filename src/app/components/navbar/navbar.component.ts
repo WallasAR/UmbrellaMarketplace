@@ -67,7 +67,7 @@ export class NavbarComponent implements OnInit, OnChanges {
       'hover:text-white': highlighted,
       'hover:border-gray-300 hover:bg-gray-50': !highlighted,
       'text-xs font-medium text-gray-600 bg-white border-gray-200': !highlighted,
-      'text-[#F74838] bg-[#fff1ef] border-[#fff1ef]': highlighted
+      'text-brand bg-brand-soft border-brand-soft': highlighted
     };
   }
 

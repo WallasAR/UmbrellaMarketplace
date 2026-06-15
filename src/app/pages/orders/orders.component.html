@@ -3,8 +3,8 @@
   <p class="text-gray-500 mb-4">Acompanhe o status das suas compras.</p>
 
   <div class="flex gap-2 mb-8">
-    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'all'" [class.border-[#F74838]]="viewMode === 'all'" [class.bg-[#fff1ef]]="viewMode === 'all'" (click)="setViewMode('all')">Todos</button>
-    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'groups'" [class.border-[#F74838]]="viewMode === 'groups'" [class.bg-[#fff1ef]]="viewMode === 'groups'" (click)="setViewMode('groups')">Multi-farmácia</button>
+    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'all'" [class.border-brand]="viewMode === 'all'" [class.bg-brand-soft]="viewMode === 'all'" (click)="setViewMode('all')">Todos</button>
+    <button type="button" class="px-4 py-2 rounded-lg text-sm border" [class.tab-active]="viewMode === 'groups'" [class.border-brand]="viewMode === 'groups'" [class.bg-brand-soft]="viewMode === 'groups'" (click)="setViewMode('groups')">Multi-farmácia</button>
   </div>
 
   @if (loading) {
@@ -18,7 +18,7 @@
     } @else {
       <div class="space-y-4">
         @for (group of orderGroups; track group.id) {
-          <article class="card-surface p-5 border-l-4 border-[#F74838]">
+          <article class="card-surface p-5 border-l-4 border-brand">
             <div class="flex flex-wrap justify-between gap-3 mb-4">
               <div>
                 <h2 class="font-semibold text-gray-800">Compra multi-farmácia</h2>
@@ -26,7 +26,7 @@
               </div>
               <div class="text-right">
                 <span class="badge-brand px-3 py-1 rounded-full text-xs font-medium">{{ statusLabel(group.status) }}</span>
-                <p class="font-bold text-[#F74838] mt-2">R$ {{ group.total_price | number:'1.2-2' }}</p>
+                <p class="font-bold text-brand mt-2">R$ {{ group.total_price | number:'1.2-2' }}</p>
               </div>
             </div>
             <div class="space-y-3">
@@ -62,12 +62,12 @@
               <h2 class="font-semibold text-gray-800">Pedido #{{ order.sessionId.slice(-8) }}</h2>
               <p class="text-sm text-gray-500">{{ order.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
               @if (order.order_group_id) {
-                <p class="text-xs text-[#F74838] mt-1">Parte de compra multi-farmácia</p>
+                <p class="text-xs text-brand mt-1">Parte de compra multi-farmácia</p>
               }
             </div>
             <div class="text-right">
               <span class="badge-brand px-3 py-1 rounded-full text-xs font-medium">{{ statusLabel(order.order_status) }}</span>
-              <p class="font-bold text-[#F74838] mt-2">R$ {{ order.total_price | number:'1.2-2' }}</p>
+              <p class="font-bold text-brand mt-2">R$ {{ order.total_price | number:'1.2-2' }}</p>
             </div>
           </div>
           <ul class="mt-4 space-y-2 text-sm text-gray-600">
@@ -77,9 +77,9 @@
           </ul>
 
           @if (order.fulfillment_mode === 'pickup' && order.pickup && order.payment_status === 'paid') {
-            <div class="mt-4 rounded-lg border border-dashed border-[#F74838]/40 bg-[#fff1ef] p-4 text-center">
+            <div class="mt-4 rounded-lg border border-dashed border-brand/40 bg-brand-soft p-4 text-center">
               <p class="text-xs text-gray-500 mb-1">Código de retirada</p>
-              <p class="text-2xl font-mono font-bold tracking-widest text-[#F74838]">{{ order.pickup.pickup_code }}</p>
+              <p class="text-2xl font-mono font-bold tracking-widest text-brand">{{ order.pickup.pickup_code }}</p>
               <p class="text-sm text-gray-600 mt-2">{{ pickupStatusLabel(order.pickup.status) }}</p>
               <p class="text-xs text-gray-400 mt-1">Válido até {{ order.pickup.expires_at | date:'dd/MM/yyyy HH:mm' }}</p>
             </div>
@@ -93,7 +93,7 @@
                 <p class="text-xs text-gray-500 mt-1">Previsão: ~{{ order.delivery.eta_minutes }} min</p>
               }
               @if (order.delivery.tracking_url) {
-                <a [href]="order.delivery.tracking_url" target="_blank" rel="noopener" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Acompanhar entrega</a>
+                <a [href]="order.delivery.tracking_url" target="_blank" rel="noopener" class="text-sm text-brand hover:underline mt-2 inline-block">Acompanhar entrega</a>
               }
               @if (order.delivery_fee) {
                 <p class="text-xs text-gray-500">Frete: R$ {{ order.delivery_fee | number:'1.2-2' }}</p>

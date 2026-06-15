@@ -7,7 +7,7 @@
 }
 
 .tab-active {
-  background: #F74838;
-  border-color: #F74838;
+  background: var(--color-brand);
+  border-color: var(--color-brand);
   color: #fff;
 }

@@ -37,7 +37,7 @@
   <!-- Content -->
   <div class="flex flex-col flex-1">
     <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mb-1">Categoria</span>
-    <h2 class="text-sm font-bold leading-snug text-gray-800 line-clamp-2 min-h-[40px] hover:text-[#F74838] cursor-pointer" [routerLink]="['/product', product().id]">
+    <h2 class="text-sm font-bold leading-snug text-gray-800 line-clamp-2 min-h-[40px] hover:text-brand cursor-pointer" [routerLink]="['/product', product().id]">
       {{ product().name }}
     </h2>
 
@@ -71,7 +71,7 @@
     <!-- Actions -->
     <div class="flex items-center gap-2 mt-auto">
       <button (click)="addToCart()"
-         class="flex-1 rounded-full border border-[#F74838] text-[#F74838] hover:bg-[#F74838] hover:text-white py-2 text-center text-xs font-bold transition-colors">
+         class="flex-1 rounded-full border border-brand text-brand hover:bg-brand hover:text-white py-2 text-center text-xs font-bold transition-colors">
         Adicionar ao Carrinho
       </button>
       <button (click)="toggleFavorite()" 

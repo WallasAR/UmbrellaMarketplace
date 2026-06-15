@@ -15,15 +15,15 @@
           <div class="flex gap-2 mb-4">
             <button type="button"
               class="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition"
-              [class.border-[#F74838]]="fulfillmentMode === 'delivery'"
-              [class.bg-[#fff1ef]]="fulfillmentMode === 'delivery'"
+              [class.border-brand]="fulfillmentMode === 'delivery'"
+              [class.bg-brand-soft]="fulfillmentMode === 'delivery'"
               (click)="setFulfillmentMode('delivery')">
               Entrega
             </button>
             <button type="button"
               class="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition"
-              [class.border-[#F74838]]="fulfillmentMode === 'pickup'"
-              [class.bg-[#fff1ef]]="fulfillmentMode === 'pickup'"
+              [class.border-brand]="fulfillmentMode === 'pickup'"
+              [class.bg-brand-soft]="fulfillmentMode === 'pickup'"
               (click)="setFulfillmentMode('pickup')">
               Retirada na farmácia
             </button>
@@ -35,10 +35,10 @@
               <p class="text-sm text-gray-600">{{ profile.address }}</p>
               <p class="text-sm text-gray-600">CEP: {{ profile.cep }} · Tel: {{ profile.phone }}</p>
             }
-            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Editar perfil</a>
+            <a routerLink="/profile" class="text-sm text-brand hover:underline mt-2 inline-block">Editar perfil</a>
           } @else {
             <p class="text-sm text-gray-600">Complete seu perfil para agilizar a entrega.</p>
-            <a routerLink="/profile" class="text-sm text-[#F74838] hover:underline mt-2 inline-block">Completar perfil</a>
+            <a routerLink="/profile" class="text-sm text-brand hover:underline mt-2 inline-block">Completar perfil</a>
           }
 
           @if (fulfillmentMode === 'delivery') {
@@ -59,7 +59,7 @@
                 </p>
               }
               @if (userLat == null) {
-                <button type="button" class="text-sm text-[#F74838] hover:underline" (click)="requestLocation()">
+                <button type="button" class="text-sm text-brand hover:underline" (click)="requestLocation()">
                   Permitir localização para cotar frete
                 </button>
               } @else if (quotingDelivery) {
@@ -165,7 +165,7 @@
         </div>
         <div class="flex justify-between text-lg font-bold mb-6">
           <span>Total</span>
-          <span class="text-[#F74838]">R$ {{ (cartService.subtotal() + (fulfillmentMode === 'delivery' ? totalDeliveryFee : 0)) | number:'1.2-2' }}</span>
+          <span class="text-brand">R$ {{ (cartService.subtotal() + (fulfillmentMode === 'delivery' ? totalDeliveryFee : 0)) | number:'1.2-2' }}</span>
         </div>
 
         @if (!canFinalize()) {
@@ -187,7 +187,7 @@
           <div class="mt-6 space-y-3">
             <p class="text-sm font-medium text-gray-700">Pagamentos por farmácia</p>
             @for (session of multiSessions; track session.pharmacyId) {
-              <a [href]="session.url" class="block rounded-lg border border-[#F74838]/30 p-3 text-sm hover:bg-[#fff1ef]">
+              <a [href]="session.url" class="block rounded-lg border border-brand/30 p-3 text-sm hover:bg-brand-soft">
                 <span class="font-semibold text-gray-800">{{ session.pharmacyName }}</span>
                 <span class="block text-gray-500">{{ session.items }} item(ns) · Pagar agora</span>
               </a>

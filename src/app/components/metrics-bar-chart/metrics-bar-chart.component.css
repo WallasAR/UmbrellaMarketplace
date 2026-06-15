@@ -25,7 +25,7 @@
 
 .chart-bar {
   width: 70%;
-  background: #F74838;
+  background: var(--color-brand);
   border-radius: 0.35rem 0.35rem 0 0;
   min-height: 8px;
 }

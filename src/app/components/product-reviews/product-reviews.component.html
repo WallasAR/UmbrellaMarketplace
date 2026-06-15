@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between mb-4">
     <h2 id="reviews-title" class="text-xl font-bold text-gray-800">Avaliações</h2>
     @if (count > 0) {
-      <p class="text-sm text-gray-600"><span class="font-bold text-[#F74838]">{{ average }}</span> · {{ count }} avaliações</p>
+      <p class="text-sm text-gray-600"><span class="font-bold text-brand">{{ average }}</span> · {{ count }} avaliações</p>
     }
   </div>
 
@@ -26,7 +26,7 @@
       @for (review of reviews; track review.id) {
         <article class="border-b border-gray-100 pb-4">
           <div class="flex items-center gap-2">
-            <span class="text-[#F74838] font-bold">{{ review.rating }}</span>
+            <span class="text-brand font-bold">{{ review.rating }}</span>
             <span class="text-sm text-gray-500">{{ review.User?.name || 'Cliente' }}</span>
           </div>
           @if (review.comment) {

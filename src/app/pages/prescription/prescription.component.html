@@ -9,7 +9,7 @@
     <!-- Loading / Error -->
     @if (isLoadingMedicine) {
       <div class="flex items-center justify-center h-32">
-        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F74838]"></div>
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand"></div>
       </div>
     }
     
@@ -44,7 +44,7 @@
               </div>
               <h4 class="font-bold text-gray-800 text-lg leading-tight mb-2">{{ medicine.name }}</h4>
               <p class="text-gray-500 text-sm mb-4">Quantidade: {{ quantity }}</p>
-              <div class="text-[#F74838] font-extrabold text-xl">R$ {{ (medicine.price * quantity) | number:'1.2-2' }}</div>
+              <div class="text-brand font-extrabold text-xl">R$ {{ (medicine.price * quantity) | number:'1.2-2' }}</div>
             </div>
             
             <div class="mt-6 pt-4 border-t border-gray-100">
@@ -100,7 +100,7 @@
                 (click)="sendPrescription()" 
                 [disabled]="!selectedFile || isUploading"
                 class="flex-[2] py-4 rounded-xl font-bold text-lg flex items-center justify-center transition-all shadow-md"
-                [ngClass]="selectedFile ? 'bg-[#F74838] text-white hover:bg-red-600 hover:shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
+                [ngClass]="selectedFile ? 'bg-brand text-white hover:bg-red-600 hover:shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
                 
                 @if (!isUploading) {
                   <span>Adicionar ao Carrinho</span>
@@ -126,7 +126,7 @@
       <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-10 text-center">
         <h3 class="text-xl font-bold text-gray-800 mb-2">Nenhum produto selecionado</h3>
         <p class="text-gray-500 mb-6">Você precisa selecionar um medicamento controlado no catálogo para anexar a receita.</p>
-        <button routerLink="/category" class="bg-[#F74838] text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-red-600">
+        <button routerLink="/category" class="bg-brand text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-red-600">
           Voltar ao Catálogo
         </button>
       </div>

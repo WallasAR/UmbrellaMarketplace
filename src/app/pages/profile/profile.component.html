@@ -43,7 +43,7 @@
               <p class="font-medium text-gray-800">{{ alert.Medicine?.name || 'Medicamento' }}</p>
               <p class="text-sm text-gray-500">Avisar quando baixar de R$ {{ alert.target_price | number:'1.2-2' }}</p>
             </div>
-            <button type="button" class="text-sm text-[#F74838]" (click)="removePriceAlert(alert.id)">Remover</button>
+            <button type="button" class="text-sm text-brand" (click)="removePriceAlert(alert.id)">Remover</button>
           </div>
         }
       </div>

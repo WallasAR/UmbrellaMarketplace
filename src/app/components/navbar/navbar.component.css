@@ -27,6 +27,6 @@
   transform: translateX(-50%);
   width: 80%;
   height: 4px;
-  background-color: #F74838;
+  background-color: var(--color-brand);
   transition: all 0.3s ease;
 }

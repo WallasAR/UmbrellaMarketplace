@@ -12,7 +12,7 @@
 
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="flex-1">
-        <div class="relative rounded-2xl bg-gradient-to-br from-gray-50 to-[#fff1ef] p-6">
+        <div class="relative rounded-2xl bg-gradient-to-br from-gray-50 to-brand-soft p-6">
           <div class="flex items-center justify-center h-72 lg:h-96">
             <img [src]="imageArray[currentIndex]" appImgFallback="/defaultmed.png" [alt]="product.name" class="object-contain w-full h-full max-h-80 lg:max-h-96">
           </div>
@@ -35,14 +35,14 @@
         <div class="mb-4">
           @if (product.discount) {
             <p class="text-lg text-gray-400 line-through">R$ {{ product.price | number:'1.2-2' }}</p>
-            <p class="text-3xl font-bold text-[#F74838]">R$ {{ finalPrice | number:'1.2-2' }}</p>
+            <p class="text-3xl font-bold text-brand">R$ {{ finalPrice | number:'1.2-2' }}</p>
           } @else {
             <p class="text-3xl font-bold text-gray-800">R$ {{ product.price | number:'1.2-2' }}</p>
           }
         </div>
 
         @if (product.requires_prescription) {
-          <p class="text-sm text-[#F74838] font-medium mb-4">Medicamento sob prescrição médica</p>
+          <p class="text-sm text-brand font-medium mb-4">Medicamento sob prescrição médica</p>
           <app-prescription-upload [medicineId]="product.id" [medicineName]="product.name" />
         }
 
@@ -57,9 +57,9 @@
               </div>
               <app-button [label]="loading ? 'Adicionando...' : 'Adicionar ao carrinho'" bgColor="bg-gray-800" hoverColor="hover:bg-gray-900" [disabled]="loading" (btnClicked)="addToCart()" class="flex-1" />
             </div>
-            <app-button [label]="loading ? 'Processando...' : 'Comprar agora'" bgColor="bg-[#F74838]" hoverColor="hover:bg-[#e03d2f]" [disabled]="loading" (btnClicked)="buyNow()" class="w-full" />
+            <app-button [label]="loading ? 'Processando...' : 'Comprar agora'" bgColor="bg-brand" hoverColor="hover:bg-brand-hover" [disabled]="loading" (btnClicked)="buyNow()" class="w-full" />
             @if (product.allows_subscription) {
-              <button type="button" class="w-full rounded-lg border border-[#F74838] text-[#F74838] font-semibold py-3 hover:bg-[#fff1ef]" [disabled]="loading" (click)="subscribe()">
+              <button type="button" class="w-full rounded-lg border border-brand text-brand font-semibold py-3 hover:bg-brand-soft" [disabled]="loading" (click)="subscribe()">
                 Assinar entrega mensal
               </button>
             }
@@ -91,12 +91,12 @@
             }
             <div class="space-y-2">
               @for (alt of alternatives!.alternatives.slice(0, 3); track alt.id) {
-                <a [routerLink]="['/product', alt.id]" class="flex justify-between items-center rounded-lg bg-white px-3 py-2 text-sm hover:border-[#F74838] border border-transparent">
+                <a [routerLink]="['/product', alt.id]" class="flex justify-between items-center rounded-lg bg-white px-3 py-2 text-sm hover:border-brand border border-transparent">
                   <span>
                     <span class="font-medium text-gray-800">{{ alt.name }}</span>
                     <span class="block text-xs text-gray-500">{{ alt.Pharmacy?.name }} · {{ alt.medicine_type === 'generic' ? 'Genérico' : 'Referência' }}</span>
                   </span>
-                  <span class="font-semibold text-[#F74838]">R$ {{ alt.final_price | number:'1.2-2' }}</span>
+                  <span class="font-semibold text-brand">R$ {{ alt.final_price | number:'1.2-2' }}</span>
                 </a>
               }
             </div>

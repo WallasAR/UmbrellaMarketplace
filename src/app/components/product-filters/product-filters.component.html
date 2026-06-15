@@ -5,7 +5,7 @@
       <h3 class="text-sm font-bold text-gray-800">Filtros</h3>
       <div class="h-4 w-px bg-gray-200"></div>
       <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-900 transition-colors">
-        <input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838]" [checked]="nearbyEnabled" (change)="toggleNearby($any($event.target).checked)" [disabled]="geoLoading" />
+        <input type="checkbox" class="rounded text-brand focus:ring-brand" [checked]="nearbyEnabled" (change)="toggleNearby($any($event.target).checked)" [disabled]="geoLoading" />
         <span class="flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-emerald-500">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -24,7 +24,7 @@
 
     <!-- Minimal Sort Select -->
     <div class="relative">
-      <select class="appearance-none bg-white border border-gray-200 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-xs font-medium hover:border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#F74838] transition-colors cursor-pointer" [(ngModel)]="filters.sort" (change)="emitFilters()">
+      <select class="appearance-none bg-white border border-gray-200 text-gray-700 py-1.5 pl-3 pr-8 rounded-full text-xs font-medium hover:border-gray-300 focus:outline-none focus:ring-1 focus:ring-brand transition-colors cursor-pointer" [(ngModel)]="filters.sort" (change)="emitFilters()">
         <option value="name_asc">A-Z</option>
         <option value="price_asc">Menor preço</option>
         <option value="price_desc">Maior preço</option>
@@ -63,13 +63,13 @@
       @for (cat of categories; track cat) {
         <button type="button" 
           class="shrink-0 px-4 py-1.5 rounded-full text-sm font-medium border transition-colors shadow-sm"
-          [class.bg-[#F74838]]="filters.category === cat"
+          [class.bg-brand]="filters.category === cat"
           [class.text-white]="filters.category === cat"
-          [class.border-[#F74838]]="filters.category === cat"
+          [class.border-brand]="filters.category === cat"
           [class.bg-white]="filters.category !== cat"
           [class.text-gray-700]="filters.category !== cat"
           [class.border-gray-200]="filters.category !== cat"
-          [class.hover:border-[#F74838]]="filters.category !== cat"
+          [class.hover:border-brand]="filters.category !== cat"
           (click)="toggleCategory(cat)">
           {{ cat }}
         </button>

@@ -3,7 +3,7 @@
   <!-- Sidebar -->
   <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-10 shadow-sm">
     <div class="h-16 flex items-center px-6 border-b border-gray-100">
-      <div class="w-8 h-8 bg-red-50 text-[#F74838] rounded-lg flex items-center justify-center mr-3 font-bold text-lg">
+      <div class="w-8 h-8 bg-red-50 text-brand rounded-lg flex items-center justify-center mr-3 font-bold text-lg">
         {{ dashboard?.pharmacy?.name?.charAt(0) || 'F' }}
       </div>
       <span class="text-lg font-bold text-gray-800 tracking-tight truncate">{{ dashboard?.pharmacy?.name || 'Carregando...' }}</span>
@@ -14,7 +14,7 @@
         @if (canShowTab('dashboard')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'dashboard'" [class.text-[#F74838]]="activeTab === 'dashboard'" [class.text-gray-600]="activeTab !== 'dashboard'" [class.hover:bg-gray-50]="activeTab !== 'dashboard'"
+              [class.bg-red-50]="activeTab === 'dashboard'" [class.text-brand]="activeTab === 'dashboard'" [class.text-gray-600]="activeTab !== 'dashboard'" [class.hover:bg-gray-50]="activeTab !== 'dashboard'"
               (click)="setTab('dashboard')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
               Resumo
@@ -24,7 +24,7 @@
         @if (canShowTab('prescriptions')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'prescriptions'" [class.text-[#F74838]]="activeTab === 'prescriptions'" [class.text-gray-600]="activeTab !== 'prescriptions'" [class.hover:bg-gray-50]="activeTab !== 'prescriptions'"
+              [class.bg-red-50]="activeTab === 'prescriptions'" [class.text-brand]="activeTab === 'prescriptions'" [class.text-gray-600]="activeTab !== 'prescriptions'" [class.hover:bg-gray-50]="activeTab !== 'prescriptions'"
               (click)="setTab('prescriptions')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Receitas
@@ -34,7 +34,7 @@
         @if (canShowTab('products')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'products'" [class.text-[#F74838]]="activeTab === 'products'" [class.text-gray-600]="activeTab !== 'products'" [class.hover:bg-gray-50]="activeTab !== 'products'"
+              [class.bg-red-50]="activeTab === 'products'" [class.text-brand]="activeTab === 'products'" [class.text-gray-600]="activeTab !== 'products'" [class.hover:bg-gray-50]="activeTab !== 'products'"
               (click)="setTab('products')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
               Estoque
@@ -42,7 +42,7 @@
           </li>
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'boosts'" [class.text-[#F74838]]="activeTab === 'boosts'" [class.text-gray-600]="activeTab !== 'boosts'" [class.hover:bg-gray-50]="activeTab !== 'boosts'"
+              [class.bg-red-50]="activeTab === 'boosts'" [class.text-brand]="activeTab === 'boosts'" [class.text-gray-600]="activeTab !== 'boosts'" [class.hover:bg-gray-50]="activeTab !== 'boosts'"
               (click)="setTab('boosts')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
               Anúncios
@@ -52,7 +52,7 @@
         @if (canShowTab('batches')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'batches'" [class.text-[#F74838]]="activeTab === 'batches'" [class.text-gray-600]="activeTab !== 'batches'" [class.hover:bg-gray-50]="activeTab !== 'batches'"
+              [class.bg-red-50]="activeTab === 'batches'" [class.text-brand]="activeTab === 'batches'" [class.text-gray-600]="activeTab !== 'batches'" [class.hover:bg-gray-50]="activeTab !== 'batches'"
               (click)="setTab('batches')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
               Lotes
@@ -62,7 +62,7 @@
         @if (canShowTab('orders')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'orders'" [class.text-[#F74838]]="activeTab === 'orders'" [class.text-gray-600]="activeTab !== 'orders'" [class.hover:bg-gray-50]="activeTab !== 'orders'"
+              [class.bg-red-50]="activeTab === 'orders'" [class.text-brand]="activeTab === 'orders'" [class.text-gray-600]="activeTab !== 'orders'" [class.hover:bg-gray-50]="activeTab !== 'orders'"
               (click)="setTab('orders')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
               Pedidos
@@ -72,7 +72,7 @@
         @if (canShowTab('alerts')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'alerts'" [class.text-[#F74838]]="activeTab === 'alerts'" [class.text-gray-600]="activeTab !== 'alerts'" [class.hover:bg-gray-50]="activeTab !== 'alerts'"
+              [class.bg-red-50]="activeTab === 'alerts'" [class.text-brand]="activeTab === 'alerts'" [class.text-gray-600]="activeTab !== 'alerts'" [class.hover:bg-gray-50]="activeTab !== 'alerts'"
               (click)="setTab('alerts')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
               Alertas
@@ -82,7 +82,7 @@
         @if (canShowTab('financial')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'financial'" [class.text-[#F74838]]="activeTab === 'financial'" [class.text-gray-600]="activeTab !== 'financial'" [class.hover:bg-gray-50]="activeTab !== 'financial'"
+              [class.bg-red-50]="activeTab === 'financial'" [class.text-brand]="activeTab === 'financial'" [class.text-gray-600]="activeTab !== 'financial'" [class.hover:bg-gray-50]="activeTab !== 'financial'"
               (click)="setTab('financial')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               Financeiro
@@ -92,7 +92,7 @@
         @if (canShowTab('team')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'team'" [class.text-[#F74838]]="activeTab === 'team'" [class.text-gray-600]="activeTab !== 'team'" [class.hover:bg-gray-50]="activeTab !== 'team'"
+              [class.bg-red-50]="activeTab === 'team'" [class.text-brand]="activeTab === 'team'" [class.text-gray-600]="activeTab !== 'team'" [class.hover:bg-gray-50]="activeTab !== 'team'"
               (click)="setTab('team')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
               Equipe
@@ -102,7 +102,7 @@
         @if (canShowTab('dashboard')) {
           <li>
             <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-              [class.bg-red-50]="activeTab === 'layout'" [class.text-[#F74838]]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
+              [class.bg-red-50]="activeTab === 'layout'" [class.text-brand]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
               (click)="setTab('layout')">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
               Layout
@@ -140,7 +140,7 @@
            activeTab === 'team' ? 'Equipe' : 'Layout' }}
       </h1>
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-red-100 text-[#F74838] flex items-center justify-center text-sm font-bold border border-red-200">
+        <div class="w-8 h-8 rounded-full bg-red-100 text-brand flex items-center justify-center text-sm font-bold border border-red-200">
           {{ dashboard?.pharmacy?.name?.charAt(0) || 'F' }}
         </div>
       </div>
@@ -151,10 +151,10 @@
       
       @if (activeTab === 'dashboard' && dashboard) {
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Produtos</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.productCount }}</p></div>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Lotes</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.batchCount }}</p></div>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Pedidos</p><p class="text-3xl font-bold text-[#F74838]">{{ dashboard.orderCount }}</p></div>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Receita</p><p class="text-3xl font-bold text-[#F74838]">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Produtos</p><p class="text-3xl font-bold text-brand">{{ dashboard.productCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Lotes</p><p class="text-3xl font-bold text-brand">{{ dashboard.batchCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Pedidos</p><p class="text-3xl font-bold text-brand">{{ dashboard.orderCount }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Receita</p><p class="text-3xl font-bold text-brand">R$ {{ dashboard.revenue | number:'1.2-2' }}</p></div>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-wrap justify-between items-center gap-4 mb-4">
@@ -186,7 +186,7 @@
           <div class="grid sm:grid-cols-3 gap-4 mt-4">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <p class="text-sm font-medium text-gray-500 mb-1">Taxa de conversão (30d)</p>
-              <p class="text-3xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p>
+              <p class="text-3xl font-bold text-brand">{{ metrics.conversionRate }}%</p>
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <p class="text-sm font-medium text-gray-500 mb-1">Checkouts / Pagos</p>
@@ -194,7 +194,7 @@
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <p class="text-sm font-medium text-gray-500 mb-1">Receita paga (30d)</p>
-              <p class="text-3xl font-bold text-[#F74838]">R$ {{ metrics.paidRevenue | number:'1.2-2' }}</p>
+              <p class="text-3xl font-bold text-brand">R$ {{ metrics.paidRevenue | number:'1.2-2' }}</p>
             </div>
           </div>
           @if (conversionChart.length) {
@@ -252,7 +252,7 @@
               </div>
               <div class="flex gap-2">
                 <button type="button" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-5 py-2.5 rounded-xl font-bold transition text-sm" (click)="reviewPrescription(rx.id, 'approved')">Aprovar Receita</button>
-                <button type="button" class="px-5 py-2.5 text-sm rounded-xl border border-gray-200 text-[#F74838] hover:bg-red-50 font-bold transition" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
+                <button type="button" class="px-5 py-2.5 text-sm rounded-xl border border-gray-200 text-brand hover:bg-red-50 font-bold transition" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
               </div>
             </div>
           } @empty {
@@ -277,20 +277,20 @@
             <input type="number" min="1" max="10" class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm" [(ngModel)]="boostForm.priority" placeholder="Prioridade (1-10)" />
           </div>
           <div class="mt-4 flex justify-end">
-            <button type="button" class="bg-[#F74838] hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="createBoost()">Ativar patrocínio</button>
+            <button type="button" class="bg-brand hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="createBoost()">Ativar patrocínio</button>
           </div>
         </div>
 
         @if (boostMetrics) {
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
             <h3 class="font-bold text-gray-800 mb-2">Métricas de cliques (30d)</h3>
-            <p class="text-4xl font-bold text-[#F74838]">{{ boostMetrics.total_clicks }}<span class="text-lg text-gray-400 font-normal ml-2">cliques totais</span></p>
+            <p class="text-4xl font-bold text-brand">{{ boostMetrics.total_clicks }}<span class="text-lg text-gray-400 font-normal ml-2">cliques totais</span></p>
             @if (boostMetrics.by_medicine.length) {
               <div class="mt-6 space-y-2">
                 @for (row of boostMetrics.by_medicine.slice(0, 5); track row.medicine_id) {
                   <div class="flex justify-between items-center text-sm p-3 bg-gray-50 rounded-lg">
                     <span class="font-medium text-gray-800">{{ row.medicine_name || 'Produto' }}</span>
-                    <span class="font-bold text-[#F74838]">{{ row.clicks }} clicks</span>
+                    <span class="font-bold text-brand">{{ row.clicks }} clicks</span>
                   </div>
                 }
               </div>
@@ -306,7 +306,7 @@
                 <p class="text-sm text-gray-500 font-medium mt-1">Válido até {{ boost.ends_at | date:'dd/MM/yyyy' }} · Prioridade <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded">{{ boost.priority }}</span></p>
               </div>
               @if (boost.active) {
-                <button type="button" class="px-5 py-2.5 text-sm font-bold text-[#F74838] bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeBoost(boost.id)">Desativar impulsionamento</button>
+                <button type="button" class="px-5 py-2.5 text-sm font-bold text-brand bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeBoost(boost.id)">Desativar impulsionamento</button>
               } @else {
                 <span class="text-sm font-bold text-gray-400 uppercase tracking-wide">Inativo</span>
               }
@@ -339,8 +339,8 @@
             <input class="rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition text-sm sm:col-span-2 lg:col-span-3" placeholder="Sintomas (separados por vírgula, ex: febre, dor de cabeça)" [(ngModel)]="productForm.symptomsInput">
           </div>
           <div class="flex flex-wrap gap-6 mt-4 text-sm font-medium text-gray-700">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838]" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838]" [(ngModel)]="productForm.allows_subscription"> Permite assinatura mensal</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-brand focus:ring-brand" [(ngModel)]="productForm.requires_prescription"> Exige receita</label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-brand focus:ring-brand" [(ngModel)]="productForm.allows_subscription"> Permite assinatura mensal</label>
           </div>
           <div class="flex justify-end mt-4">
             <button type="button" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl hover:bg-gray-700 transition shadow-sm" (click)="createProduct()">Cadastrar produto no estoque</button>
@@ -422,7 +422,7 @@
                     </div>
                     <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-gray-200 text-blue-600 bg-blue-50 hover:bg-blue-100 transition" (click)="loadPriceBenchmark(product.id)">Termômetro</button>
                     <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition" (click)="startEdit(product)">Editar</button>
-                    <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-red-100 text-[#F74838] bg-red-50 hover:bg-red-100 transition" (click)="deleteProduct(product.id)">Remover</button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium rounded-xl border border-red-100 text-brand bg-red-50 hover:bg-red-100 transition" (click)="deleteProduct(product.id)">Remover</button>
                   </div>
                 </div>
               }
@@ -465,7 +465,7 @@
                 </div>
                 <p class="text-sm text-gray-500 font-medium mt-2">Vence em: <span class="text-gray-800">{{ batch.expiry_date | date:'dd/MM/yyyy' }}</span></p>
               </div>
-              <button type="button" class="px-5 py-2 text-sm font-medium rounded-xl border border-red-100 text-[#F74838] hover:bg-red-50 transition" (click)="deleteBatch(batch.id)">Excluir Lote</button>
+              <button type="button" class="px-5 py-2 text-sm font-medium rounded-xl border border-red-100 text-brand hover:bg-red-50 transition" (click)="deleteBatch(batch.id)">Excluir Lote</button>
             </div>
           } @empty {
             <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
@@ -476,12 +476,12 @@
       }
 
       @if (activeTab === 'orders') {
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 border-l-4 border-l-[#F74838]">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 border-l-4 border-l-brand">
           <h2 class="font-bold text-gray-800 text-lg mb-2">Retirada na Loja (Click & Collect)</h2>
           <p class="text-sm text-gray-500 mb-4">Insira o código fornecido pelo cliente para concluir um pedido de retirada.</p>
           <div class="flex gap-3">
             <input class="flex-1 max-w-sm rounded-xl border border-gray-200 px-4 py-2.5 bg-gray-50 focus:bg-white transition font-mono uppercase text-lg tracking-widest text-center placeholder-gray-400" [(ngModel)]="pickupCodeInput" placeholder="EX: ABC-1234" />
-            <button type="button" class="bg-[#F74838] hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="confirmPickup()">Confirmar Retirada</button>
+            <button type="button" class="bg-brand hover:bg-red-600 text-white font-medium px-6 py-2.5 rounded-xl transition" (click)="confirmPickup()">Confirmar Retirada</button>
           </div>
         </div>
 
@@ -561,12 +561,12 @@
           </div>
 
           <div>
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#F74838]"></div> Lotes Perto do Vencimento</h2>
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-brand"></div> Lotes Perto do Vencimento</h2>
             <div class="grid gap-3">
               @for (batch of alerts.expiringBatches; track batch.id) {
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
                   <p class="font-bold text-gray-800 mb-1">{{ batch.Medicine?.name }}</p>
-                  <p class="text-sm font-medium text-[#F74838]">Lote <span class="font-mono">{{ batch.batch_number }}</span> · Vence dia {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
+                  <p class="text-sm font-medium text-brand">Lote <span class="font-mono">{{ batch.batch_number }}</span> · Vence dia {{ batch.expiry_date | date:'dd/MM/yyyy' }}</p>
                 </div>
               } @empty {
                 <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-6 text-center">
@@ -611,7 +611,7 @@
                 </div>
                 <div class="flex gap-2">
                   <button type="button" class="px-4 py-2 text-sm font-bold border border-gray-200 rounded-xl hover:bg-gray-50 transition" (click)="startEditPermissions(member)">Gerir Permissões</button>
-                  <button type="button" class="px-4 py-2 text-sm font-bold text-[#F74838] border border-red-100 bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeTeamMember(member.id)">Remover</button>
+                  <button type="button" class="px-4 py-2 text-sm font-bold text-brand border border-red-100 bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="removeTeamMember(member.id)">Remover</button>
                 </div>
               </div>
               
@@ -627,7 +627,7 @@
                   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                     @for (perm of teamPermissions; track perm) {
                       <label class="flex items-center gap-3 text-sm font-medium text-gray-700 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-red-200 transition">
-                        <input type="checkbox" class="rounded text-[#F74838] focus:ring-[#F74838] w-4 h-4" [checked]="editingPermissions.includes(perm)" (change)="toggleEditingPermission(perm)" />
+                        <input type="checkbox" class="rounded text-brand focus:ring-brand w-4 h-4" [checked]="editingPermissions.includes(perm)" (change)="toggleEditingPermission(perm)" />
                         {{ permissionLabel(perm) }}
                       </label>
                     }

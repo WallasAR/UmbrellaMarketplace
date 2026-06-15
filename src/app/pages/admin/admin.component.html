@@ -3,17 +3,17 @@
   <!-- Sidebar -->
   <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-10 shadow-sm">
     <div class="h-16 flex items-center px-6 border-b border-gray-100">
-      <div class="w-8 h-8 bg-red-50 text-[#F74838] rounded-lg flex items-center justify-center mr-3 font-bold text-lg">
+      <div class="w-8 h-8 bg-red-50 text-brand rounded-lg flex items-center justify-center mr-3 font-bold text-lg">
         U
       </div>
-      <span class="text-xl font-bold text-gray-800 tracking-tight">Admin<span class="text-[#F74838]">.</span></span>
+      <span class="text-xl font-bold text-gray-800 tracking-tight">Admin<span class="text-brand">.</span></span>
     </div>
     
     <nav class="flex-1 overflow-y-auto py-6 px-3">
       <ul class="space-y-1.5">
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'dashboard'" [class.text-[#F74838]]="activeTab === 'dashboard'" [class.text-gray-600]="activeTab !== 'dashboard'" [class.hover:bg-gray-50]="activeTab !== 'dashboard'"
+            [class.bg-red-50]="activeTab === 'dashboard'" [class.text-brand]="activeTab === 'dashboard'" [class.text-gray-600]="activeTab !== 'dashboard'" [class.hover:bg-gray-50]="activeTab !== 'dashboard'"
             (click)="setTab('dashboard')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             Resumo
@@ -21,7 +21,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'financial'" [class.text-[#F74838]]="activeTab === 'financial'" [class.text-gray-600]="activeTab !== 'financial'" [class.hover:bg-gray-50]="activeTab !== 'financial'"
+            [class.bg-red-50]="activeTab === 'financial'" [class.text-brand]="activeTab === 'financial'" [class.text-gray-600]="activeTab !== 'financial'" [class.hover:bg-gray-50]="activeTab !== 'financial'"
             (click)="setTab('financial')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             Financeiro
@@ -29,7 +29,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'pharmacies'" [class.text-[#F74838]]="activeTab === 'pharmacies'" [class.text-gray-600]="activeTab !== 'pharmacies'" [class.hover:bg-gray-50]="activeTab !== 'pharmacies'"
+            [class.bg-red-50]="activeTab === 'pharmacies'" [class.text-brand]="activeTab === 'pharmacies'" [class.text-gray-600]="activeTab !== 'pharmacies'" [class.hover:bg-gray-50]="activeTab !== 'pharmacies'"
             (click)="setTab('pharmacies')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
             Farmácias
@@ -37,7 +37,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'orders'" [class.text-[#F74838]]="activeTab === 'orders'" [class.text-gray-600]="activeTab !== 'orders'" [class.hover:bg-gray-50]="activeTab !== 'orders'"
+            [class.bg-red-50]="activeTab === 'orders'" [class.text-brand]="activeTab === 'orders'" [class.text-gray-600]="activeTab !== 'orders'" [class.hover:bg-gray-50]="activeTab !== 'orders'"
             (click)="setTab('orders')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
             Pedidos Globais
@@ -45,7 +45,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'prescriptions'" [class.text-[#F74838]]="activeTab === 'prescriptions'" [class.text-gray-600]="activeTab !== 'prescriptions'" [class.hover:bg-gray-50]="activeTab !== 'prescriptions'"
+            [class.bg-red-50]="activeTab === 'prescriptions'" [class.text-brand]="activeTab === 'prescriptions'" [class.text-gray-600]="activeTab !== 'prescriptions'" [class.hover:bg-gray-50]="activeTab !== 'prescriptions'"
             (click)="setTab('prescriptions')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             Receitas
@@ -53,7 +53,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'layout'" [class.text-[#F74838]]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
+            [class.bg-red-50]="activeTab === 'layout'" [class.text-brand]="activeTab === 'layout'" [class.text-gray-600]="activeTab !== 'layout'" [class.hover:bg-gray-50]="activeTab !== 'layout'"
             (click)="setTab('layout')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
             Layout Global
@@ -61,7 +61,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'users'" [class.text-[#F74838]]="activeTab === 'users'" [class.text-gray-600]="activeTab !== 'users'" [class.hover:bg-gray-50]="activeTab !== 'users'"
+            [class.bg-red-50]="activeTab === 'users'" [class.text-brand]="activeTab === 'users'" [class.text-gray-600]="activeTab !== 'users'" [class.hover:bg-gray-50]="activeTab !== 'users'"
             (click)="setTab('users')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             Usuários
@@ -69,7 +69,7 @@
         </li>
         <li>
           <button class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-colors"
-            [class.bg-red-50]="activeTab === 'audit'" [class.text-[#F74838]]="activeTab === 'audit'" [class.text-gray-600]="activeTab !== 'audit'" [class.hover:bg-gray-50]="activeTab !== 'audit'"
+            [class.bg-red-50]="activeTab === 'audit'" [class.text-brand]="activeTab === 'audit'" [class.text-gray-600]="activeTab !== 'audit'" [class.hover:bg-gray-50]="activeTab !== 'audit'"
             (click)="setTab('audit')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
             Auditoria (Logs)
@@ -96,7 +96,7 @@
     <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 sticky top-0 z-10">
       <h1 class="text-xl font-semibold text-gray-800 capitalize">{{ activeTab === 'dashboard' ? 'Resumo da Plataforma' : activeTab === 'financial' ? 'Financeiro Global' : activeTab === 'pharmacies' ? 'Gestão de Farmácias' : activeTab === 'orders' ? 'Pedidos Globais' : activeTab === 'prescriptions' ? 'Receitas Pendentes' : activeTab === 'layout' ? 'Layout Global' : activeTab === 'users' ? 'Usuários do Sistema' : 'Auditoria do Sistema' }}</h1>
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-red-100 text-[#F74838] flex items-center justify-center text-sm font-bold border border-red-200">
+        <div class="w-8 h-8 rounded-full bg-red-100 text-brand flex items-center justify-center text-sm font-bold border border-red-200">
           AD
         </div>
       </div>
@@ -107,10 +107,10 @@
       @if (activeTab === 'dashboard') {
         @if (metrics) {
           <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Conversão checkout</p><p class="text-3xl font-bold text-[#F74838]">{{ metrics.conversionRate }}%</p></div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Conversão checkout</p><p class="text-3xl font-bold text-brand">{{ metrics.conversionRate }}%</p></div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Carrinhos abandonados</p><p class="text-3xl font-bold text-gray-800">{{ metrics.abandonedCarts }}</p></div>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Checkouts / Pagos</p><p class="text-3xl font-bold text-gray-800">{{ metrics.checkoutSessions }} / {{ metrics.paidSessions }}</p></div>
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Assinaturas ativas</p><p class="text-3xl font-bold text-[#F74838]">{{ metrics.activeSubscriptions }}</p></div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Assinaturas ativas</p><p class="text-3xl font-bold text-brand">{{ metrics.activeSubscriptions }}</p></div>
           </div>
           @if (conversionChart.length) {
             <app-metrics-bar-chart class="block mb-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-2" title="Conversão diária (%)" [points]="conversionChart" />
@@ -121,7 +121,7 @@
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Usuários totais</p><p class="text-3xl font-bold text-gray-800">{{ stats.users || 0 }}</p></div>
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Produtos</p><p class="text-3xl font-bold text-gray-800">{{ stats.products || 0 }}</p></div>
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Pedidos totais</p><p class="text-3xl font-bold text-gray-800">{{ stats.orders || 0 }}</p></div>
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Receitas pendentes</p><p class="text-3xl font-bold text-[#F74838]">{{ stats.pendingPrescriptions || 0 }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Receitas pendentes</p><p class="text-3xl font-bold text-brand">{{ stats.pendingPrescriptions || 0 }}</p></div>
         </div>
       }
 
@@ -141,7 +141,7 @@
         
         <div class="grid sm:grid-cols-3 gap-4 mb-6">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">GMV (Volume Bruto)</p><p class="text-3xl font-bold text-gray-800">R$ {{ financial.summary.grossRevenue | number:'1.2-2' }}</p></div>
-          <div class="bg-white rounded-2xl shadow-sm border border-red-100 bg-red-50/30 p-6"><p class="text-sm font-medium text-[#F74838] mb-1">Receita da Plataforma (Comissões)</p><p class="text-3xl font-bold text-[#F74838]">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
+          <div class="bg-white rounded-2xl shadow-sm border border-red-100 bg-red-50/30 p-6"><p class="text-sm font-medium text-brand mb-1">Receita da Plataforma (Comissões)</p><p class="text-3xl font-bold text-brand">R$ {{ financial.summary.platformFee | number:'1.2-2' }}</p></div>
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><p class="text-sm font-medium text-gray-500 mb-1">Pedidos pagos</p><p class="text-3xl font-bold text-gray-800">{{ financial.summary.orderCount }}</p></div>
         </div>
         
@@ -163,7 +163,7 @@
                 </div>
                 <div class="text-right">
                   <span class="text-xl font-bold text-gray-800 block mb-1">R$ {{ p.grossRevenue | number:'1.2-2' }} <span class="text-sm font-normal text-gray-400">Bruto</span></span>
-                  <span class="text-sm text-[#F74838] font-medium bg-red-50 px-2 py-1 rounded-lg">Comissão: R$ {{ p.platformFee | number:'1.2-2' }}</span>
+                  <span class="text-sm text-brand font-medium bg-red-50 px-2 py-1 rounded-lg">Comissão: R$ {{ p.platformFee | number:'1.2-2' }}</span>
                 </div>
               </div>
             }
@@ -174,7 +174,7 @@
       @if (activeTab === 'pharmacies') {
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold text-gray-800">Gestão de Farmácias</h2>
-          <button type="button" class="bg-[#F74838] hover:bg-red-600 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm" (click)="inviteModalOpen = true">
+          <button type="button" class="bg-brand hover:bg-red-600 text-white px-5 py-2.5 rounded-xl font-medium transition shadow-sm" (click)="inviteModalOpen = true">
             Nova Farmácia
           </button>
         </div>
@@ -198,7 +198,7 @@
               </div>
               <div class="flex gap-2">
                 <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition" (click)="viewKyc(pharmacy.id)">Documentação KYC</button>
-                <button type="button" class="px-4 py-2 text-sm font-medium text-[#F74838] bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="deletePharmacy(pharmacy.id)">Remover</button>
+                <button type="button" class="px-4 py-2 text-sm font-medium text-brand bg-red-50 rounded-xl hover:bg-red-100 transition" (click)="deletePharmacy(pharmacy.id)">Remover</button>
               </div>
             </div>
           } @empty {
@@ -211,7 +211,7 @@
 
         @if (kycReview) {
           <div class="bg-white rounded-2xl shadow-md border-2 border-gray-100 p-6 mb-8 overflow-hidden relative">
-            <div class="absolute top-0 left-0 w-1 h-full bg-[#F74838]"></div>
+            <div class="absolute top-0 left-0 w-1 h-full bg-brand"></div>
             <h2 class="text-xl font-bold mb-2 text-gray-800">Documentos KYC — {{ kycReview.pharmacy?.name }}</h2>
             <p class="text-sm text-gray-500 mb-6 flex items-center">Status da análise KYC: <span class="ml-2 px-2 py-1 bg-gray-100 rounded-md text-xs font-bold uppercase">{{ kycReview.pharmacy?.kyc_status }}</span></p>
             
@@ -263,7 +263,7 @@
                     <code class="text-sm text-gray-800 flex-1">{{ currentInviteUrl }}</code>
                   </div>
                   
-                  <button type="button" class="w-full bg-[#F74838] hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-sm" (click)="inviteModalOpen = false; currentInviteUrl = ''">Concluído</button>
+                  <button type="button" class="w-full bg-brand hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-sm" (click)="inviteModalOpen = false; currentInviteUrl = ''">Concluído</button>
                 </div>
               } @else {
                 <h3 class="text-2xl font-bold text-gray-800 mb-6">Nova Farmácia</h3>
@@ -271,18 +271,18 @@
                 <div class="space-y-5">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Farmácia</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="Ex: Farmácia São Paulo" [(ngModel)]="pharmacyForm.name">
+                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="Ex: Farmácia São Paulo" [(ngModel)]="pharmacyForm.name">
                   </div>
                   
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Email do Responsável (Login)</label>
-                    <input type="email" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#F74838] focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="dono@farmacia.com" [(ngModel)]="pharmacyForm.owner_email">
+                    <input type="email" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition bg-gray-50 focus:bg-white" placeholder="dono@farmacia.com" [(ngModel)]="pharmacyForm.owner_email">
                     <p class="text-xs text-gray-500 mt-1">Será enviado um convite para este email configurar a conta.</p>
                   </div>
                   
                   <div class="pt-4 flex justify-end gap-3">
                     <button type="button" class="px-5 py-2.5 rounded-xl font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition" (click)="inviteModalOpen = false">Cancelar</button>
-                    <button type="button" class="px-5 py-2.5 rounded-xl font-bold text-white bg-[#F74838] hover:bg-red-600 transition shadow-sm" (click)="createPharmacy()" [disabled]="!pharmacyForm.name || !pharmacyForm.owner_email">Gerar Convite</button>
+                    <button type="button" class="px-5 py-2.5 rounded-xl font-bold text-white bg-brand hover:bg-red-600 transition shadow-sm" (click)="createPharmacy()" [disabled]="!pharmacyForm.name || !pharmacyForm.owner_email">Gerar Convite</button>
                   </div>
                 </div>
               }
@@ -334,7 +334,7 @@
               </div>
               <div class="flex gap-2">
                 <button type="button" class="bg-emerald-50 text-emerald-700 px-4 py-2 text-sm font-bold rounded-xl hover:bg-emerald-100 transition" (click)="reviewPrescription(rx.id, 'approved')">Aprovar Receita</button>
-                <button type="button" class="px-4 py-2 text-sm font-bold rounded-xl border border-gray-200 text-[#F74838] hover:bg-red-50 transition" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
+                <button type="button" class="px-4 py-2 text-sm font-bold rounded-xl border border-gray-200 text-brand hover:bg-red-50 transition" (click)="reviewPrescription(rx.id, 'rejected')">Recusar</button>
               </div>
             </div>
           } @empty {
@@ -380,7 +380,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="divide-y divide-gray-100">
             @for (log of auditLogs; track log.id) {
-              <div class="p-4 hover:bg-gray-50 transition border-l-4" [class.border-l-[#F74838]]="log.action.includes('delete') || log.action.includes('reject')" [class.border-l-blue-500]="!log.action.includes('delete') && !log.action.includes('reject')">
+              <div class="p-4 hover:bg-gray-50 transition border-l-4" [class.border-l-brand]="log.action.includes('delete') || log.action.includes('reject')" [class.border-l-blue-500]="!log.action.includes('delete') && !log.action.includes('reject')">
                 <div class="flex flex-wrap justify-between gap-2 mb-2">
                   <span class="font-bold text-gray-800 uppercase tracking-wide text-xs bg-white px-2 py-0.5 rounded border border-gray-200">{{ log.action }}</span>
                   <span class="text-gray-400 text-xs font-mono">{{ log.created_at | date:'dd/MM/yyyy HH:mm:ss' }}</span>
