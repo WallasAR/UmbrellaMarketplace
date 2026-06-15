@@ -137,14 +137,23 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
 
 function mergeLinks(raw: Partial<ChromeLinkItem>[] | undefined, fallback: ChromeLinkItem[]): ChromeLinkItem[] {
   if (!raw?.length) return fallback.map((item) => ({ ...item }));
-  return raw.map((item, index) => ({
-    id: item.id || uid(),
-    label: item.label || fallback[index]?.label || 'Link',
-    link_url: item.link_url || fallback[index]?.link_url || '/home',
-    visible: item.visible !== false,
-    highlight: item.highlight === true,
-    external: item.external === true
-  }));
+  return raw.map((item, index) => {
+    let url = item.link_url || fallback[index]?.link_url || '/home';
+    
+    // Auto-migrate old /home links to the new /busca catalog links
+    if (url === '/home' && fallback[index]?.link_url?.startsWith('/busca')) {
+      url = fallback[index].link_url;
+    }
+
+    return {
+      id: item.id || uid(),
+      label: item.label || fallback[index]?.label || 'Link',
+      link_url: url,
+      visible: item.visible !== false,
+      highlight: item.highlight === true,
+      external: item.external === true
+    };
+  });
 }
 
 export function getNavbarConfig(theme?: ThemeLayoutConfig | null): NavbarConfig {
