@@ -1,7 +1,35 @@
 <main class="pb-16 bg-gray-50 min-h-screen">
   @if (isLoading) {
-    <div class="flex items-center justify-center h-64">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#F74838]"></div>
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 animate-pulse">
+      <!-- Banner Skeleton -->
+      <div class="w-full h-[200px] md:h-[400px] bg-gray-200 rounded-3xl mb-12"></div>
+      
+      <!-- Horizontal Skeletons for Categories / Slider headers -->
+      <div class="mb-6 flex justify-between items-end">
+        <div class="h-8 w-48 bg-gray-200 rounded-lg"></div>
+        <div class="h-4 w-24 bg-gray-200 rounded-lg"></div>
+      </div>
+      
+      <!-- Product Cards Skeleton -->
+      <div class="flex gap-4 overflow-hidden mb-16">
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden sm:block"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden md:block"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden lg:block"></div>
+      </div>
+      
+      <!-- Another Row Skeleton -->
+      <div class="mb-6 flex justify-between items-end">
+        <div class="h-8 w-64 bg-gray-200 rounded-lg"></div>
+      </div>
+      <div class="flex gap-4 overflow-hidden">
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden sm:block"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden md:block"></div>
+        <div class="w-[240px] h-[320px] bg-gray-200 rounded-2xl shrink-0 hidden lg:block"></div>
+      </div>
     </div>
   }
 

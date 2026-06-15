@@ -58,12 +58,15 @@
     </div>
 
     <!-- Rating section -->
-    <div class="flex items-center gap-1 mb-4">
-      <div class="flex text-emerald-500 text-[10px]">
-        ★ ★ ★ ★ <span class="text-gray-300">★</span>
+    @if (product().average_rating) {
+      <div class="flex items-center gap-1 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 text-amber-400">
+          <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
+        </svg>
+        <span class="text-[11px] font-bold text-gray-700">{{ product().average_rating | number:'1.1-1' }}</span>
+        <span class="text-[11px] text-gray-400">({{ product().review_count || 0 }})</span>
       </div>
-      <span class="text-[10px] text-gray-500">{{ product().average_rating ? (product().average_rating | number:'1.1-1') : '4.8' }} ({{ product().review_count || '1,234' }} reviews)</span>
-    </div>
+    }
 
     <!-- Actions -->
     <div class="flex items-center gap-2 mt-auto">
