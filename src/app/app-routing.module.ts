@@ -23,6 +23,7 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { pharmacyGuard } from './guards/pharmacy.guard';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
+import { ProductListComponent } from './pages/product-list/product-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -42,6 +43,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'faqs', component: FaqsComponent },
   { path: 'category', component: CategoryComponent },
+  { path: 'busca', component: ProductListComponent },
   { path: 'prescription', component: PrescriptionComponent },
   { path: 'pharmacies/nearby', component: NearbyPharmaciesComponent },
   { path: 'checkout/success', component: CheckoutSuccessComponent },

@@ -24,7 +24,7 @@
 
     <div class="flex items-center gap-2 md:gap-4 ml-auto">
       <div *ngIf="cfg.show_location" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 cursor-pointer transition">
-        <div class="w-8 h-8 rounded-full flex items-center justify-center" [style.background-color]="accentColor + '15'" [style.color]="accentColor">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-brand-soft text-brand">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
         </div>
         <div class="flex flex-col">
@@ -34,19 +34,19 @@
       </div>
 
       <div *ngIf="cfg.show_cart" class="relative">
-        <button type="button" (click)="goToCart()" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors" [style.--hover-bg]="accentColor + '15'" aria-label="Carrinho">
+        <button type="button" (click)="goToCart()" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 transition-colors hover:bg-brand-soft hover:text-brand" aria-label="Carrinho">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
           @if (!previewMode && cartService.itemCount() > 0) {
-            <span class="absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white shadow-sm" [style.background-color]="accentColor">{{ cartService.itemCount() }}</span>
+            <span class="absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 border-2 border-white shadow-sm bg-brand">{{ cartService.itemCount() }}</span>
           }
         </button>
       </div>
 
       <div *ngIf="cfg.show_profile" class="relative hidden sm:block">
         <button type="button" class="flex items-center gap-2 rounded-full border border-gray-100 p-1 pr-3 hover:bg-gray-50 transition-colors" (click)="toggleDropdown('profile')">
-          <div class="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden" [style.background-color]="accentColor">
+          <div class="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden bg-brand">
             {{ authService.isAuthenticated() ? 'U' : '?' }}
           </div>
           <div class="flex flex-col text-left">
@@ -78,9 +78,8 @@
   <div *ngIf="cfg.show_category_bar && visibleCategoryLinks().length" class="hidden md:flex w-full max-w-7xl mx-auto px-4 sm:px-6 items-center gap-2 overflow-x-auto no-scrollbar pb-1">
     <a
       *ngFor="let link of visibleCategoryLinks()"
-      [routerLink]="link.link_url"
+      (click)="navigate(link.link_url)"
       [ngClass]="linkClasses(link)"
-      [ngStyle]="linkStyle(link)"
     >{{ link.label }}</a>
   </div>
 </nav>

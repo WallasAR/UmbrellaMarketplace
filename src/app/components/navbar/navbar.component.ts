@@ -115,4 +115,9 @@ export class NavbarComponent implements OnInit, OnChanges {
     this.notificationService.items.set([]);
     this.closeDropdowns();
   }
+
+  navigate(url: string): void {
+    if (this.previewMode) return;
+    this.router.navigateByUrl(url);
+  }
 }

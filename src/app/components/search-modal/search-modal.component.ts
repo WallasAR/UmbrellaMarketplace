@@ -99,17 +99,17 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   search(term: string) {
     if (!term.trim()) return;
     this.searchService.saveHistory(term).subscribe();
-    this.router.navigate(['/home'], { queryParams: { q: term } });
+    this.router.navigate(['/busca'], { queryParams: { q: term } });
     this.closeModal();
   }
 
   searchByCategory(category: string) {
-    this.router.navigate(['/home'], { queryParams: { category } });
+    this.router.navigate(['/busca'], { queryParams: { category } });
     this.closeModal();
   }
 
   searchByBrand(brand: string) {
-    this.router.navigate(['/home'], { queryParams: { laboratory: brand } });
+    this.router.navigate(['/busca'], { queryParams: { laboratory: brand } });
     this.closeModal();
   }
 
