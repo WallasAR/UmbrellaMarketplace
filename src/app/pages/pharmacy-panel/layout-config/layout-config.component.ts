@@ -245,17 +245,10 @@ export class LayoutConfigComponent implements OnInit {
   }
 
   private get themeSection(): LayoutSection {
-    this.ensureThemeConfig();
     return this.layout!.sections.find((s) => s.section_type === 'theme_config')!;
   }
 
-  get navbarConfig(): NavbarConfig {
-    return getNavbarConfig(this.themeConfig);
-  }
 
-  get footerConfig(): FooterConfig {
-    return getFooterConfig(this.themeConfig);
-  }
 
   get navbarDraft(): NavbarConfig {
     const config = this.themeSection.config as ThemeLayoutConfig;
