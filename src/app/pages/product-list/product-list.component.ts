@@ -26,9 +26,22 @@ export class ProductListComponent implements OnInit {
   ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
       this.activeSymptom = params.get('symptom') || undefined;
+      
+      let queryParam = params.get('q') || undefined;
+      let discountParam = params.get('discount') === 'true' ? true : undefined;
+      
+      if (queryParam) {
+        const normalizedQ = queryParam.trim().toLowerCase();
+        if (normalizedQ === 'promocao' || normalizedQ === 'promoção') {
+          queryParam = undefined;
+          discountParam = true;
+        }
+      }
+
       this.filters = {
         ...this.filters,
-        q: params.get('q') || undefined,
+        q: queryParam,
+        discount: discountParam,
         category: params.get('category') || undefined
       };
       this.loadProducts();

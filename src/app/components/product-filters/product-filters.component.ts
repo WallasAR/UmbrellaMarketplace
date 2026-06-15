@@ -1,4 +1,4 @@
-import { Component, OnInit, output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, output } from '@angular/core';
 import { ProductFilters } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 
@@ -8,7 +8,8 @@ import { ProductService } from '../../services/product.service';
   templateUrl: './product-filters.component.html',
   styleUrl: './product-filters.component.css'
 })
-export class ProductFiltersComponent implements OnInit {
+export class ProductFiltersComponent implements OnInit, OnChanges {
+  @Input() currentFilters: ProductFilters = {};
   filtersChange = output<ProductFilters>();
 
   categories: string[] = [];
@@ -26,7 +27,12 @@ export class ProductFiltersComponent implements OnInit {
       next: (categories) => this.categories = categories,
       error: () => this.categories = []
     });
-    this.emitFilters();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentFilters']) {
+      this.filters = { ...this.filters, ...this.currentFilters };
+    }
   }
 
   emitFilters() {

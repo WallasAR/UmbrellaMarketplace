@@ -1,31 +1,90 @@
-<div class="space-y-4">
-  @if (activeSymptom) {
-    <div class="rounded-lg bg-brand-soft border border-brand/20 px-4 py-3 text-sm text-gray-700">
-      Resultados para sintoma: <strong>{{ activeSymptom }}</strong>
-    </div>
-  }
-  <app-product-filters (filtersChange)="onFiltersChange($event)" />
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-  @if (error) {
-    <div class="card-surface p-8 text-center">
-      <p class="text-gray-600">Não foi possível carregar os medicamentos.</p>
-      <button type="button" class="btn-brand mt-4 px-4 py-2" (click)="loadProducts()">Tentar novamente</button>
-    </div>
-  } @else if (!loading && !products.length) {
-    <div class="card-surface p-8 text-center">
-      <p class="text-gray-600">Nenhum medicamento encontrado com os filtros selecionados.</p>
-    </div>
-  } @else {
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-      @if (loading) {
-        @for (index of [0, 1, 2, 3, 4, 5, 6, 7, 8]; track index) {
-          <app-product-card-skeleton />
+  <!-- Cabeçalho de Resultados & Ordenação -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gray-200 gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-gray-900">
+        @if (filters.q) {
+          Resultados para "{{ filters.q }}"
+        } @else if (filters.category) {
+          Categoria: {{ filters.category }}
+        } @else if (filters.discount) {
+          Ofertas Especiais
+        } @else if (filters.symptom) {
+          Tratamento para: {{ filters.symptom }}
+        } @else {
+          Catálogo Completo
         }
+      </h1>
+      <p class="text-gray-500 mt-1">
+        @if (!loading && products.length > 0) {
+          Exibindo {{ products.length }} produtos
+        } @else if (loading) {
+          Buscando produtos...
+        }
+      </p>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span class="text-sm font-bold text-gray-700 hidden sm:block">Ordenar por:</span>
+      <div class="relative w-full sm:w-auto">
+        <select class="appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2.5 pl-4 pr-10 rounded-xl text-sm font-medium hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all shadow-sm cursor-pointer" 
+                [(ngModel)]="filters.sort" 
+                (change)="loadProducts()">
+          <option value="name_asc">A-Z (Ordem Alfabética)</option>
+          <option value="price_asc">Menor Preço</option>
+          <option value="price_desc">Maior Preço</option>
+          <option value="discount_desc">Maior Desconto</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col md:flex-row gap-8">
+    
+    <!-- Barra Lateral de Filtros (Sidebar) -->
+    <aside class="w-full md:w-64 lg:w-72 shrink-0">
+      <!-- Botão "Filtrar" no Mobile que expande algo (Para simplificar, vamos deixar os filtros sempre visíveis mas você pode adicionar um collapse no CSS ou TS depois se quiser esconder no mobile) -->
+      <app-product-filters 
+        [currentFilters]="filters" 
+        (filtersChange)="onFiltersChange($event)">
+      </app-product-filters>
+    </aside>
+
+    <!-- Grade de Produtos -->
+    <main class="flex-1">
+      @if (error) {
+        <div class="card-surface p-12 text-center rounded-3xl border border-red-100 bg-red-50">
+          <svg class="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <p class="text-gray-800 font-medium text-lg">Não foi possível carregar os medicamentos.</p>
+          <p class="text-gray-500 mb-6">Verifique sua conexão ou tente novamente mais tarde.</p>
+          <button type="button" class="btn-brand px-8 py-3 rounded-xl font-bold shadow-lg" (click)="loadProducts()">Tentar Novamente</button>
+        </div>
+      } @else if (!loading && !products.length) {
+        <div class="card-surface p-16 text-center rounded-3xl border border-gray-100 bg-gray-50">
+          <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-6">
+            <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Nenhum resultado encontrado</h2>
+          <p class="text-gray-500 max-w-md mx-auto">Tente ajustar seus filtros, buscar por um termo mais genérico ou limpar as opções selecionadas.</p>
+        </div>
       } @else {
-        @for (product of products; track product.id) {
-          <app-product-card [product]="product" />
-        }
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          @if (loading) {
+            @for (index of [0, 1, 2, 3, 4, 5, 6, 7]; track index) {
+              <app-product-card-skeleton />
+            }
+          } @else {
+            @for (product of products; track product.id) {
+              <app-product-card [product]="product" />
+            }
+          }
+        </div>
       }
-    </div>
-  }
+    </main>
+  </div>
+
 </div>
