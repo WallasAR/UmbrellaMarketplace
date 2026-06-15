@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PrescriptionService } from '../../services/prescription.service';
-import { ProductService } from '../../services/product.service';
-import { CartService } from '../../services/cart.service';
-import { Product } from '../../models/product.model';
-import { switchMap, catchError, of } from 'rxjs';
+import { CopilotService } from '../../services/copilot.service';
 
 @Component({
   selector: 'app-prescription',
@@ -17,42 +13,17 @@ export class PrescriptionComponent implements OnInit {
   previewUrl: string | null = null;
   isUploading = false;
   uploadSuccess = false;
-
-  medicineId: number | null = null;
-  quantity: number = 1;
-  isCheckout: boolean = false;
-  medicine: Product | null = null;
-  isLoadingMedicine = false;
   errorMsg = '';
+  successMsg = '';
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private prescriptionService: PrescriptionService,
-    private productService: ProductService,
-    private cartService: CartService
+    private copilotService: CopilotService
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.medicineId = params['medicine_id'] ? Number(params['medicine_id']) : null;
-      this.quantity = params['qty'] ? Number(params['qty']) : 1;
-      this.isCheckout = params['checkout'] === 'true';
-
-      if (this.medicineId) {
-        this.isLoadingMedicine = true;
-        this.productService.getProductById(this.medicineId.toString()).subscribe({
-          next: (prod) => {
-            this.medicine = prod;
-            this.isLoadingMedicine = false;
-          },
-          error: () => {
-            this.isLoadingMedicine = false;
-            this.errorMsg = 'Medicamento não encontrado.';
-          }
-        });
-      }
-    });
+    // No longer need medicine_id
   }
 
   onFileSelected(event: any) {
@@ -71,37 +42,33 @@ export class PrescriptionComponent implements OnInit {
   removeFile() {
     this.selectedFile = null;
     this.previewUrl = null;
+    this.errorMsg = '';
   }
 
   cancel() {
-    this.router.navigate(['/category']);
+    this.router.navigate(['/home']);
   }
 
   sendPrescription() {
-    if (!this.selectedFile || !this.medicineId) return;
+    if (!this.selectedFile || !this.previewUrl) return;
     this.isUploading = true;
     this.errorMsg = '';
     
-    this.prescriptionService.upload(this.medicineId, this.selectedFile).subscribe({
-      next: (prescription) => {
-        // Upload done, now add to cart
-        this.cartService.addItem(this.medicineId!, this.quantity).subscribe({
-          next: () => {
-            this.isUploading = false;
-            this.uploadSuccess = true;
-            setTimeout(() => {
-              this.router.navigate([this.isCheckout ? '/checkout' : '/cart']);
-            }, 2000);
-          },
-          error: () => {
-            this.isUploading = false;
-            this.errorMsg = 'Receita enviada, mas não foi possível adicionar ao carrinho.';
-          }
-        });
-      },
-      error: () => {
+    // Extract base64 data without the data URI prefix
+    const base64Data = this.previewUrl.split(',')[1];
+    
+    this.copilotService.prescriptionToCart({ file_data: base64Data }).subscribe({
+      next: (res) => {
         this.isUploading = false;
-        this.errorMsg = 'Erro ao enviar a receita. Tente novamente.';
+        this.uploadSuccess = true;
+        this.successMsg = res.message || 'Receita analisada e produtos adicionados ao carrinho!';
+        setTimeout(() => {
+          this.router.navigate(['/cart']);
+        }, 2500);
+      },
+      error: (err) => {
+        this.isUploading = false;
+        this.errorMsg = err.error?.message || 'Erro ao analisar a receita. Verifique se a imagem está legível e tente novamente.';
       }
     });
   }
