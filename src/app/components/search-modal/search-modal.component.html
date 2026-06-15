@@ -1,38 +1,47 @@
-<div *ngIf="isOpen" class="fixed inset-0 z-50 flex justify-center bg-black/60 backdrop-blur-sm transition-opacity">
+<div class="relative w-full h-full flex items-center" (click)="$event.stopPropagation()">
   
-  <!-- Click outside to close -->
-  <div class="absolute inset-0" (click)="closeModal()"></div>
-
-  <!-- Modal Content -->
-  <div class="relative w-full max-w-4xl bg-white mt-16 md:mt-24 rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden h-[85vh] md:h-auto md:max-h-[80vh] flex flex-col animate-slide-up md:animate-scale-in">
+  <!-- Search Input Container -->
+  <div class="flex-1 relative flex items-center bg-gray-50 rounded-full border border-gray-200 focus-within:ring-1 transition-all overflow-hidden" [style.--tw-ring-color]="'#F7483833'">
     
-    <!-- Search Header -->
-    <div class="flex items-center px-4 py-4 md:px-6 md:py-6 border-b border-gray-100 bg-white">
-      <button (click)="closeModal()" class="p-2 mr-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50 md:hidden">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-      </button>
-      
-      <div class="flex-1 relative">
-        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        <input 
-          #searchInput
-          type="text" 
-          [value]="searchQuery"
-          (input)="onInput($event)"
-          (keydown.enter)="search(searchQuery)"
-          placeholder="Busque por medicamento, princípio ativo, laboratório..." 
-          class="w-full bg-gray-50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand/20 focus:bg-white border border-transparent focus:border-brand transition-all text-gray-800"
-        />
-        
-        <button *ngIf="searchQuery" (click)="reset(); searchInput.value=''" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
+    <div class="flex items-center pl-4 pr-2 border-r border-gray-200 cursor-pointer hover:bg-gray-100" (click)="toggleCategoryMenu($event)">
+      <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Todas Categorias</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+    </div>
 
-      <button (click)="closeModal()" class="hidden md:flex ml-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <!-- Dropdown das Categorias (Todas Categorias) -->
+    <div *ngIf="isCategoryMenuOpen" class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
+      <div *ngIf="popularCategories.length === 0" class="px-4 py-2 text-sm text-gray-500">Carregando...</div>
+      <button *ngFor="let cat of popularCategories" (click)="searchByCategory(cat); isCategoryMenuOpen = false" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-brand-soft hover:text-brand transition-colors">
+        {{ cat }}
+      </button>
+      <hr class="my-1 border-gray-100">
+      <button routerLink="/category" (click)="isCategoryMenuOpen = false; closeModal()" class="w-full text-left px-4 py-2 text-sm font-bold text-brand hover:bg-brand-soft transition-colors">
+        Ver Todas
       </button>
     </div>
+
+    <input 
+      #searchInput
+      type="text" 
+      [value]="searchQuery"
+      (input)="onInput($event)"
+      (keydown.enter)="search(searchQuery)"
+      (focus)="onFocus()"
+      placeholder="Busque por medicamento, princípio ativo, laboratório..." 
+      class="flex-1 bg-transparent border-none px-4 py-2.5 focus:outline-none text-sm text-gray-800 placeholder-gray-400"
+    />
+    
+    <button *ngIf="searchQuery" (click)="reset(); searchInput.value=''" class="absolute right-12 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+
+    <button type="button" (click)="search(searchQuery)" class="p-2.5 mr-1 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
+    </button>
+  </div>
+
+  <!-- Modal/Dropdown Content -->
+  <div *ngIf="isOpen" class="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden max-h-[80vh] flex flex-col z-50 animate-scale-in">
 
     <!-- Modal Body -->
     <div class="flex-1 overflow-y-auto bg-white">
@@ -173,6 +182,7 @@
 
         </div>
 
+      </div>
       </div>
     </div>
   </div>

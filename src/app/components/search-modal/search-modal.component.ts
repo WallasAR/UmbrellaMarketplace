@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchService, SearchSuggestions } from '../../services/search.service';
 import { Subscription, Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { ProductService } from '../../services/product.service';
 })
 export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   isOpen = false;
+  isCategoryMenuOpen = false;
   searchQuery = '';
   history: string[] = [];
   suggestions: SearchSuggestions = { terms: [], products: [], categories: [], brands: [] };
@@ -124,5 +125,31 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   goToPrescription() {
     this.closeModal();
     this.router.navigate(['/prescription']);
+  }
+
+  toggleCategoryMenu(event: Event) {
+    event.stopPropagation();
+    this.isCategoryMenuOpen = !this.isCategoryMenuOpen;
+    if (this.isCategoryMenuOpen) {
+      this.isOpen = false; // Hide search results if category is open
+      this.loadPopularCategories();
+    }
+  }
+
+  onFocus() {
+    if (!this.isOpen) {
+      this.searchService.openModal();
+    }
+    this.isCategoryMenuOpen = false; // Hide categories when focusing search
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (this.isOpen || this.isCategoryMenuOpen) {
+      // The wrapper component has (click)="$event.stopPropagation()"
+      // so clicks inside the component won't reach document
+      this.closeModal();
+      this.isCategoryMenuOpen = false;
+    }
   }
 }
