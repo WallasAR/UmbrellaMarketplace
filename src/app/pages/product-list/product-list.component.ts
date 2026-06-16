@@ -29,12 +29,20 @@ export class ProductListComponent implements OnInit {
       
       let queryParam = params.get('q') || undefined;
       let discountParam = params.get('discount') === 'true' ? true : undefined;
+      let maxPriceParam = params.get('maxPrice') ? Number(params.get('maxPrice')) : undefined;
+      let sortParam = params.get('sort') as any || this.filters.sort;
       
       if (queryParam) {
         const normalizedQ = queryParam.trim().toLowerCase();
         if (normalizedQ === 'promocao' || normalizedQ === 'promoção') {
           queryParam = undefined;
           discountParam = true;
+        } else if (normalizedQ === 'oferta' || normalizedQ === 'ofertas') {
+          queryParam = undefined;
+          maxPriceParam = 50; // Map "Menos de R$ 50"
+        } else if (normalizedQ === 'lancamento' || normalizedQ === 'lançamento' || normalizedQ === 'top') {
+          queryParam = undefined;
+          // Just clear the search to show all products or apply standard sort
         }
       }
 
@@ -42,6 +50,8 @@ export class ProductListComponent implements OnInit {
         ...this.filters,
         q: queryParam,
         discount: discountParam,
+        maxPrice: maxPriceParam,
+        sort: sortParam,
         category: params.get('category') || undefined
       };
       this.loadProducts();

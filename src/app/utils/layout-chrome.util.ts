@@ -81,10 +81,10 @@ export const DEFAULT_NAVBAR_CONFIG: NavbarConfig = {
   show_category_bar: true,
   category_links: [
     { id: uid(), label: 'Comprar por Categoria', link_url: '/category', visible: true, highlight: true },
-    { id: uid(), label: 'Menos de R$ 50', link_url: '/busca?q=oferta', visible: true },
-    { id: uid(), label: '✧ Lançamentos', link_url: '/busca?q=lancamento', visible: true },
-    { id: uid(), label: '✓ Mais Vendidos', link_url: '/busca?q=top', visible: true },
-    { id: uid(), label: '% Novas Ofertas', link_url: '/busca?q=promocao', visible: true },
+    { id: uid(), label: 'Menos de R$ 50', link_url: '/busca?maxPrice=50', visible: true },
+    { id: uid(), label: '✧ Lançamentos', link_url: '/busca?sort=name_asc', visible: true },
+    { id: uid(), label: '✓ Mais Vendidos', link_url: '/busca?sort=name_asc', visible: true },
+    { id: uid(), label: '% Novas Ofertas', link_url: '/busca?discount=true', visible: true },
     { id: uid(), label: 'Higiene Pessoal', link_url: '/busca?category=Higiene', visible: true },
     { id: uid(), label: 'Vitaminas & Suplementos', link_url: '/busca?category=Vitaminas', visible: true },
     { id: uid(), label: 'Mãe & Bebê', link_url: '/busca?category=Infantil', visible: true }

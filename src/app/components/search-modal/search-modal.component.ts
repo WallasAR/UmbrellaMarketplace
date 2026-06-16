@@ -103,6 +103,10 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
     const normalizedTerm = term.trim().toLowerCase();
     if (normalizedTerm === 'promocao' || normalizedTerm === 'promoção') {
       this.router.navigate(['/busca'], { queryParams: { discount: true } });
+    } else if (normalizedTerm === 'oferta' || normalizedTerm === 'ofertas') {
+      this.router.navigate(['/busca'], { queryParams: { maxPrice: 50 } });
+    } else if (normalizedTerm === 'lancamento' || normalizedTerm === 'lançamento' || normalizedTerm === 'top') {
+      this.router.navigate(['/busca'], { queryParams: { sort: 'name_asc' } });
     } else {
       this.router.navigate(['/busca'], { queryParams: { q: term } });
     }
