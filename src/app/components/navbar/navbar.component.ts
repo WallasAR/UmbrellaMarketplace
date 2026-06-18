@@ -125,6 +125,16 @@ export class NavbarComponent implements OnInit, OnChanges {
     this.isAddressModalOpen = !this.isAddressModalOpen;
   }
 
+  saveGuestCep(cep: string) {
+    if (cep.trim()) {
+      const formatted = cep.trim();
+      this.locationService.setCustomLocation(`CEP: ${formatted}`);
+      this.userAddress = `CEP: ${formatted}`;
+      this.guessedLocation = `CEP: ${formatted}`;
+      this.closeAddressModal();
+    }
+  }
+
   closeAddressModal() {
     this.isAddressModalOpen = false;
   }

@@ -19,7 +19,7 @@ export class LocationService {
       return of(savedLoc);
     }
 
-    return this.http.get<IpInfo>('https://ipapi.co/json/').pipe(
+    return this.http.get<IpInfo>('https://ipinfo.io/json').pipe(
       map(res => {
         if (res.city) {
           return `${res.city}${res.postal ? ' ' + res.postal.replace('-', '') : ''}`;
