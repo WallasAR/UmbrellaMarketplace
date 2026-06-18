@@ -23,13 +23,57 @@
     </div>
 
     <div class="flex items-center gap-2 md:gap-4 ml-auto">
-      <div *ngIf="cfg.show_location" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 cursor-pointer transition">
+      <div *ngIf="cfg.show_location" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-50 cursor-pointer transition relative" (click)="toggleAddressModal()">
         <div class="w-8 h-8 rounded-full flex items-center justify-center bg-brand-soft text-brand">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
         </div>
         <div class="flex flex-col">
           <span class="text-[10px] text-gray-500 uppercase tracking-wide">{{ cfg.location_label }}</span>
           <span class="text-xs font-bold text-gray-800 flex items-center gap-1 max-w-[150px] truncate" [title]="userAddress || cfg.location_value">{{ userAddress || cfg.location_value }}</span>
+        </div>
+
+        <!-- Address Modal (Mercado Livre style) -->
+        <div *ngIf="isAddressModalOpen" class="absolute top-12 left-0 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden cursor-default" (click)="$event.stopPropagation()">
+          <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="font-bold text-gray-800 text-sm">Escolha um endereço de entrega</h3>
+            <button (click)="closeAddressModal()" class="text-gray-400 hover:text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="p-4 max-h-64 overflow-y-auto">
+            <!-- Unauthenticated or No Addresses -->
+            <div *ngIf="!authService.isAuthenticated() || userAddresses.length === 0" class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50 mb-2">
+              <div class="w-4 h-4 rounded-full border-4 border-brand bg-white shrink-0"></div>
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-500">Minha localização atual</span>
+                <span class="text-sm font-bold text-gray-800">{{ guessedLocation || 'Calculando...' }}</span>
+              </div>
+            </div>
+
+            <!-- Authenticated with Addresses -->
+            <ng-container *ngIf="authService.isAuthenticated() && userAddresses.length > 0">
+              <div *ngFor="let addr of userAddresses" 
+                   class="flex items-start gap-3 p-3 border rounded-lg mb-2 cursor-pointer transition"
+                   [ngClass]="addr.is_default ? 'border-brand bg-brand-soft/20' : 'border-gray-200 hover:bg-gray-50'"
+                   (click)="selectAddress(addr)">
+                <div class="w-4 h-4 rounded-full border border-gray-300 mt-0.5 shrink-0"
+                     [ngClass]="addr.is_default ? 'border-4 border-brand bg-white' : 'bg-white'"></div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold text-gray-800">{{ addr.name }}</span>
+                  <span class="text-xs text-gray-500">{{ addr.address }} - {{ addr.city }}, {{ addr.state }}</span>
+                  <span class="text-xs text-gray-400">CEP: {{ addr.cep }}</span>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+            <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm font-bold" (click)="closeAddressModal()">Confirmar</button>
+            <a routerLink="/profile" (click)="closeAddressModal()" class="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-bold hover:bg-blue-100 transition whitespace-nowrap">Adicionar novo</a>
+          </div>
         </div>
       </div>
 

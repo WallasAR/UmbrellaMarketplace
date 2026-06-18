@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
@@ -7,6 +7,8 @@ import { NotificationService } from '../../services/notification.service';
 import { SearchService } from '../../services/search.service';
 import { UserService } from '../../services/user.service';
 import { LocationService } from '../../services/location.service';
+import { AddressService } from '../../services/address.service';
+import { Address } from '../../models/address.model';
 import { NavbarConfig, visibleLinks } from '../../utils/layout-chrome.util';
 
 @Component({
@@ -21,9 +23,12 @@ export class NavbarComponent implements OnInit, OnChanges {
   @Input() accentColor = '#F74838';
 
   dropdownOpen: string | null = null;
+  isAddressModalOpen = false;
   searchQuery = '';
   displayConfig: NavbarConfig;
   userAddress: string | null = null;
+  userAddresses: Address[] = [];
+  guessedLocation: string | null = null;
 
   constructor(
     public authService: AuthService,
@@ -33,6 +38,7 @@ export class NavbarComponent implements OnInit, OnChanges {
     private chromeService: LayoutChromeService,
     private userService: UserService,
     private locationService: LocationService,
+    private addressService: AddressService,
     private router: Router
   ) {
     this.displayConfig = this.chromeService.navbar;
@@ -48,10 +54,12 @@ export class NavbarComponent implements OnInit, OnChanges {
     if (this.authService.isAuthenticated() && !this.previewMode) {
       this.cartService.loadCart();
       this.notificationService.load();
-      this.userService.getProfile().subscribe({
-        next: (profile) => {
-          if (profile && profile.address) {
-            this.userAddress = profile.address;
+      this.addressService.fetchAddresses().subscribe({
+        next: (addresses) => {
+          this.userAddresses = addresses;
+          const defaultAddress = addresses.find(a => a.is_default);
+          if (defaultAddress) {
+            this.userAddress = `${defaultAddress.city} ${defaultAddress.cep}`;
           } else {
             this.guessLocation();
           }
@@ -104,9 +112,31 @@ export class NavbarComponent implements OnInit, OnChanges {
   private guessLocation() {
     this.locationService.guessLocation().subscribe(loc => {
       if (loc) {
-        this.userAddress = loc;
+        this.guessedLocation = loc;
+        if (!this.userAddresses.length) {
+          this.userAddress = loc;
+        }
       }
     });
+  }
+
+  toggleAddressModal() {
+    if (this.previewMode) return;
+    this.isAddressModalOpen = !this.isAddressModalOpen;
+  }
+
+  closeAddressModal() {
+    this.isAddressModalOpen = false;
+  }
+
+  selectAddress(address: Address) {
+    if (address.id) {
+      this.addressService.setDefaultAddress(address.id).subscribe(() => {
+        this.userAddress = `${address.city} ${address.cep}`;
+        this.userAddresses.forEach(a => a.is_default = (a.id === address.id));
+        this.closeAddressModal();
+      });
+    }
   }
 
   toggleDropdown(menu: string): void {
@@ -144,5 +174,15 @@ export class NavbarComponent implements OnInit, OnChanges {
   navigate(url: string): void {
     if (this.previewMode) return;
     this.router.navigateByUrl(url);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (this.isAddressModalOpen) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.relative')) {
+        this.closeAddressModal();
+      }
+    }
   }
 }
