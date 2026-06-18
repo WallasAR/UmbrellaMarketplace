@@ -29,7 +29,7 @@
         </div>
         <div class="flex flex-col">
           <span class="text-[10px] text-gray-500 uppercase tracking-wide">{{ cfg.location_label }}</span>
-          <span class="text-xs font-bold text-gray-800 flex items-center gap-1">{{ cfg.location_value }}</span>
+          <span class="text-xs font-bold text-gray-800 flex items-center gap-1 max-w-[150px] truncate" [title]="userAddress || cfg.location_value">{{ userAddress || cfg.location_value }}</span>
         </div>
       </div>
 

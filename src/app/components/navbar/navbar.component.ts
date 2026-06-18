@@ -5,6 +5,7 @@ import { CartService } from '../../services/cart.service';
 import { LayoutChromeService } from '../../services/layout-chrome.service';
 import { NotificationService } from '../../services/notification.service';
 import { SearchService } from '../../services/search.service';
+import { UserService } from '../../services/user.service';
 import { NavbarConfig, visibleLinks } from '../../utils/layout-chrome.util';
 
 @Component({
@@ -21,13 +22,15 @@ export class NavbarComponent implements OnInit, OnChanges {
   dropdownOpen: string | null = null;
   searchQuery = '';
   displayConfig: NavbarConfig;
+  userAddress: string | null = null;
 
   constructor(
     public authService: AuthService,
     public cartService: CartService,
-    public notificationService: NotificationService,
+    private notificationService: NotificationService,
     private searchService: SearchService,
     private chromeService: LayoutChromeService,
+    private userService: UserService,
     private router: Router
   ) {
     this.displayConfig = this.chromeService.navbar;
@@ -40,9 +43,17 @@ export class NavbarComponent implements OnInit, OnChanges {
         this.displayConfig = cfg;
       });
     }
-    if (this.authService.getToken() && !this.previewMode) {
+    if (this.authService.isAuthenticated() && !this.previewMode) {
       this.cartService.loadCart();
       this.notificationService.load();
+      this.userService.getProfile().subscribe({
+        next: (profile) => {
+          if (profile && profile.address) {
+            this.userAddress = profile.address;
+          }
+        },
+        error: () => {}
+      });
     }
   }
 
