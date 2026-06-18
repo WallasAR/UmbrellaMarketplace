@@ -3,22 +3,6 @@
   <!-- Search Input Container -->
   <div class="flex-1 relative flex items-center bg-gray-50 rounded-full border border-gray-200 focus-within:ring-1 focus-within:ring-brand/30 transition-all overflow-visible">
     
-    <div class="flex items-center pl-4 pr-2 border-r border-gray-200 cursor-pointer hover:bg-gray-100" (click)="toggleCategoryMenu($event)">
-      <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Todas Categorias</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-    </div>
-
-    <!-- Dropdown das Categorias (Todas Categorias) -->
-    <div *ngIf="isCategoryMenuOpen" class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
-      <div *ngIf="popularCategories.length === 0" class="px-4 py-2 text-sm text-gray-500">Carregando...</div>
-      <button *ngFor="let cat of popularCategories" (click)="searchByCategory(cat); isCategoryMenuOpen = false" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-brand-soft hover:text-brand transition-colors">
-        {{ cat }}
-      </button>
-      <hr class="my-1 border-gray-100">
-      <button routerLink="/category" (click)="isCategoryMenuOpen = false; closeModal()" class="w-full text-left px-4 py-2 text-sm font-bold text-brand hover:bg-brand-soft transition-colors">
-        Ver Todas
-      </button>
-    </div>
 
     <input 
       #searchInput
@@ -142,7 +126,7 @@
                 </button>
               </div>
 
-              <div *ngIf="suggestions.products.length === 0" class="text-gray-500 text-sm py-4 flex flex-col items-center justify-center bg-gray-50 rounded-xl h-32 border border-dashed border-gray-200">
+              <div *ngIf="!suggestions.products || suggestions.products.length === 0" class="text-gray-500 text-sm py-4 flex flex-col items-center justify-center bg-gray-50 rounded-xl h-32 border border-dashed border-gray-200">
                 <svg class="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Nenhum produto encontrado.
               </div>

@@ -13,7 +13,6 @@ import { ProductService } from '../../services/product.service';
 })
 export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
   isOpen = false;
-  isCategoryMenuOpen = false;
   searchQuery = '';
   history: string[] = [];
   suggestions: SearchSuggestions = { terms: [], products: [], categories: [], brands: [] };
@@ -138,29 +137,18 @@ export class SearchModalComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/prescription']);
   }
 
-  toggleCategoryMenu(event: Event) {
-    event.stopPropagation();
-    this.isCategoryMenuOpen = !this.isCategoryMenuOpen;
-    if (this.isCategoryMenuOpen) {
-      this.isOpen = false; // Hide search results if category is open
-      this.loadPopularCategories();
-    }
-  }
-
   onFocus() {
     if (!this.isOpen) {
       this.searchService.openModal();
     }
-    this.isCategoryMenuOpen = false; // Hide categories when focusing search
   }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
-    if (this.isOpen || this.isCategoryMenuOpen) {
+    if (this.isOpen) {
       // The wrapper component has (click)="$event.stopPropagation()"
       // so clicks inside the component won't reach document
       this.closeModal();
-      this.isCategoryMenuOpen = false;
     }
   }
 }
