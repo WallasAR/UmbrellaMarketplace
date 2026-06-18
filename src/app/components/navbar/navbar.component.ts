@@ -6,6 +6,7 @@ import { LayoutChromeService } from '../../services/layout-chrome.service';
 import { NotificationService } from '../../services/notification.service';
 import { SearchService } from '../../services/search.service';
 import { UserService } from '../../services/user.service';
+import { LocationService } from '../../services/location.service';
 import { NavbarConfig, visibleLinks } from '../../utils/layout-chrome.util';
 
 @Component({
@@ -31,6 +32,7 @@ export class NavbarComponent implements OnInit, OnChanges {
     private searchService: SearchService,
     private chromeService: LayoutChromeService,
     private userService: UserService,
+    private locationService: LocationService,
     private router: Router
   ) {
     this.displayConfig = this.chromeService.navbar;
@@ -50,10 +52,14 @@ export class NavbarComponent implements OnInit, OnChanges {
         next: (profile) => {
           if (profile && profile.address) {
             this.userAddress = profile.address;
+          } else {
+            this.guessLocation();
           }
         },
-        error: () => {}
+        error: () => this.guessLocation()
       });
+    } else if (!this.previewMode) {
+      this.guessLocation();
     }
   }
 
@@ -93,6 +99,14 @@ export class NavbarComponent implements OnInit, OnChanges {
 
   private syncConfig() {
     this.displayConfig = this.config || this.chromeService.navbar;
+  }
+
+  private guessLocation() {
+    this.locationService.guessLocation().subscribe(loc => {
+      if (loc) {
+        this.userAddress = loc;
+      }
+    });
   }
 
   toggleDropdown(menu: string): void {
