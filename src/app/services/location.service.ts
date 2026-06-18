@@ -14,7 +14,12 @@ export class LocationService {
   constructor(private http: HttpClient) {}
 
   guessLocation(): Observable<string | null> {
-    return this.http.get<IpInfo>('https://ipinfo.io/json').pipe(
+    const savedLoc = localStorage.getItem('guest_location');
+    if (savedLoc) {
+      return of(savedLoc);
+    }
+
+    return this.http.get<IpInfo>('https://ipapi.co/json/').pipe(
       map(res => {
         if (res.city) {
           return `${res.city}${res.postal ? ' ' + res.postal.replace('-', '') : ''}`;
@@ -23,5 +28,9 @@ export class LocationService {
       }),
       catchError(() => of(null))
     );
+  }
+
+  setCustomLocation(location: string): void {
+    localStorage.setItem('guest_location', location);
   }
 }
