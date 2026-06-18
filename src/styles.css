@@ -46,3 +46,8 @@ body {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
+
+a, [routerLink], button, select, label {
+  cursor: pointer;
+}
+
