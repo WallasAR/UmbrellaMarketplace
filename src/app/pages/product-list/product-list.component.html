@@ -46,7 +46,7 @@
   <div class="flex flex-col md:flex-row gap-8">
     
     <!-- Barra Lateral de Filtros (Sidebar) -->
-    <aside class="w-full md:w-64 lg:w-72 shrink-0">
+    <aside class="w-full md:w-64 lg:w-72 shrink-0 md:sticky md:top-32 md:self-start md:max-h-[calc(100vh-8rem)] md:overflow-y-auto custom-scrollbar">
       <!-- Botão "Filtrar" no Mobile que expande algo (Para simplificar, vamos deixar os filtros sempre visíveis mas você pode adicionar um collapse no CSS ou TS depois se quiser esconder no mobile) -->
       <app-product-filters 
         [currentFilters]="filters" 
