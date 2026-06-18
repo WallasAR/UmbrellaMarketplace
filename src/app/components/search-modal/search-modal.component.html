@@ -57,6 +57,12 @@
         <div *ngIf="searchQuery.length < 3">
 
           <!-- Popular Categories (Drogasil Style) -->
+          <div *ngIf="popularCategories.length === 0 && history.length === 0" class="text-center py-8">
+            <svg class="w-12 h-12 text-gray-200 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <p class="text-gray-500 font-medium">Nenhuma busca recente.</p>
+            <p class="text-gray-400 text-sm mt-1">Comece a digitar para ver sugestões de produtos.</p>
+          </div>
+
           <div *ngIf="popularCategories.length > 0" class="mb-8">
             <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Principais Categorias</h4>
             <div class="flex flex-wrap gap-2">
@@ -141,7 +147,7 @@
                 Nenhum produto encontrado.
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div *ngFor="let prod of suggestions.products">
                   <!-- Miniature product card -->
                   <a [routerLink]="['/product', prod.id]" (click)="closeModal()" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-brand hover:shadow-[0_4px_12px_rgba(247,72,56,0.1)] transition-all group bg-white">
